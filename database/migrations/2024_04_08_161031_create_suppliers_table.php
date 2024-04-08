@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('store_name');
             $table->string('phone_number')->unique();
             $table->string('password');
+            $table->string('discount_code');
             $table->timestamps();
         });
     }

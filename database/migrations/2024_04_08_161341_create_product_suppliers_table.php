@@ -27,6 +27,7 @@ return new class extends Migration
             $table->primary(['product_id','supplier_id']);
             $table->float('price');
             $table->float('price_after_sales');
+            $table->string('discount_by_code');
             $table->timestamps();
         });
     }

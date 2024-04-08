@@ -22,6 +22,7 @@ class ProductSupplier extends Model
         'product_id',
         'price',
         'price_after_sales',
+        'discount_by_code',
     ];
 
     public function bills() : BelongsToMany {

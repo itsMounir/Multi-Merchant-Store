@@ -23,6 +23,8 @@ class Supplier extends Model
         'last_name',
         'phone_number',
         'password',
+        'discount_code',
+        'store_name',
     ];
 
     public function image() : MorphOne {

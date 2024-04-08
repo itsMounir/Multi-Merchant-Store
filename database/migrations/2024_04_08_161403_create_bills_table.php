@@ -26,6 +26,7 @@ return new class extends Migration {
             $table->float('total_price');
             $table->enum('payement_method',['كاش','بطاقة']);
             $table->enum('status',['مدفوع','غير مدفوع','تم التوصيل']);
+            $table->string('discount_code');
             $table->timestamps();
         });
     }
