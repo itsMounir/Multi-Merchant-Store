@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('phone_number')->unique();
             $table->string('password');
             $table->string('discount_code');
+            $table->enum('status',['نشط','محظور','غير نشط'])->default('غير نشط');
             $table->timestamps();
         });
     }

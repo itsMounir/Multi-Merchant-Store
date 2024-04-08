@@ -27,6 +27,8 @@ class Market extends Model
         'street',
         'category_id',
         'presentator_code',
+        'status',
+        'is_subscriped',
     ];
 
     public function image() : MorphOne {

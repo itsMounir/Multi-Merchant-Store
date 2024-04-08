@@ -27,6 +27,8 @@ return new class extends Migration {
             $table->string('city');
             $table->string('street');
             $table->string('representator_code');
+            $table->string('is_subscriped');
+            $table->enum('status',['نشط','محظور','غير نشط'])->default('غير نشط');
             $table->timestamps();
         });
     }
