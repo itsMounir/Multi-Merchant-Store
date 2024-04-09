@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Suppliers;
+namespace App\Http\Controllers\Api\V1\Markets;
 
 use App\Http\Controllers\Controller;
 use App\Models\Supplier;
