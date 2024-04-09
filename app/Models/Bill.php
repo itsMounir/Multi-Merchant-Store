@@ -21,6 +21,7 @@ class Bill extends Model
         'status',
         'market_id',
         'supplier_id',
+        'discount_code'
     ];
 
     public function productSuppliers() : BelongsToMany {

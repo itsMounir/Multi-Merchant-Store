@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('bills', function (Blueprint $table) {
-
+            $table->id();
             $table->foreignId('market_id')
                 ->constrained()
                 ->cascadeOnDelete()
@@ -22,10 +22,10 @@ return new class extends Migration {
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->primary(['market_id','supplier_id']);
             $table->float('total_price');
             $table->enum('payement_method',['كاش','بطاقة']);
             $table->enum('status',['مدفوع','غير مدفوع','تم التوصيل']);
+            $table->string('discount_code');
             $table->timestamps();
         });
     }

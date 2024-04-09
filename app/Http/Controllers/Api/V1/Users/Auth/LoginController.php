@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Auth;
+namespace App\Http\Controllers\Api\V1\Users\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\LoginRequest;
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    public function create(LoginRequest $request) {
+    public function create(Request $request) {
         $credentials = $request->only('email', 'password');
 
         if (! Auth::attempt($credentials)) {
@@ -18,7 +18,7 @@ class LoginController extends Controller
         }
         $user = Auth::user();
 
-        $token = $user->createToken('access_token')->plainTextToken;
+        $token = $user->createToken('access_token', ['role:user'])->plainTextToken;
 
         return response()->json([
             'message' => 'User logged in successfully.',

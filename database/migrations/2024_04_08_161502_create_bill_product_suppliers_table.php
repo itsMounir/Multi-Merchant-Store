@@ -19,11 +19,11 @@ return new class extends Migration
                 ->cascadeOnUpdate();
 
             $table->foreignId('product_supplier_id')
-                ->constrained()
+                ->constrained('product_supplier')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->primary(['bill_id','product_id']);
+            $table->primary(['bill_id','product_supplier_id']);
             $table->timestamps();
         });
     }

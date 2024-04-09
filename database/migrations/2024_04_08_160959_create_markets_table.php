@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('markets', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('category_id')
+            $table->foreignId('market_category_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
@@ -27,6 +27,8 @@ return new class extends Migration {
             $table->string('city');
             $table->string('street');
             $table->string('representator_code');
+            $table->string('is_subscriped');
+            $table->enum('status',['نشط','محظور','غير نشط'])->default('غير نشط');
             $table->timestamps();
         });
     }
