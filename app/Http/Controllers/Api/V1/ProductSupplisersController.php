@@ -1,21 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Suppliers;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\Supplier;
+use App\Models\ProductSupplier;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class SuppliersController extends Controller
+class ProductSupplisersController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $suppliers = Supplier::site()->get();
-        return $this->indexOrShowResponse('suppliers',$suppliers);
+        //
     }
 
     /**
@@ -37,16 +35,15 @@ class SuppliersController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Supplier $supplier)
+    public function show(ProductSupplier $productSupplier)
     {
-        $supplier = $supplier->load('products');
-        return $this->indexOrShowResponse('supplier',$supplier);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Supplier $supplier)
+    public function edit(ProductSupplier $productSupplier)
     {
         //
     }
@@ -54,7 +51,7 @@ class SuppliersController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Supplier $supplier)
+    public function update(Request $request, ProductSupplier $productSupplier)
     {
         //
     }
@@ -62,7 +59,7 @@ class SuppliersController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Supplier $supplier)
+    public function destroy(ProductSupplier $productSupplier)
     {
         //
     }

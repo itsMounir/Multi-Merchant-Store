@@ -3,7 +3,13 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -33,7 +39,7 @@ class Handler extends ExceptionHandler
     {
         if ($e instanceof ModelNotFoundException) {
             return response()->json([
-                'message' => 'alkjf;',
+                'message' => explode('\\', $e->getModel())[2] . ' Not Found.',
             ], 404);
         }
 
@@ -60,6 +66,12 @@ class Handler extends ExceptionHandler
                 'message' => 'Validation error',
                 'errors' => $e->errors(),
             ], 422);
+        }
+
+        if ($e instanceof RouteNotFoundException) {
+            return response()->json([
+                'message' => 'Unauthenticated',
+            ], 401);
         }
 
         return parent::render($request, $e);

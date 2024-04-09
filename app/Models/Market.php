@@ -30,7 +30,7 @@ class Market extends Authenticatable
         'password',
         'city',
         'street',
-        'category_id',
+        'market_category_id',
         'representator_code',
         'status',
         'is_subscriped',
