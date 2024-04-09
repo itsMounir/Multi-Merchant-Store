@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Category extends Model
+class ProductCategory extends Model
 {
     use HasFactory;
 
@@ -18,10 +18,6 @@ class Category extends Model
     protected $fillable = [
         'name',
     ];
-
-    public function markets() : HasMany {
-        return $this->hasMany(Market::class);
-    }
 
     public function products() : HasMany {
         return $this->hasMany(Product::class);

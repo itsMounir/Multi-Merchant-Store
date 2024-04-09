@@ -17,3 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+include __DIR__ . '/Developers/Users/Auth.php';
+include __DIR__ . '/Developers/Suppliers/Auth.php';
+include __DIR__ . '/Developers/Markets/Auth.php';

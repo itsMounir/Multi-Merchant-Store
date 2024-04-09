@@ -26,7 +26,6 @@ return new class extends Migration
 
             $table->float('price');
             $table->float('price_after_sales');
-            $table->string('discount_by_code');
             $table->timestamps();
         });
     }
