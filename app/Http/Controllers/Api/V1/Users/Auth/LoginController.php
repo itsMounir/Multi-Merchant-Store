@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Auth\Markets;
+namespace App\Http\Controllers\Api\V1\Users\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\LoginRequest;
@@ -10,18 +10,18 @@ use Illuminate\Support\Facades\Auth;
 class LoginController extends Controller
 {
     public function create(Request $request) {
-        $credentials = $request->only('phone_number', 'password');
+        $credentials = $request->only('email', 'password');
 
-        if (! Auth::guard('market')->attempt($credentials)) {
+        if (! Auth::attempt($credentials)) {
 
             return response()->json(['message' => 'your provided credentials cannot be verified.'], 401);
         }
-        $user = Auth::guard('market')->user();
-        //dd($user);
-        $token = $user->createToken('access_token', ['role:market'])->plainTextToken;
+        $user = Auth::user();
+
+        $token = $user->createToken('access_token', ['role:user'])->plainTextToken;
 
         return response()->json([
-            'message' => 'Market logged in successfully.',
+            'message' => 'User logged in successfully.',
             'access_token' => $token,
         ]);
     }

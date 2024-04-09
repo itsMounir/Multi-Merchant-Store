@@ -1,7 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Auth\Suppliers;
-use App\Models\Supplier;
+namespace App\Http\Controllers\Api\V1\Markets\Auth;
+use App\Models\Market;
 use App\Notifications\verfication_code;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\RegisterRequest;
@@ -17,10 +17,10 @@ class RegisterController extends Controller
 
             // $verfication_code=mt_rand(100000,999999);
             // $request['code'] = $verfication_code;
-            $supplier = Supplier::create($request->all());
-            //Auth::login($supplier);
+            $market = Market::create($request->all());
+            //Auth::login($market);
 
-            $token = $supplier->createToken('access_token', ['role:supplier'])->plainTextToken;
+            $token = $market->createToken('access_token', ['role:market'])->plainTextToken;
            // $user->notify(new  verfication_code($verfication_code));
             return response()->json([
                 'message' => 'Created Successfully please wait for admin confirmation',

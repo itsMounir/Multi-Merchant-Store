@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Auth\Users;
+namespace App\Http\Controllers\Api\V1\Suppliers\Auth;
+use App\Models\Supplier;
 use App\Notifications\verfication_code;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\RegisterRequest;
@@ -16,11 +17,11 @@ class RegisterController extends Controller
 
             // $verfication_code=mt_rand(100000,999999);
             // $request['code'] = $verfication_code;
-            $user = User::create($request->all());
-            //Auth::login($user);
+            $supplier = Supplier::create($request->all());
+            //Auth::login($supplier);
 
-            $token = $user->createToken('access_token', ['role:user'])->plainTextToken;
-            //$user->notify(new  verfication_code($verfication_code));
+            $token = $supplier->createToken('access_token', ['role:supplier'])->plainTextToken;
+           // $user->notify(new  verfication_code($verfication_code));
             return response()->json([
                 'message' => 'Created Successfully please wait for admin confirmation',
                 'access_token' => $token,
