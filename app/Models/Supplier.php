@@ -31,9 +31,10 @@ class Supplier extends Authenticatable
         'discount_code',
         'store_name',
         'status',
+        'type',
     ];
 
-    protected $guard = 'supplier';
+    protected $guard = ['supplier'];
 
         /**
      * The attributes that should be hidden for serialization.
@@ -69,6 +70,9 @@ class Supplier extends Authenticatable
     }
 
     public function products() : BelongsToMany {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class,'product_suppliers');
     }
+
+
+
 }

@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('store_name');
             $table->string('phone_number')->unique();
             $table->string('password');
-            $table->string('discount_code');
-            $table->string('discount_by_code');
+            $table->string('discount_code')->nullable();
+            $table->string('discount_by_code')->nullable();
             $table->enum('type',['مورد','شركة']);
             $table->enum('status',['نشط','محظور','غير نشط'])->default('غير نشط');
             $table->timestamps();

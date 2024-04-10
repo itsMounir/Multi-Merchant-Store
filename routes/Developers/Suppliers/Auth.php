@@ -1,9 +1,13 @@
 <?php
 
-use App\Http\Controllers\Api\V1\Auth\Suppliers\{
+use App\Http\Controllers\Api\V1\Suppliers\Auth\{
     LoginController,
     RegisterController,
     VerificationController
+};
+use App\Http\Controllers\Api\V1\Suppliers\{
+    ProductSuppliersController,
+    SuppliersController
 };
 
 Route::prefix('suppliers/')->group(function () {
@@ -19,4 +23,9 @@ Route::middleware(['auth:sanctum', 'type.supplier'])->group(function () {
     Route::get('shit',function () {
         return response()->json('shit');
     });
+    Route::get('supplier',[ProductSuppliersController::class,'index']);
+    Route::post('price/{id}',[ProductSuppliersController::class,'update']);
+    Route::delete('delete/{id}',[ProductSuppliersController::class,'destroy']);
+    Route::post('products',[ProductSuppliersController::class,'store']);
+    Route::get('products',[ProductSuppliersController::class,'index']);
 });

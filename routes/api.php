@@ -2,7 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Api\V1\Suppliers\ProductSuppliersController;
+use App\Http\Controllers\Api\V1\Suppliers\SuppliersController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,3 +22,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 include __DIR__ . '/Developers/Users/Auth.php';
 include __DIR__ . '/Developers/Suppliers/Auth.php';
 include __DIR__ . '/Developers/Markets/Auth.php';
+
+

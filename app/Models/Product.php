@@ -24,7 +24,7 @@ class Product extends Model
     ];
 
     public function suppliers() : BelongsToMany {
-        return $this->belongsToMany(Supplier::class);
+        return $this->belongsToMany(Supplier::class,'product_suppliers');
     }
 
     public function category() : BelongsTo {

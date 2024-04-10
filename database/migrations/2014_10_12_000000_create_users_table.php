@@ -32,3 +32,38 @@ return new class extends Migration
         Schema::dropIfExists('users');
     }
 };
+
+        /*Schema::create('bills', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('market_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->foreignId('supplier_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->float('total_price');
+            $table->enum('payement_method',['كاش','بطاقة']);
+            $table->enum('status',['مدفوع','غير مدفوع','تم التوصيل']);
+            $table->string('discount_code');
+            $table->timestamps();
+        });*/
+
+                /*Schema::create('bill_product_supplier', function (Blueprint $table) {
+
+            $table->foreignId('bill_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->foreignId('product_supplier_id')
+                ->constrained('product_supplier')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->primary(['bill_id','product_supplier_id']);
+            $table->timestamps();
+        });*/

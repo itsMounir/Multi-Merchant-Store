@@ -19,7 +19,7 @@ return new class extends Migration
                 ->cascadeOnUpdate();
 
             $table->foreignId('product_supplier_id')
-                ->constrained('product_supplier')
+                ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bill_products');
+        //
     }
 };

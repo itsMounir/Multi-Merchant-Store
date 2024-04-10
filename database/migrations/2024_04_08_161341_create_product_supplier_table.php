@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_supplier', function (Blueprint $table) {
+        Schema::create('product_suppliers', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('product_id')
@@ -24,8 +24,8 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->float('price');
-            $table->float('price_after_sales');
+            $table->float('price')->nullable();
+            $table->float('price_after_sales')->nullable();
             $table->timestamps();
         });
     }

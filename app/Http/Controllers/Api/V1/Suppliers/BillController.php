@@ -3,24 +3,16 @@
 namespace App\Http\Controllers\Api\V1\Suppliers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Supplier;
-use App\Models\ProductSupplier;
 use Illuminate\Http\Request;
 
-class SuppliersController extends Controller
+class BillController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-
-       /* $user = Auth::user();
-        if (!$user) {
-            return $this->sudResponse('Unauthorized', 401);
-        }
-        $products = $user->products;
-        return $this->indexOrShowResponse('data', $products);*/
+        //
     }
 
     /**
@@ -42,7 +34,7 @@ class SuppliersController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Supplier $supplier)
+    public function show(string $id)
     {
         //
     }
@@ -50,7 +42,7 @@ class SuppliersController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Supplier $supplier)
+    public function edit(string $id)
     {
         //
     }
@@ -58,15 +50,15 @@ class SuppliersController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Supplier $supplier)
+    public function update(Request $request, string $id)
     {
-
+        //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Supplier $supplier)
+    public function destroy(string $id)
     {
         //
     }

@@ -28,4 +28,7 @@ class ProductSupplier extends Model
     public function bills() : BelongsToMany {
         return $this->belongsToMany(Bill::class);
     }
+
+
+
 }
