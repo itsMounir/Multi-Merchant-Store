@@ -32,7 +32,6 @@ class Market extends Authenticatable
         'street',
         'market_category_id',
         'representator_code',
-        'status',
         'is_subscriped',
         'store_name',
     ];

@@ -96,12 +96,14 @@ class Supplier extends Authenticatable
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class,'product_suppliers')
-            ->withPivot('price');
+        return $this->belongsToMany(Product::class,'product_supplier')
+            ->withPivot('price','price_after_sales');
 
     }
 
-
+    public function productSuppliers() : HasMany {
+        return $this->hasMany(ProductSupplier::class);
+    }
 
 }
 

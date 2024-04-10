@@ -17,14 +17,14 @@ class Bill extends Model
      */
     protected $fillable = [
         'total_price',
-        'payement_method',
+        'payement_method_id',
         'status',
         'market_id',
         'supplier_id',
         'discount_code'
     ];
 
-    public function productSuppliers() : BelongsToMany {
-        return $this->belongsToMany(ProductSupplier::class);
+    public function products() : BelongsToMany {
+        return $this->belongsToMany(Product::class);
     }
 }

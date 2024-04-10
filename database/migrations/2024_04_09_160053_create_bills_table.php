@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -23,9 +22,11 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
+            $table->foreignId('payement_method_id')
+                ->constrained();
+
             $table->float('total_price');
-            $table->enum('payement_method',['كاش','بطاقة']);
-            $table->enum('status',['مدفوع','غير مدفوع','تم التوصيل']);
+            $table->enum('status', ['مدفوع', 'غير مدفوع', 'تم التوصيل'])->default('غير مدفوع');
             $table->string('discount_code');
             $table->timestamps();
         });

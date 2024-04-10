@@ -11,19 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bill_product_supplier', function (Blueprint $table) {
+        Schema::create('bill_product', function (Blueprint $table) {
 
             $table->foreignId('bill_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->foreignId('product_supplier_id')
+            $table->foreignId('product_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->primary(['bill_id','product_supplier_id']);
+            $table->primary(['bill_id','product_id']);
+            $table->integer('quantity');
             $table->timestamps();
         });
     }

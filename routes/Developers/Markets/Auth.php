@@ -7,12 +7,14 @@ use App\Http\Controllers\Api\V1\Markets\Auth\{
 };
 use App\Http\Controllers\Api\V1\Markets\{
     SuppliersController,
-    ProductsController
+    ProductsController,
+    BillsController
 };
 
 Route::prefix('markets/')->group(function () {
     // auth routes
-    Route::post('/register', [RegisterController::class, 'create']);
+    Route::get('/register', [RegisterController::class, 'create']);
+    Route::post('/register', [RegisterController::class, 'store']);
     Route::post('/login', [LoginController::class, 'create']);
     Route::get('/logout', [LoginController::class, 'destroy'])->middleware(['auth:sanctum', 'type.market']);
 
@@ -24,6 +26,9 @@ Route::prefix('markets/')->group(function () {
             Route::get('suppliers/{supplier}', [SuppliersController::class, 'show']);
 
             Route::get('products',[ProductsController::class,'index']);
+
+            Route::get('bills',[BillsController::class,'index']);
+            Route::post('bills',[BillsController::class,'store']);
         });
 });
 

@@ -10,7 +10,7 @@ class ProductSupplier extends Model
 {
     use HasFactory;
 
-    protected $table = 'product_suppliers';
+    protected $table = 'product_supplier';
 
     /**
      * The attributes that are mass assignable.
@@ -22,12 +22,11 @@ class ProductSupplier extends Model
         'product_id',
         'price',
         'price_after_sales',
-        'discount_by_code',
     ];
 
-    public function bills() : BelongsToMany {
-        return $this->belongsToMany(Bill::class);
-    }
+    // public function bills() : BelongsToMany {
+    //     return $this->belongsToMany(Bill::class);
+    // }
 
 
 
