@@ -25,11 +25,6 @@ class BaseFilter
         return $query;
     }
 
-    public function productName(Builder $query): Builder
-    {
-        return $query->where('name', $this->request->input('productName'));
-    }
-
     protected function getFilters(): array
     {
         $filters = [];

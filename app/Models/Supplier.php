@@ -24,7 +24,7 @@ class Supplier extends Authenticatable
      */
     protected static function booted(): void
     {
-        static::addGlobalScope(new ActiveScope);
+        //static::addGlobalScope(new ActiveScope);
     }
 
     /**
@@ -95,6 +95,7 @@ class Supplier extends Authenticatable
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class)
+            ->withPivot('price');
     }
 }

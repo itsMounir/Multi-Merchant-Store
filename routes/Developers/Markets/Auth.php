@@ -5,7 +5,10 @@ use App\Http\Controllers\Api\V1\Markets\Auth\{
     RegisterController,
     VerificationController
 };
-use App\Http\Controllers\Api\V1\Markets\SuppliersController;
+use App\Http\Controllers\Api\V1\Markets\{
+    SuppliersController,
+    ProductsController
+};
 
 Route::prefix('markets/')->group(function () {
     // auth routes
@@ -19,6 +22,8 @@ Route::prefix('markets/')->group(function () {
             // Route::apiResource('suppliers',SuppliersController::class)->only(['index','show']);
             Route::get('suppliers', [SuppliersController::class, 'index']);
             Route::get('suppliers/{supplier}', [SuppliersController::class, 'show']);
+
+            Route::get('products',[ProductsController::class,'index']);
         });
 });
 

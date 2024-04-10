@@ -23,11 +23,14 @@ class Product extends Model
         'category_id',
     ];
 
-    public function suppliers() : BelongsToMany {
-        return $this->belongsToMany(Supplier::class);
+    public function suppliers(): BelongsToMany
+    {
+        return $this->belongsToMany(Supplier::class)
+            ->withPivot('price');
     }
 
-    public function category() : BelongsTo {
+    public function category(): BelongsTo
+    {
         return $this->belongsTo(ProductCategory::class);
     }
 }
