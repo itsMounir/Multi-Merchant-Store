@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Suppliers;
+namespace App\Http\Controllers\Api\V1\Markets;
 
+use App\Filters\Markets\ProductsFilters;
 use App\Http\Controllers\Controller;
-use App\Models\Supplier;
-use App\Models\ProductSupplier;
+use App\Models\{
+    Product,
+    Supplier
+};
 use Illuminate\Http\Request;
 
-class SuppliersController extends Controller
+class ProductsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(ProductsFilters $productsFilters)
     {
-
-       /* $user = Auth::user();
-        if (!$user) {
-            return $this->sudResponse('Unauthorized', 401);
-        }
-        $products = $user->products;
-        return $this->indexOrShowResponse('data', $products);*/
+        $products = $productsFilters->applyFilters(Product::query())
+            ->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
+            ->orderBy('product_supplier.price')->get();
+        return $this->indexOrShowResponse('products', $products);
     }
 
     /**
@@ -42,7 +42,7 @@ class SuppliersController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Supplier $supplier)
+    public function show(Product $product)
     {
         //
     }
@@ -50,7 +50,7 @@ class SuppliersController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Supplier $supplier)
+    public function edit(Product $product)
     {
         //
     }
@@ -58,15 +58,15 @@ class SuppliersController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Supplier $supplier)
+    public function update(Request $request, Product $product)
     {
-
+        //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Supplier $supplier)
+    public function destroy(Product $product)
     {
         //
     }

@@ -23,9 +23,9 @@ Route::middleware(['auth:sanctum', 'type.supplier'])->group(function () {
     Route::get('shit',function () {
         return response()->json('shit');
     });
-    Route::get('supplier',[ProductSuppliersController::class,'index']);
+
+    Route::apiResource('suppliers',ProductSuppliersController::class);
+    Route::get('product',[SuppliersController::class,'index']);
     Route::post('price/{id}',[ProductSuppliersController::class,'update']);
-    Route::delete('delete/{id}',[ProductSuppliersController::class,'destroy']);
-    Route::post('products',[ProductSuppliersController::class,'store']);
-    Route::get('products',[ProductSuppliersController::class,'index']);
+
 });

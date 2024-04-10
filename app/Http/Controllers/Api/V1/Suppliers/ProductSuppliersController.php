@@ -25,8 +25,8 @@ class ProductSuppliersController extends Controller
         if(!$supplier){
             return $this->sudResponse('Unauthorized',401);
         }
-        $data=ProductCategory::with('products')->get();
-        return $this->indexOrShowResponse('message',$data);
+        $product=$supplier->products;
+        return $this->indexOrShowResponse('message',$product);
     }
 
 
@@ -48,7 +48,9 @@ class ProductSuppliersController extends Controller
         DB::beginTransaction();
         try {
             foreach ($request['products'] as $product) {
-                $supplier->products()->syncWithoutDetaching($product['id']);
+                $supplier->products()->syncWithoutDetaching([
+                    $product['id'] => ['price' => $product['price'],'price_after_sales'=>$product['price_after_sales']]
+                ]);
             }
             DB::commit();
             return $this->sudResponse('Products have been added successfully');
@@ -81,6 +83,8 @@ class ProductSuppliersController extends Controller
     public function update(UpdatePriceRequest $request, $product_id)
     {
         $supplier = Auth::user();
+
+
         if (!$supplier) {
             return $this->sudResponse('Unauthorized', 401);
         }
@@ -89,7 +93,7 @@ class ProductSuppliersController extends Controller
             return $this->sudResponse('Not found', 404);
         }
         $productSupplier->update(['price' => $request->price]);
-        return $this->indexOrShowResponse('data', $productSupplier);
+        return $this->sudResponse('price has been updated');
     }
 
 
@@ -98,6 +102,7 @@ class ProductSuppliersController extends Controller
 
     private function findProductSupplier($supplierId, $productId)
     {
+
         return ProductSupplier::where('supplier_id', $supplierId)
                               ->where('product_id', $productId)
                               ->first();
