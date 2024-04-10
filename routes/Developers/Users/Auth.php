@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\V1\Auth\Users\{
+use App\Http\Controllers\Api\V1\Users\Auth\{
     LoginController,
     RegisterController,
     VerificationController
