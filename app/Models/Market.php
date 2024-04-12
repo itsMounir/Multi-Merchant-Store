@@ -58,6 +58,12 @@ class Market extends Authenticatable
         'password' => 'hashed',
     ];
 
+    protected $appends = ['category'];
+
+    public function getCategoryAttribute() {
+        return $this->category()->get(['name']);
+    }
+
 
     public function image() : MorphOne {
         return $this->morphOne(Image::class,'imageable');

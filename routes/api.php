@@ -22,5 +22,3 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 include __DIR__ . '/Developers/Users/Auth.php';
 include __DIR__ . '/Developers/Suppliers/Auth.php';
 include __DIR__ . '/Developers/Markets/Auth.php';
-
-

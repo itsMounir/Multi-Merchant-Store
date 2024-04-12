@@ -23,6 +23,7 @@ class ProductFactory extends Factory
             'name' => fake()->name,
             'discription' => fake()->text(),
             'size' => fake()->numberBetween(1,10) ,
+            'size_of' => fake()->word(),
         ];
     }
 }

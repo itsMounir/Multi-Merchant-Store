@@ -23,6 +23,11 @@ class Product extends Model
         'category_id',
     ];
 
+    protected $appends = ['category'];
+
+    public function getCategoryAttribute() {
+        return $this->category()->get(['name']);
+    }
 
     public function suppliers(): BelongsToMany
     {

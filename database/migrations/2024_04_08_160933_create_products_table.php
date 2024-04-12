@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('discription');
             $table->integer('size');
+            $table->string('size_of');
             $table->timestamps();
         });
     }

@@ -57,7 +57,7 @@ class Handler extends ExceptionHandler
 
         if ($e instanceof QueryException) {
             return response()->json([
-                'message' => 'Unknown sql error.',
+                'message' => $e->getMessage(),
             ]);
         }
 

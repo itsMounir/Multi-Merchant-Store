@@ -27,8 +27,8 @@ Route::prefix('markets/')->group(function () {
 
             Route::get('products',[ProductsController::class,'index']);
 
-            Route::get('bills',[BillsController::class,'index']);
-            Route::post('bills',[BillsController::class,'store']);
+            Route::apiResource('bills',BillsController::class);
+           // Route::post('bills',[BillsController::class,'store']);
         });
 });
 

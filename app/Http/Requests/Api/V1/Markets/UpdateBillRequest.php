@@ -4,8 +4,9 @@ namespace App\Http\Requests\Api\V1\Markets;
 
 use App\Rules\Bills\ProductExistsForSupplier;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
-class StoreBillRequest extends FormRequest
+class UpdateBillRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,11 +24,19 @@ class StoreBillRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'supplier_id' => ['required','exists:suppliers,id'],
-            'payement_method_id' => ['required','exists:payement_methods,id'],
-            'cart' => ['array','present'],
-            'cart.*.id' => ['required',new ProductExistsForSupplier($this->input('supplier_id'))],
-            'cart.*.quantity' => ['required','integer','min:1'],
+            'supplier_id' => ['exists:suppliers,id'],
+            'payement_method_id' => ['exists:payement_methods,id'],
+            'cart' => ['array'],
+            'cart.*.id' => [new ProductExistsForSupplier($this->input('supplier_id'))],
+            'cart.*.quantity' => ['integer'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'cart.*.id.required'
+            => 'we don\'t have this product in the store .',
         ];
     }
 }

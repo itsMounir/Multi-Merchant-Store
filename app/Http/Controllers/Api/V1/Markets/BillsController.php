@@ -3,23 +3,37 @@
 namespace App\Http\Controllers\Api\V1\Markets;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\Markets\StoreBillRequest;
-use App\Models\Bill;
-use App\Models\ProductSupplier;
-use App\Models\Supplier;
+use App\Http\Requests\Api\V1\Markets\{
+    StoreBillRequest,
+    UpdateBillRequest
+};
+use App\Models\{
+    Bill,
+    Supplier
+};
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\{
+    Auth,
+    DB
+};
 
 class BillsController extends Controller
 {
+    /**
+     * Create the controller instance.
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(Bill::class, 'bill');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $bills = Auth::user()->bills()->where('status','غير مدفوع')->get();
-        return $this->indexOrShowResponse('bills',$bills);
+        $bills = Auth::user()->bills()->where('status', 'غير مدفوع')->get();
+        return $this->indexOrShowResponse('bills', $bills);
     }
 
     /**
@@ -35,27 +49,20 @@ class BillsController extends Controller
      */
     public function store(StoreBillRequest $request)
     {
-        /**
-         * supplier_id
-         * add the condition for product exsisting in the store in the validation
-         *
-         */
-        return DB::transaction(function () use($request) {
-            //dd($request->cart);
+        return DB::transaction(function () use ($request) {
             $market = Auth::user();
             $supplier = Supplier::find($request->supplier_id);
             $supplier_products = $supplier->products->toArray();
             $total_price = 0.0;
-            //dd($request->cart);
+
             foreach ($request->cart as $product) {
                 foreach ($supplier_products as $supplier_product) {
-                    //dd($supplier_product);
                     if ($product['id'] == $supplier_product['id']) {
                         $total_price += $supplier_product['pivot']['price'] * $product['quantity'];
                     }
                 }
             }
-            //dd($total_price);
+
             $bill = Bill::create([
                 'total_price' => $total_price,
                 'payement_method_id' => $request->payement_method_id,
@@ -63,22 +70,17 @@ class BillsController extends Controller
                 'market_id' => $market->id,
                 'discount_code' => $request->discount_code ? $request->discount_code : null,
             ]);
-            //dd($bill);
-            // $bill->products()->sync([
-            //     $request->cart['id'] => ['quantity' => $request->cart['quantity']],
-            // ]);
 
             foreach ($request->cart as $item) {
-                // Update the pivot table with the product ID and quantity
                 $bill->products()->syncWithoutDetaching([
-                    $item['id'] => ['quantity' => $item['quantity']],
+                    $item['id'] => [
+                        'quantity' => $item['quantity'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ],
                 ]);
             }
-
-
-            //$bill->save();
-
-            return response()->json('Done');
+            return $this->sudResponse('Bill Created Successfully',201);
         });
     }
 
@@ -87,7 +89,7 @@ class BillsController extends Controller
      */
     public function show(Bill $bill)
     {
-        //
+        return $this->indexOrShowResponse('bill',$bill);
     }
 
     /**
@@ -101,9 +103,46 @@ class BillsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Bill $bill)
+    public function update(UpdateBillRequest $request, Bill $bill)
     {
-        //
+        return DB::transaction(function () use ($request,$bill) {
+            $market = Auth::user();
+            $supplier = Supplier::find($request->supplier_id);
+            $supplier_products = $supplier->products->toArray();
+            $total_price = 0.0;
+
+            foreach ($request->cart as $product) {
+                foreach ($supplier_products as $supplier_product) {
+
+                    if ($product['id'] == $supplier_product['id']) {
+                        $total_price += $supplier_product['pivot']['price'] * $product['quantity'];
+                    }
+                }
+            }
+
+            $bill->update([
+                'total_price' => $total_price,
+                'payement_method_id' => $request->payement_method_id ? $request->payement_method_id : $bill->payement_method_id,
+                'supplier_id' => $supplier->id,
+                'market_id' => $market->id,
+                'discount_code' => $request->discount_code ? $request->discount_code : $bill->discount_code,
+            ]);
+
+            foreach ($request->cart as $item) {
+                $bill->products()->syncWithoutDetaching([
+                    $item['id'] => [
+                        'quantity' => $item['quantity'],
+                        'updated_at' => now(),
+                    ],
+                ]);
+            }
+
+
+            $bill->save();
+
+            return $this->sudResponse('Bill Updated Successfully');
+        });
+
     }
 
     /**
@@ -111,6 +150,12 @@ class BillsController extends Controller
      */
     public function destroy(Bill $bill)
     {
-        //
+        return DB::transaction(function () use ($bill) {
+            $bill->delete();
+            //$bill->save();
+
+            return $this->sudResponse('Bill Deleted Successfully');
+        });
+
     }
 }

@@ -19,9 +19,7 @@ return new class extends Migration
                 ->cascadeOnUpdate();
 
             $table->foreignId('product_id')
-                ->constrained()
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
+                ->constrained();
 
             $table->primary(['bill_id','product_id']);
             $table->integer('quantity');

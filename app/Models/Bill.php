@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Bill extends Model
@@ -24,7 +25,18 @@ class Bill extends Model
         'discount_code'
     ];
 
+    protected $appends = ['payement_method'];
+
+    protected function getpayementMethodAttribute()
+    {
+        return $this->payementMethod()->get(['name']);
+    }
+
     public function products() : BelongsToMany {
         return $this->belongsToMany(Product::class);
+    }
+
+    public function payementMethod() : BelongsTo {
+        return $this->belongsTo(PayementMethod::class);
     }
 }
