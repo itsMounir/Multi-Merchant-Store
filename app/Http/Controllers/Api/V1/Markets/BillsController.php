@@ -9,13 +9,15 @@ use App\Http\Requests\Api\V1\Markets\{
 };
 use App\Models\{
     Bill,
-    Supplier
+    Supplier,
+    PayementMethod
 };
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{
     Auth,
     DB
 };
+use App\Filters\Markets\BillsFilters;
 
 class BillsController extends Controller
 {
@@ -30,9 +32,9 @@ class BillsController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(BillsFilters $billsFilters)
     {
-        $bills = Auth::user()->bills()->where('status', 'غير مدفوع')->get();
+        $bills = $billsFilters->applyFilters(Auth::user()->bills()->getQuery())->get();
         return $this->indexOrShowResponse('bills', $bills);
     }
 
@@ -41,7 +43,8 @@ class BillsController extends Controller
      */
     public function create()
     {
-        //
+        $payement_methods = PayementMethod::get(['id', 'name']);
+        return $this->indexOrShowResponse('payement_methods', $payement_methods);
     }
 
     /**
@@ -51,36 +54,41 @@ class BillsController extends Controller
     {
         return DB::transaction(function () use ($request) {
             $market = Auth::user();
-            $supplier = Supplier::find($request->supplier_id);
-            $supplier_products = $supplier->products->toArray();
-            $total_price = 0.0;
+            $bills = $request->bills;
 
-            foreach ($request->cart as $product) {
-                foreach ($supplier_products as $supplier_product) {
-                    if ($product['id'] == $supplier_product['id']) {
-                        $total_price += $supplier_product['pivot']['price'] * $product['quantity'];
+            foreach ($bills as $bill) {
+                $supplier = Supplier::find($bill['supplier_id']);
+                $supplier_products = $supplier->products->toArray();
+                $total_price = 0.0;
+
+                foreach ($bill['products'] as $product) {
+                    foreach ($supplier_products as $supplier_product) {
+                        if ($product['id'] == $supplier_product['id']) {
+                            $total_price += $supplier_product['pivot']['price'] * $product['quantity'];
+                        }
                     }
+                }
+
+                $new_bill = Bill::create([
+                    'total_price' => $total_price,
+                    'payement_method_id' => $bill['payement_method_id'],
+                    'supplier_id' => $supplier->id,
+                    'market_id' => $market->id,
+                    'discount_code' => 'shit',
+                ]);
+
+                foreach ($bill['products'] as $product) {
+                    $new_bill->products()->syncWithoutDetaching([
+                        $product['id'] => [
+                            'quantity' => $product['quantity'],
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ],
+                    ]);
                 }
             }
 
-            $bill = Bill::create([
-                'total_price' => $total_price,
-                'payement_method_id' => $request->payement_method_id,
-                'supplier_id' => $supplier->id,
-                'market_id' => $market->id,
-                'discount_code' => $request->discount_code ? $request->discount_code : null,
-            ]);
-
-            foreach ($request->cart as $item) {
-                $bill->products()->syncWithoutDetaching([
-                    $item['id'] => [
-                        'quantity' => $item['quantity'],
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ],
-                ]);
-            }
-            return $this->sudResponse('Bill Created Successfully',201);
+            return $this->sudResponse('Bills Created Successfully', 201);
         });
     }
 
@@ -89,7 +97,7 @@ class BillsController extends Controller
      */
     public function show(Bill $bill)
     {
-        return $this->indexOrShowResponse('bill',$bill);
+        return $this->indexOrShowResponse('bill', $bill);
     }
 
     /**
@@ -105,7 +113,7 @@ class BillsController extends Controller
      */
     public function update(UpdateBillRequest $request, Bill $bill)
     {
-        return DB::transaction(function () use ($request,$bill) {
+        return DB::transaction(function () use ($request, $bill) {
             $market = Auth::user();
             $supplier = Supplier::find($request->supplier_id);
             $supplier_products = $supplier->products->toArray();
@@ -122,10 +130,10 @@ class BillsController extends Controller
 
             $bill->update([
                 'total_price' => $total_price,
-                'payement_method_id' => $request->payement_method_id ? $request->payement_method_id : $bill->payement_method_id,
+                'payement_method_id' => $request->payement_method_id ?? $bill->payement_method_id,
                 'supplier_id' => $supplier->id,
                 'market_id' => $market->id,
-                'discount_code' => $request->discount_code ? $request->discount_code : $bill->discount_code,
+                'discount_code' => $request->discount_code ?? $bill->discount_code,
             ]);
 
             foreach ($request->cart as $item) {
@@ -152,8 +160,6 @@ class BillsController extends Controller
     {
         return DB::transaction(function () use ($bill) {
             $bill->delete();
-            //$bill->save();
-
             return $this->sudResponse('Bill Deleted Successfully');
         });
 

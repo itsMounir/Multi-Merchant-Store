@@ -105,5 +105,9 @@ class Supplier extends Authenticatable
         return $this->hasMany(ProductSupplier::class);
     }
 
+    public function goals() : HasMany {
+        return $this->hasMany(Goal::class);
+    }
+
 }
 

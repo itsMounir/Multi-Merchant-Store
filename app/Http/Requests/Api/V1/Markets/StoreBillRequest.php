@@ -23,11 +23,12 @@ class StoreBillRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'supplier_id' => ['required','exists:suppliers,id'],
-            'payement_method_id' => ['required','exists:payement_methods,id'],
-            'cart' => ['array','present'],
-            'cart.*.id' => ['required',new ProductExistsForSupplier($this->input('supplier_id'))],
-            'cart.*.quantity' => ['required','integer','min:1'],
+            'bills' => ['array','present'],
+            'bills.*.supplier_id' => ['required','exists:suppliers,id'],
+            'bills.*.payement_method_id' => ['required','exists:payement_methods,id'],
+            'bills.*.products' => ['array','present'],
+            'bills.*.products.*.id' => ['required',new ProductExistsForSupplier($this->input('bills.*.supplier_id'))],
+            'bills.*.products.*.quantity' => ['required','integer','min:1'],
         ];
     }
 }

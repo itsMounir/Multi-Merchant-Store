@@ -21,13 +21,14 @@ Route::prefix('markets/')->group(function () {
     // market section
     Route::middleware(['auth:sanctum', 'type.market'])
         ->group(function () {
-            // Route::apiResource('suppliers',SuppliersController::class)->only(['index','show']);
-            Route::get('suppliers', [SuppliersController::class, 'index']);
-            Route::get('suppliers/{supplier}', [SuppliersController::class, 'show']);
+            Route::apiResource('suppliers',SuppliersController::class)->only(['index','show']);
+            // Route::get('suppliers', [SuppliersController::class, 'index']);
+            // Route::get('suppliers/{supplier}', [SuppliersController::class, 'show']);
 
             Route::get('products',[ProductsController::class,'index']);
 
-            Route::apiResource('bills',BillsController::class);
+            Route::resource('bills',BillsController::class);
+            //Route::get('bills/old',BillsController::class);
            // Route::post('bills',[BillsController::class,'store']);
         });
 });
