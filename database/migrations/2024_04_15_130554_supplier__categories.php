@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('images', function (Blueprint $table) {
+        Schema::create('supplier_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('url')->unique();
-            $table->morphs('imageable');
+            $table->enum('type',['مورد','شركات','توريدات']);
             $table->timestamps();
         });
     }
@@ -24,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('images');
+        //
     }
 };

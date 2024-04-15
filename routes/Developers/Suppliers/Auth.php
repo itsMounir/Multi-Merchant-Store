@@ -7,7 +7,8 @@ use App\Http\Controllers\Api\V1\Suppliers\Auth\{
 };
 use App\Http\Controllers\Api\V1\Suppliers\{
     ProductSuppliersController,
-    SuppliersController
+    SuppliersController,
+    BillController
 };
 
 Route::prefix('suppliers/')->group(function () {
@@ -27,5 +28,8 @@ Route::middleware(['auth:sanctum', 'type.supplier'])->group(function () {
     Route::apiResource('suppliers',ProductSuppliersController::class);
     Route::get('product',[SuppliersController::class,'index']);
     Route::post('price/{id}',[ProductSuppliersController::class,'update']);
+    Route::get('bill',[BillController::class,'index']);
+    Route::post('update/{id}',[BillController::class,'update']);
+    Route::delete('delete/{id}',[BillController::class,'destroy']);
 
 });

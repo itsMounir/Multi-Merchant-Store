@@ -11,16 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('distributin_locations', function (Blueprint $table) {
+        Schema::create('images', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('supplier_id')
-                ->constrained()
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-
-            $table->string('from_site');
-            $table->string('to_site');
+            $table->string('url')->unique();
+            $table->morphs('imageable');
             $table->timestamps();
         });
     }
@@ -30,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('distributin_locations');
+        //
     }
 };

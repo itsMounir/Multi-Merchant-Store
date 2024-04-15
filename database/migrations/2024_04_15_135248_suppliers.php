@@ -22,7 +22,11 @@ return new class extends Migration
             $table->string('discount_code')->nullable();
             $table->string('discount_by_code')->nullable();
 
-            $table->enum('type',['مورد','شركة']);
+
+            $table->foreignId('supplier_category_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
             $table->enum('status',['نشط','محظور','غير نشط'])->default('غير نشط');
             $table->timestamps();
         });
@@ -33,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('suppliers');
+        //
     }
 };

@@ -61,12 +61,8 @@ class Handler extends ExceptionHandler
             ]);
         }
 
-        if ($e instanceof ValidationException) {
-            return response()->json([
-                'message' => 'Validation error',
-                'errors' => $e->errors(),
-            ], 422);
-        }
+
+
 
         if ($e instanceof RouteNotFoundException) {
             return response()->json([
