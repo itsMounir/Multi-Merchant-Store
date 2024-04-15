@@ -34,6 +34,7 @@ class Market extends Authenticatable
         'representator_code',
         'is_subscriped',
         'store_name',
+        'subscription_expires_at',
     ];
 
     protected $guard = 'market';
