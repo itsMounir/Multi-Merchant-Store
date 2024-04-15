@@ -70,6 +70,12 @@ class Handler extends ExceptionHandler
             ], 401);
         }
 
+        if ($e instanceof ProductNotExistForSupplierException) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ],$e->getCode());
+        }
+
         return parent::render($request, $e);
     }
 }

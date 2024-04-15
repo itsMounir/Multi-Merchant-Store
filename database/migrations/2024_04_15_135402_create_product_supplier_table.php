@@ -11,28 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bills', function (Blueprint $table) {
+        Schema::create('product_supplier', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('market_id')
+
+            $table->foreignId('product_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->foreignId('supplier_id')
+                $table->foreignId('supplier_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->foreignId('payement_method_id')
-                ->constrained();
-
-            $table->float('total_price');
-
-            $table->enum('status', ['مدفوع', 'غير مدفوع', 'تم التوصيل','قيد التحضير'])
-            ->default('غير مدفوع');
-            $table->string('discount_code');
-            $table->string('reason_for_rejection')->nullable();
-            $table->softDeletes();
+            $table->float('price')->nullable();
+            $table->integer('min_selling_amount')->default(1);
             $table->timestamps();
         });
     }

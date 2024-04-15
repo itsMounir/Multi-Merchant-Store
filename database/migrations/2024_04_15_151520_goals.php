@@ -19,8 +19,8 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->string('starting_date');
-            $table->string('expiring_date');
+            $table->date('starting_date');
+            $table->date('expiring_date');
             $table->float('min_price');
             $table->float('discount_price');
             $table->timestamps();
