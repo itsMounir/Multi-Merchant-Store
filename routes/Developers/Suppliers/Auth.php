@@ -7,7 +7,7 @@ use App\Http\Controllers\Api\V1\Suppliers\Auth\{
 };
 use App\Http\Controllers\Api\V1\Suppliers\{
     ProductSuppliersController,
-    SuppliersController,
+    SupplierContoller,
     BillController
 };
 
@@ -26,7 +26,7 @@ Route::middleware(['auth:sanctum', 'type.supplier'])->group(function () {
     });
 
     Route::apiResource('suppliers',ProductSuppliersController::class);
-    Route::get('product',[SuppliersController::class,'index']);
+    Route::get('product',[SupplierContoller::class,'index']);
     Route::post('price/{id}',[ProductSuppliersController::class,'update']);
     Route::get('bill',[BillController::class,'index']);
     Route::post('update/{id}',[BillController::class,'update']);

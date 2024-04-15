@@ -34,8 +34,7 @@ class Bill extends Model
         return $this->payementMethod()->get(['name']);
     }
 
-    public function products(): BelongsToMany
-    {
+    public function products() : BelongsToMany {
         return $this->belongsToMany(Product::class);
     }
 
@@ -43,7 +42,7 @@ class Bill extends Model
     public function payementMethod(): BelongsTo
     {
         return $this->belongsTo(PayementMethod::class);
-    }
+
     public function market()
     {
         return $this->belongsTo(Market::class);
