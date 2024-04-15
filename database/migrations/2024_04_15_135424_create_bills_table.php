@@ -30,8 +30,8 @@ return new class extends Migration
 
             $table->enum('status', ['مدفوع', 'غير مدفوع', 'تم التوصيل','قيد التحضير'])
             ->default('غير مدفوع');
-            $table->string('discount_code');
-            $table->string('reason_for_rejection')->nullable();
+            $table->string('market_note');
+            $table->string('rejection_reason')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

@@ -23,6 +23,8 @@ class Bill extends Model
         'status',
         'market_id',
         'supplier_id',
+        'market_note',
+        'rejection_reason',
     ];
 
     protected $appends = ['payement_method'];
