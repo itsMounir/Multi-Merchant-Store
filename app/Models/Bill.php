@@ -33,17 +33,18 @@ class Bill extends Model
     }
 
     public function products() : BelongsToMany {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class)->with('suppliers');
     }
 
 
     public function payementMethod() : BelongsTo {
         return $this->belongsTo(PayementMethod::class);
+    }
 
     public function market()
     {
         return $this->belongsTo(Market::class);
 
     }
-}
+
 }

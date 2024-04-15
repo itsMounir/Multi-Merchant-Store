@@ -18,7 +18,7 @@ class BillController extends Controller
             return $this->sudResponse('unauthorized',401);
         }
         $bills = $supplier->bills()->with(['market', 'products'])->get();
-        return $this->indexOrShowResponse('message',$bills);
+        return $this->sudResponse($bills);
     }
 
     public function create()
@@ -49,13 +49,28 @@ class BillController extends Controller
         $bill = $supplier->bills()->with('products')->where('status', '=', 'غير مدفوع')->find($bill_id);
 
         if (!$bill) {
-            return $this->sudResponse('Not found',404);
+            return $this->sudResponse('Not found', 404);
         }
 
         $this->detachProducts($bill, $request->input('products_to_remove'));
         $this->updateProductQuantities($bill, $request->input('products_to_update'));
+
+        // حساب سعر الفاتورة بعد الحذف أو التعديل
+        $totalPrice = 0;
+        $bill->load('products');
+        //return $bill;
+        foreach ($bill->products as $product) {
+            $totalPrice += $product->pivot->price * $product->pivot->quantity;
+        }
+
+        // تحديث سعر الفاتورة
+        $bill->total_price = $totalPrice;
+        $bill->save();
+
         return $this->sudResponse('Bill has been updated');
     }
+
+
 
 
 //ازالة المنتجات من الفاتورة
@@ -78,15 +93,18 @@ class BillController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($billId)
+    public function destroy(Request $request)
     {
-        $supplier = Auth::user();
-        $bill = $supplier->bills()->where('id', $billId)->where('status', '=', 'غير مدفوع')->first();
-        if (!$bill) {
-            return $this->sudResponse('Not found',404);
-        }
-        $bill->delete();
-        return $this->indexOrShowResponse('message','Bill has been deleted');
 
+        $supplier = Auth::user();
+        $bill = $supplier->bills()->where('id', $request->id)->where('status', '=', 'غير مدفوع')->first();
+        if (!$bill) {
+            return $this->sudResponse('Not found', 404);
+        }
+        $bill->reason_for_rejection=$request->reason;
+        $bill->save();
+        $bill->delete();
+        return $this->sudResponse('Bill has been deleted');
     }
+
 }
