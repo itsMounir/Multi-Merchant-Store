@@ -27,7 +27,7 @@ class StoreBillRequest extends FormRequest
             'bills.*.supplier_id' => ['required','exists:suppliers,id'],
             'bills.*.payement_method_id' => ['required','exists:payement_methods,id'],
             'bills.*.products' => ['array','present'],
-            'bills.*.products.*.id' => ['required',new ProductExistsForSupplier($this->input('bills.*.supplier_id'))],
+            'bills.*.products.*.id' => ['required'],
             'bills.*.products.*.quantity' => ['required','integer','min:1'],
         ];
     }

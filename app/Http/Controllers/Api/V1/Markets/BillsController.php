@@ -12,6 +12,7 @@ use App\Models\{
     Supplier,
     PayementMethod
 };
+use App\Services\BillsServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{
     Auth,
@@ -56,36 +57,9 @@ class BillsController extends Controller
             $market = Auth::user();
             $bills = $request->bills;
 
+            $billService = new BillsServices;
             foreach ($bills as $bill) {
-                $supplier = Supplier::find($bill['supplier_id']);
-                $supplier_products = $supplier->products->toArray();
-                $total_price = 0.0;
-
-                foreach ($bill['products'] as $product) {
-                    foreach ($supplier_products as $supplier_product) {
-                        if ($product['id'] == $supplier_product['id']) {
-                            $total_price += $supplier_product['pivot']['price'] * $product['quantity'];
-                        }
-                    }
-                }
-
-                $new_bill = Bill::create([
-                    'total_price' => $total_price,
-                    'payement_method_id' => $bill['payement_method_id'],
-                    'supplier_id' => $supplier->id,
-                    'market_id' => $market->id,
-                    'discount_code' => 'shit',
-                ]);
-
-                foreach ($bill['products'] as $product) {
-                    $new_bill->products()->syncWithoutDetaching([
-                        $product['id'] => [
-                            'quantity' => $product['quantity'],
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ],
-                    ]);
-                }
+                $billService->process($bill, $market);
             }
 
             return $this->sudResponse('Bills Created Successfully', 201);
@@ -114,19 +88,13 @@ class BillsController extends Controller
     public function update(UpdateBillRequest $request, Bill $bill)
     {
         return DB::transaction(function () use ($request, $bill) {
+            $billService = new BillsServices;
             $market = Auth::user();
             $supplier = Supplier::find($request->supplier_id);
-            $supplier_products = $supplier->products->toArray();
-            $total_price = 0.0;
 
-            foreach ($request->cart as $product) {
-                foreach ($supplier_products as $supplier_product) {
+            $total_price = $billService->calculatePrice($bill, $supplier);
 
-                    if ($product['id'] == $supplier_product['id']) {
-                        $total_price += $supplier_product['pivot']['price'] * $product['quantity'];
-                    }
-                }
-            }
+            $total_price -= $billService->discounts($supplier, $total_price);
 
             $bill->update([
                 'total_price' => $total_price,
