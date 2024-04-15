@@ -42,7 +42,7 @@ class Supplier extends Authenticatable
         'discount_by_code',
         'store_name',
         'status',
-        'type',
+        'supplier_category_id',
     ];
 
     protected $guard = ['supplier'];
@@ -103,6 +103,10 @@ class Supplier extends Authenticatable
 
     public function productSuppliers() : HasMany {
         return $this->hasMany(ProductSupplier::class);
+    }
+
+    public function category() : BelongsTo {
+        return $this->belongsTo(Supplier_Category::class);
     }
 
 }

@@ -4,62 +4,89 @@ namespace App\Http\Controllers\Api\V1\Suppliers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use App\Models\Bill;
+use App\Models\Supplier;
+use App\Traits\Responses;
+use Illuminate\Support\Facades\Auth;
 class BillController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    use Responses;
     public function index()
     {
-        //
+        $supplier = Auth::user();
+        if (!$supplier) {
+            return $this->sudResponse('unauthorized',401);
+        }
+        $bills = $supplier->bills()->with(['market', 'products'])->get();
+        return $this->indexOrShowResponse('message',$bills);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        //
+
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function edit(string $id)
     {
-        //
+
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+
+    public function update(Request $request, $bill_id)
     {
-        //
+        $supplier = Auth::user();
+        $bill = $supplier->bills()->with('products')->where('status', '=', 'غير مدفوع')->find($bill_id);
+
+        if (!$bill) {
+            return $this->sudResponse('Not found',404);
+        }
+
+        $this->detachProducts($bill, $request->input('products_to_remove'));
+        $this->updateProductQuantities($bill, $request->input('products_to_update'));
+        return $this->sudResponse('Bill has been updated');
+    }
+
+
+//ازالة المنتجات من الفاتورة
+    private function detachProducts($bill, array $productsToRemove)
+    {
+        if (!empty($productsToRemove)) {
+            $bill->products()->detach($productsToRemove);
+        }
+    }
+
+// تعديل على كمية المنتجات
+
+    private function updateProductQuantities($bill, array $productsToUpdate)
+    {
+        foreach ($productsToUpdate as $productId => $quantity) {
+            $quantity > 0 ? $bill->products()->updateExistingPivot($productId, ['quantity' => $quantity]) : $bill->products()->detach($productId);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($billId)
     {
-        //
+        $supplier = Auth::user();
+        $bill = $supplier->bills()->where('id', $billId)->where('status', '=', 'غير مدفوع')->first();
+        if (!$bill) {
+            return $this->sudResponse('Not found',404);
+        }
+        $bill->delete();
+        return $this->indexOrShowResponse('message','Bill has been deleted');
+
     }
 }

@@ -4,30 +4,28 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('bills', function (Blueprint $table) {
+        Schema::create('product_suppliers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('market_id')
+
+            $table->foreignId('product_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->foreignId('supplier_id')
+                $table->foreignId('supplier_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->foreignId('payement_method_id')
-                ->constrained();
-
-            $table->float('total_price');
-            $table->enum('status', ['مدفوع', 'غير مدفوع', 'تم التوصيل'])->default('غير مدفوع');
-            $table->string('discount_code');
+            $table->float('price')->nullable();
+            $table->float('price_after_sales')->nullable();
             $table->timestamps();
         });
     }
@@ -37,6 +35,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('bills');
+        //
     }
 };
