@@ -28,8 +28,8 @@ return new class extends Migration
 
             $table->float('total_price');
 
-            $table->enum('status', ['مدفوع', 'غير مدفوع', 'تم التوصيل','قيد التحضير'])
-            ->default('غير مدفوع');
+            $table->enum('status', ['انتظار', 'جديد','ملغية', 'تم التوصيل','قيد التحضير'])
+            ->default('انتظار');
             $table->string('market_note');
             $table->string('rejection_reason')->nullable();
             $table->softDeletes();
