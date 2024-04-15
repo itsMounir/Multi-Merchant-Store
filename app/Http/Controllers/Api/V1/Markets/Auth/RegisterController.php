@@ -21,13 +21,10 @@ class RegisterController extends Controller
     public function store(RegisterRequest $request) {
         return DB::transaction(function () use ($request){
 
-            // $verfication_code=mt_rand(100000,999999);
-            // $request['code'] = $verfication_code;
             $market = Market::create($request->all());
-            //Auth::login($market);
 
             $token = $market->createToken('access_token', ['role:market'])->plainTextToken;
-           // $user->notify(new  verfication_code($verfication_code));
+
             return response()->json([
                 'message' => 'Created Successfully please wait for admin confirmation',
                 'access_token' => $token,

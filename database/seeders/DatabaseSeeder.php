@@ -8,7 +8,7 @@ use App\Models\{
     ProductCategory,
     MarketCategory,
     Product,
-
+    PayementMethod
 };
 
 class DatabaseSeeder extends Seeder
@@ -18,6 +18,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        PayementMethod::create([
+            'name' => 'كاش'
+        ]);
+
+        PayementMethod::create([
+            'name' => 'بطاقة'
+        ]);
+
         ProductCategory::create([
             'name' => 'product category',
         ]);
