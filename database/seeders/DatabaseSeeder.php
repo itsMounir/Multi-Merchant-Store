@@ -8,7 +8,8 @@ use App\Models\{
     ProductCategory,
     MarketCategory,
     Product,
-    PayementMethod
+    PayementMethod,
+    SupplierCategory
 };
 
 class DatabaseSeeder extends Seeder
@@ -24,6 +25,18 @@ class DatabaseSeeder extends Seeder
 
         PayementMethod::create([
             'name' => 'بطاقة'
+        ]);
+
+        SupplierCategory::create([
+            'type'=>'مورد',
+        ]);
+
+        SupplierCategory::create([
+            'type'=>'شركات',
+        ]);
+
+        SupplierCategory::create([
+            'type'=>'توريدات',
         ]);
 
         ProductCategory::create([

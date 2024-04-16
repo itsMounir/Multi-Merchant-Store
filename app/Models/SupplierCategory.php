@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Supplier_Category extends Model
+class SupplierCategory extends Model
 {
     use HasFactory;
     protected $fillable = [
