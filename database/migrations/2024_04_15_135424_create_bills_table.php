@@ -29,6 +29,8 @@ return new class extends Migration {
 
             $table->enum('status', ['انتظار', 'جديد', 'ملغية', 'تم التوصيل', 'قيد التحضير'])
                 ->default('انتظار');
+
+            $table->float('min_selling_price');
             $table->boolean('has_additional_cost');
             $table->string('market_note');
             $table->string('rejection_reason')->nullable();

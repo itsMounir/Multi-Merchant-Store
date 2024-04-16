@@ -26,7 +26,6 @@ return new class extends Migration
 
             $table->float('price')->nullable();
             $table->integer('min_selling_quantity')->default(1);
-            $table->float('min_selling_price');
             $table->timestamps();
         });
     }
