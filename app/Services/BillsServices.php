@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Exceptions\InsufficientPriceForSupplierException;
 use App\Exceptions\ProductNotExistForSupplierException;
 use App\Models\Bill;
 use App\Models\Supplier;
+use Illuminate\Support\Facades\Auth;
 
 class BillsServices
 {
@@ -17,6 +19,10 @@ class BillsServices
 
         $total_price = $this->calculatePrice($bill, $supplier);
 
+        if ($total_price < $supplier->min_bill_price) {
+            throw new InsufficientPriceForSupplierException($total_price,$supplier);
+        }
+
         $total_price -= $this->discounts($supplier, $total_price);
 
         $new_bill = Bill::create([
@@ -24,6 +30,8 @@ class BillsServices
             'payement_method_id' => $bill['payement_method_id'],
             'supplier_id' => $supplier->id,
             'market_id' => $market->id,
+            'has_additional_cost' => ! Auth::user()->is_subscriped,
+            'market_note' => $bill['market_note'],
         ]);
 
         foreach ($bill['products'] as $product) {
@@ -57,7 +65,7 @@ class BillsServices
                 }
             }
             if (!$exist) {
-                throw new ProductNotExistForSupplierException($product['id'], $supplier->id);
+                throw new ProductNotExistForSupplierException($product['id'], $supplier->store_name);
             }
         }
         return $total_price;

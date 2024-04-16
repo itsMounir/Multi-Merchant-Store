@@ -44,7 +44,7 @@ class SuppliersController extends Controller
         // dd($supplier->products()->getQuery());
         $products = $productsFilters->applyFilters($supplier->products()->getQuery())->get();
         return response()->json([
-            'supplier' => $supplier,
+            'supplier' => $supplier->with('goals')->get(),
             'products' => $products,
         ]);
     }
