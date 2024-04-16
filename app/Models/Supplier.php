@@ -108,7 +108,7 @@ class Supplier extends Authenticatable
 
 
     public function category() : BelongsTo {
-        return $this->belongsTo(Supplier_Category::class);
+        return $this->belongsTo(SupplierCategory::class);
 
     }
 

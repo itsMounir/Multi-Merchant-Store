@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -28,8 +27,11 @@ return new class extends Migration
 
             $table->float('total_price');
 
-            $table->enum('status', ['انتظار', 'جديد','ملغية', 'تم التوصيل','قيد التحضير'])
-            ->default('انتظار');
+            $table->enum('status', ['انتظار', 'جديد', 'ملغية', 'تم التوصيل', 'قيد التحضير'])
+                ->default('انتظار');
+
+            $table->float('min_selling_price');
+            $table->boolean('has_additional_cost');
             $table->string('market_note');
             $table->string('rejection_reason')->nullable();
             $table->softDeletes();

@@ -21,7 +21,10 @@ class RegisterController extends Controller
     public function store(RegisterRequest $request) {
         return DB::transaction(function () use ($request){
 
-            $market = Market::create($request->all());
+            $market = Market::create(array_merge(
+                $request->all(),
+                ['subscription_expires_at' => now()->addMonths(2)]
+            ));
 
             $token = $market->createToken('access_token', ['role:market'])->plainTextToken;
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Markets;
 
 use App\Filters\Markets\ProductsFilters;
+use App\Filters\Markets\SuppliersFilters;
 use App\Http\Controllers\Controller;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
@@ -13,9 +14,9 @@ class SuppliersController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(SuppliersFilters $suppliersFilters)
     {
-        $suppliers = Supplier::site()->get();
+        $suppliers = $suppliersFilters->applyFilters(Supplier::query())->site()->get();
         return $this->indexOrShowResponse('suppliers',$suppliers);
     }
 
