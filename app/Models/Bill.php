@@ -34,14 +34,11 @@ class Bill extends Model
         return $this->payementMethod()->get(['name']);
     }
 
-<<<<<<< HEAD
-    public function products() : BelongsToMany {
-        return $this->belongsToMany(Product::class)->with('suppliers');
-=======
+
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class);
->>>>>>> 6e088b9cd88d7c922c1dd7e07675380a4713f940
+
     }
 
 
@@ -49,10 +46,7 @@ class Bill extends Model
     {
         return $this->belongsTo(PayementMethod::class);
     }
-<<<<<<< HEAD
 
-=======
->>>>>>> 6e088b9cd88d7c922c1dd7e07675380a4713f940
     public function market()
     {
         return $this->belongsTo(Market::class);
