@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Suppliers\ProductSuppliersController;
 use App\Http\Controllers\Api\V1\Suppliers\SuppliersController;
 use App\Http\Controllers\Api\V1\Suppliers\BillController;
+
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,11 +18,15 @@ use App\Http\Controllers\Api\V1\Suppliers\BillController;
 |
 */
 
+
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
 include __DIR__ . '/Developers/Users/Auth.php';
+include __DIR__ . '/Developers/Users/Bills.php';
+
 include __DIR__ . '/Developers/Suppliers/Auth.php';
 
 // Market Section
