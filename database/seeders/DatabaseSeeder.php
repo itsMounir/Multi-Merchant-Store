@@ -5,11 +5,13 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\{
+    Market,
     ProductCategory,
     MarketCategory,
     Product,
     PayementMethod,
-    SupplierCategory
+    SupplierCategory,
+    Supplier,
 };
 
 class DatabaseSeeder extends Seeder
@@ -46,6 +48,9 @@ class DatabaseSeeder extends Seeder
             'name' => 'market category',
         ]);
         Product::factory(20)->create();
+
+        //Market::factory(10)->create();
+        //Supplier::factory(10)->create();
         // \App\Models\User::factory(10)->create();
     }
 }

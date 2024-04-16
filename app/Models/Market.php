@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -15,7 +14,7 @@ use Spatie\Permission\Traits\HasPermissions;
 
 class Market extends Authenticatable
 {
-    use HasFactory,HasApiTokens,Notifiable,HasPermissions;
+    use HasFactory, HasApiTokens, Notifiable, HasPermissions;
 
     /**
      * The attributes that are mass assignable.
@@ -39,7 +38,7 @@ class Market extends Authenticatable
 
     protected $guard = 'market';
 
-        /**
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
@@ -61,20 +60,24 @@ class Market extends Authenticatable
 
     protected $appends = ['category'];
 
-    public function getCategoryAttribute() {
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(MarketCategory::class, 'market_category_id');
+    }
+
+    public function getCategoryAttribute()
+    {
         return $this->category()->get(['name']);
     }
 
 
-    public function image() : MorphOne {
-        return $this->morphOne(Image::class,'imageable');
+    public function image(): MorphOne
+    {
+        return $this->morphOne(Image::class, 'imageable');
     }
 
-    public function bills() : HasMany {
+    public function bills(): HasMany
+    {
         return $this->hasMany(Bill::class);
-    }
-
-    public function category() : BelongsTo {
-        return $this->belongsTo(MarketCategory::class);
     }
 }
