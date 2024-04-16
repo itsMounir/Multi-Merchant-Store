@@ -31,7 +31,7 @@ return new class extends Migration {
                 ->default('انتظار');
 
             $table->boolean('has_additional_cost');
-            $table->string('market_note');
+            $table->string('market_note')->nullable();
             $table->string('rejection_reason')->nullable();
             $table->softDeletes();
             $table->timestamps();

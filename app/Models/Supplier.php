@@ -21,14 +21,6 @@ class Supplier extends Authenticatable
     use HasFactory, HasApiTokens, Notifiable, HasPermissions;
 
     /**
-     * The "booted" method of the model.
-     */
-    protected static function booted(): void
-    {
-        //static::addGlobalScope(new ActiveScope);
-    }
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -65,7 +57,6 @@ class Supplier extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        //'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 
@@ -77,6 +68,11 @@ class Supplier extends Authenticatable
         $query->whereHas('distributionLocations', function ($query) {
             return $query->where('to_site', Auth::user()->city);
         });
+    }
+
+    public static function scopeActive(Builder $query): void
+    {
+        $query->where('status','نشط');
     }
 
 
@@ -111,6 +107,10 @@ class Supplier extends Authenticatable
     public function supplierCategory() : BelongsTo {
         return $this->belongsTo(SupplierCategory::class);
 
+    }
+
+    public function goals() : HasMany {
+        return $this->hasMany(Goal::class);
     }
 
 }

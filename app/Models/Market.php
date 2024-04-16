@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -58,16 +59,10 @@ class Market extends Authenticatable
         'password' => 'hashed',
     ];
 
-    protected $appends = ['category'];
 
-    public function category(): BelongsTo
+    public function isActive(): bool
     {
-        return $this->belongsTo(MarketCategory::class, 'market_category_id');
-    }
-
-    public function getCategoryAttribute()
-    {
-        return $this->category()->get(['name']);
+        return ($this->status == 'نشط');
     }
 
 
@@ -79,5 +74,15 @@ class Market extends Authenticatable
     public function bills(): HasMany
     {
         return $this->hasMany(Bill::class);
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(MarketCategory::class);
+    }
+
+    public function goals(): BelongsToMany
+    {
+        return $this->belongsToMany(Goal::class)->withTimestamps();
     }
 }
