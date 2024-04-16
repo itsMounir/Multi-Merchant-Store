@@ -24,7 +24,7 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->float('price')->nullable();
+            $table->float('price');
             $table->integer('min_selling_quantity')->default(1);
             $table->timestamps();
         });

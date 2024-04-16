@@ -19,7 +19,9 @@ class ProductsController extends Controller
     {
         $products = $productsFilters->applyFilters(Product::query())
             ->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
-            ->orderBy('product_supplier.price')->get();
+            ->orderBy('product_supplier.price')
+            ->get();
+
         return $this->indexOrShowResponse('products', $products);
     }
 

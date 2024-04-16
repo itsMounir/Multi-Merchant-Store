@@ -41,6 +41,7 @@ class SuppliersController extends Controller
      */
     public function show(Supplier $supplier,ProductsFilters $productsFilters)
     {
+        // dd($supplier->products()->getQuery());
         $products = $productsFilters->applyFilters($supplier->products()->getQuery())->get();
         return response()->json([
             'supplier' => $supplier,

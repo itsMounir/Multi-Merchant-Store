@@ -44,6 +44,7 @@ class Supplier extends Authenticatable
         'store_name',
         'status',
         'supplier_category_id',
+        'min_bill_price',
     ];
 
     protected $guard = ['supplier'];
@@ -98,7 +99,7 @@ class Supplier extends Authenticatable
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class,'product_supplier')
-            ->withPivot('price','price_after_sales');
+            ->withPivot('price','min_selling_quantity');
 
     }
 
@@ -107,7 +108,7 @@ class Supplier extends Authenticatable
     }
 
 
-    public function category() : BelongsTo {
+    public function supplierCategory() : BelongsTo {
         return $this->belongsTo(SupplierCategory::class);
 
     }

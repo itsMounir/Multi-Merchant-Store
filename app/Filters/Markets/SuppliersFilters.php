@@ -12,7 +12,7 @@ class SuppliersFilters extends BaseFilter
 {
     public function category(Builder $query): Builder
     {
-        return $query->whereHas('category',function ($query) {
+        return $query->whereHas('supplierCategory',function ($query) {
             return $query->where('type',$this->request->input('category'));
         });
     }

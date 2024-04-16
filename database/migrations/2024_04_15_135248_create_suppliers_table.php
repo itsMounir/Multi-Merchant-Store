@@ -19,8 +19,7 @@ return new class extends Migration
             $table->string('store_name');
             $table->string('phone_number')->unique();
             $table->string('password');
-            $table->string('discount_code')->nullable();
-            $table->string('discount_by_code')->nullable();
+            $table->float('min_bill_price');
 
 
             $table->foreignId('supplier_category_id')
