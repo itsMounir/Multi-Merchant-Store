@@ -29,7 +29,7 @@ return new class extends Migration {
 
             $table->enum('status', ['انتظار', 'جديد', 'ملغية', 'تم التوصيل', 'قيد التحضير'])
                 ->default('انتظار');
-            $table->boolean('has_over_charge');
+            $table->boolean('has_additional_cost');
             $table->string('market_note');
             $table->string('rejection_reason')->nullable();
             $table->softDeletes();
