@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Goal extends Model
 {
@@ -18,7 +19,13 @@ class Goal extends Model
         'discount_price',
     ];
 
-    public function supplier() : BelongsTo {
+    public function supplier(): BelongsTo
+    {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function markets(): BelongsToMany
+    {
+        return $this->belongsToMany(Market::class)->withTimestamps();
     }
 }

@@ -2,10 +2,15 @@
 
 namespace App\Services;
 
-use App\Exceptions\InsufficientPriceForSupplierException;
-use App\Exceptions\ProductNotExistForSupplierException;
-use App\Models\Bill;
-use App\Models\Supplier;
+use App\Exceptions\{
+    InActiveSupplierException,
+    InsufficientPriceForSupplierException,
+    ProductNotExistForSupplierException
+};
+use App\Models\{
+    Bill,
+    Supplier
+};
 use Illuminate\Support\Facades\Auth;
 
 class BillsServices
@@ -16,6 +21,10 @@ class BillsServices
     public function process($bill, $market)
     {
         $supplier = Supplier::find($bill['supplier_id']);
+
+        if ($supplier->status != 'نشط') {
+            throw new InActiveSupplierException($supplier);
+        }
 
         $total_price = $this->calculatePrice($bill, $supplier);
 
@@ -81,6 +90,7 @@ class BillsServices
             $goals = $supplier->goals()->orderByDesc('min_price')->get();
             foreach ($goals as $goal) {
                 if ($total_price >= $goal->min_price) {
+                    Auth::user()->goals()->attach($goal);
                     return $goal->discount_price;
                 }
             }

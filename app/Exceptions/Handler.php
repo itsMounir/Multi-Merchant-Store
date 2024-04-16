@@ -79,13 +79,11 @@ class Handler extends ExceptionHandler
             ], 401);
         }
 
-        if ($e instanceof ProductNotExistForSupplierException) {
-            return response()->json([
-                'message' => $e->getMessage(),
-            ], $e->getCode());
-        }
-
-        if ($e instanceof InsufficientPriceForSupplierException) {
+        if (
+            $e instanceof ProductNotExistForSupplierException ||
+            $e instanceof InsufficientPriceForSupplierException ||
+            $e instanceof InActiveSupplierException
+        ) {
             return response()->json([
                 'message' => $e->getMessage(),
             ], $e->getCode());
