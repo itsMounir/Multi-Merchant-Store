@@ -17,9 +17,9 @@ class BillsController extends Controller
      */
     public function billDecision($id, Request $request)
     {
-        $bill = Bill::find($id);
-        if (!$bill)
-            return response()->json(['message' => 'Bill not found'], 404);
+        $bill = Bill::findOrFail($id);
+        if ($bill->status != 'انتظار')
+            return response()->json(['message' => 'you cant change the status for this bill.... already done '], 422);
         if ($request->status == 'تأكيد') {
             $bill->status = 'جديد';
             $bill->save();
@@ -50,7 +50,8 @@ class BillsController extends Controller
     {
         $withFee = $request->query('fee');
         $query = Bill::query();
-        if ($withFee == 1 || $withFee == 0)
+        
+        if ($withFee == '1' || $withFee == '0')
             $query->where('has_additional_cost', $withFee);
         $bills = $query->where('status', '!=', 'انتظار')->get();
         return response()->json(['bills' => $bills]);
