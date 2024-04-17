@@ -2,9 +2,16 @@
 
 namespace App\Services;
 
-use App\Exceptions\ProductNotExistForSupplierException;
-use App\Models\Bill;
-use App\Models\Supplier;
+use App\Exceptions\{
+    InActiveSupplierException,
+    InsufficientPriceForSupplierException,
+    ProductNotExistForSupplierException
+};
+use App\Models\{
+    Bill,
+    Supplier
+};
+use Illuminate\Support\Facades\Auth;
 
 class BillsServices
 {
@@ -15,7 +22,15 @@ class BillsServices
     {
         $supplier = Supplier::find($bill['supplier_id']);
 
+        if ($supplier->status != 'نشط') {
+            throw new InActiveSupplierException($supplier);
+        }
+
         $total_price = $this->calculatePrice($bill, $supplier);
+
+        if ($total_price < $supplier->min_bill_price) {
+            throw new InsufficientPriceForSupplierException($total_price,$supplier);
+        }
 
         $total_price -= $this->discounts($supplier, $total_price);
 
@@ -24,6 +39,8 @@ class BillsServices
             'payement_method_id' => $bill['payement_method_id'],
             'supplier_id' => $supplier->id,
             'market_id' => $market->id,
+            'has_additional_cost' => ! Auth::user()->is_subscriped,
+            'market_note' => $bill['market_note'],
         ]);
 
         foreach ($bill['products'] as $product) {
@@ -57,7 +74,7 @@ class BillsServices
                 }
             }
             if (!$exist) {
-                throw new ProductNotExistForSupplierException($product['id'], $supplier->id);
+                throw new ProductNotExistForSupplierException($product['id'], $supplier->store_name);
             }
         }
         return $total_price;
@@ -73,6 +90,7 @@ class BillsServices
             $goals = $supplier->goals()->orderByDesc('min_price')->get();
             foreach ($goals as $goal) {
                 if ($total_price >= $goal->min_price) {
+                    Auth::user()->goals()->attach($goal);
                     return $goal->discount_price;
                 }
             }

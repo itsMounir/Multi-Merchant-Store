@@ -21,7 +21,7 @@ class ProductSupplier extends Model
         'supplier_id',
         'product_id',
         'price',
-        'price_after_sales',
+        'min_selling_quantity',
     ];
 
     // public function bills() : BelongsToMany {

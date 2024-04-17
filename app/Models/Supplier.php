@@ -21,14 +21,6 @@ class Supplier extends Authenticatable
     use HasFactory, HasApiTokens, Notifiable, HasPermissions;
 
     /**
-     * The "booted" method of the model.
-     */
-    protected static function booted(): void
-    {
-        //static::addGlobalScope(new ActiveScope);
-    }
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -44,6 +36,7 @@ class Supplier extends Authenticatable
         'store_name',
         'status',
         'supplier_category_id',
+        'min_bill_price',
     ];
 
     protected $guard = ['supplier'];
@@ -64,7 +57,6 @@ class Supplier extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        //'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 
@@ -76,6 +68,11 @@ class Supplier extends Authenticatable
         $query->whereHas('distributionLocations', function ($query) {
             return $query->where('to_site', Auth::user()->city);
         });
+    }
+
+    public static function scopeActive(Builder $query): void
+    {
+        $query->where('status','نشط');
     }
 
 
@@ -97,8 +94,9 @@ class Supplier extends Authenticatable
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class,'product_suppliers')
-            ->withPivot('price','price_after_sales');
+        return $this->belongsToMany(Product::class,'product_supplier')
+            ->withPivot('price','min_selling_quantity');
+
 
     }
 
@@ -107,9 +105,13 @@ class Supplier extends Authenticatable
     }
 
 
-    public function category() : BelongsTo {
+    public function supplierCategory() : BelongsTo {
         return $this->belongsTo(SupplierCategory::class);
 
+    }
+
+    public function goals() : HasMany {
+        return $this->hasMany(Goal::class);
     }
 
 }

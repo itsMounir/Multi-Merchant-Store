@@ -27,7 +27,7 @@ return new class extends Migration {
             $table->string('city');
             $table->string('street');
             $table->string('representator_code')->nullable();
-            $table->boolean('is_subscriped')->default(true);
+            $table->boolean('is_subscribed')->default(true);
             $table->date('subscription_expires_at');
             $table->enum('status',['نشط','محظور','غير نشط'])->default('غير نشط');
             $table->timestamps();

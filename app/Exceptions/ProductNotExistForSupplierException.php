@@ -7,14 +7,14 @@ use Exception;
 class ProductNotExistForSupplierException extends Exception
 {
     protected $productId;
-    protected $supplierId;
+    protected $store_name;
 
-    public function __construct($productId, $supplierId)
+    public function __construct($productId, $store_name)
     {
         $this->productId = $productId;
-        $this->supplierId = $supplierId;
+        $this->store_name = $store_name;
 
-        $this->message = 'The selected product with id (' . $this->productId . ') does not exist for the specified supplier with id (' . $this->supplierId . ').';
+        $this->message = 'The selected product with id (' . $this->productId . ') does not exist for the specified supplier (' . $this->store_name . ').';
 
         $this->code = 400;
     }

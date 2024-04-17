@@ -19,7 +19,8 @@ class MarketCategory extends Model
         'name',
     ];
 
-    public function markets() : HasMany {
-        return $this->hasMany(Market::class);
+    public function markets(): HasMany
+    {
+        return $this->hasMany(Market::class, 'market_category_id');
     }
 }

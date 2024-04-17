@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -15,7 +15,7 @@ use Spatie\Permission\Traits\HasPermissions;
 
 class Market extends Authenticatable
 {
-    use HasFactory,HasApiTokens,Notifiable,HasPermissions;
+    use HasFactory, HasApiTokens, Notifiable, HasPermissions;
 
     /**
      * The attributes that are mass assignable.
@@ -32,14 +32,14 @@ class Market extends Authenticatable
         'street',
         'market_category_id',
         'representator_code',
-        'is_subscriped',
+        'is_subscribed',
         'store_name',
         'subscription_expires_at',
     ];
 
     protected $guard = 'market';
 
-        /**
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
@@ -47,6 +47,8 @@ class Market extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'created_at',
+        'updated_at',
     ];
 
     /**
@@ -59,22 +61,52 @@ class Market extends Authenticatable
         'password' => 'hashed',
     ];
 
-    protected $appends = ['category'];
+    protected $appends = ['created_from', 'images'];
 
-    public function getCategoryAttribute() {
-        return $this->category()->get(['name']);
+    // created from attribute
+    public function getCreatedFromAttribute()
+    {
+        return $this->created_at->diffForHumans();
+    }
+
+    // images attribute
+    public function getImagesAttribute()
+    {
+        return $this->images()
+            ->get(['imageable_type', 'url'])
+            ->map(function ($image) {
+                $dir = explode('\\', $image->imageable_type)[2];
+                unset ($image->imageable_type);
+                return asset("public/$dir") . '/' . $image->url;
+            });
     }
 
 
-    public function image() : MorphOne {
-        return $this->morphOne(Image::class,'imageable');
+
+    public function isActive(): bool
+    {
+        return ($this->status == 'نشط');
     }
 
-    public function bills() : HasMany {
+
+    // morphs relation with images table
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+
+    public function bills(): HasMany
+    {
         return $this->hasMany(Bill::class);
     }
 
-    public function category() : BelongsTo {
+    public function category(): BelongsTo
+    {
         return $this->belongsTo(MarketCategory::class);
+    }
+
+    public function goals(): BelongsToMany
+    {
+        return $this->belongsToMany(Goal::class)->withTimestamps();
     }
 }

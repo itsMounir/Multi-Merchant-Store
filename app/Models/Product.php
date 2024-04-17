@@ -23,15 +23,15 @@ class Product extends Model
         'category_id',
     ];
 
-    protected $appends = ['category'];
+    //protected $appends = ['category'];
 
-    public function getCategoryAttribute() {
-        return $this->category()->get(['name']);
-    }
+    // public function getCategoryAttribute() {
+    //     return $this->category()->get(['name']);
+    // }
 
     public function suppliers(): BelongsToMany
     {
-        return $this->belongsToMany(Supplier::class,'product_suppliers')
+        return $this->belongsToMany(Supplier::class,'product_supplier')
             ->withPivot('price');
 
     }

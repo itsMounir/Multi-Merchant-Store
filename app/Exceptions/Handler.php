@@ -4,9 +4,11 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Database\QueryException;
-use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Database\{
+    QueryException,
+    Eloquent\ModelNotFoundException,
+    UniqueConstraintViolationException,
+};
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -37,6 +39,15 @@ class Handler extends ExceptionHandler
 
     public function render($request, Exception|Throwable $e)
     {
+
+        if ($e instanceof ValidationException) {
+            return response()->json([
+                'message' => 'Validation error',
+                'errors' => $e->errors(),
+            ], 422);
+        }
+
+
         if ($e instanceof ModelNotFoundException) {
             return response()->json([
                 'message' => explode('\\', $e->getModel())[2] . ' Not Found.',
@@ -62,18 +73,20 @@ class Handler extends ExceptionHandler
         }
 
 
-
-
         if ($e instanceof RouteNotFoundException) {
             return response()->json([
                 'message' => 'Unauthenticated',
             ], 401);
         }
 
-        if ($e instanceof ProductNotExistForSupplierException) {
+        if (
+            $e instanceof ProductNotExistForSupplierException ||
+            $e instanceof InsufficientPriceForSupplierException ||
+            $e instanceof InActiveSupplierException
+        ) {
             return response()->json([
                 'message' => $e->getMessage(),
-            ],$e->getCode());
+            ], $e->getCode());
         }
 
         return parent::render($request, $e);

@@ -16,7 +16,7 @@ class SuppliersController extends Controller
      */
     public function index(SuppliersFilters $suppliersFilters)
     {
-        $suppliers = $suppliersFilters->applyFilters(Supplier::query())->site()->get();
+        $suppliers = $suppliersFilters->applyFilters(Supplier::query())->active()->site()->get();
         return $this->indexOrShowResponse('suppliers',$suppliers);
     }
 
@@ -41,9 +41,10 @@ class SuppliersController extends Controller
      */
     public function show(Supplier $supplier,ProductsFilters $productsFilters)
     {
+        // dd($supplier->products()->getQuery());
         $products = $productsFilters->applyFilters($supplier->products()->getQuery())->get();
         return response()->json([
-            'supplier' => $supplier,
+            'supplier' => $supplier->with('goals')->get(),
             'products' => $products,
         ]);
     }
