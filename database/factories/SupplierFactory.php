@@ -26,6 +26,7 @@ class SupplierFactory extends Factory
             'password' => Hash::make('password'),
             'supplier_category_id' => fake()->randomElement([1, 2]),
             'min_bill_price' => fake()->randomFloat(3, 250.0, 5000),
+            'min_selling_quantity' => fake()->randomFloat(3, 250.0, 5000),
             'status' => fake()->randomElement(['نشط', 'محظور', 'غير نشط']),
         ];
     }

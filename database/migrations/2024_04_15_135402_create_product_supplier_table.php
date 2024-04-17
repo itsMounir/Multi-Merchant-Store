@@ -25,7 +25,11 @@ return new class extends Migration
                 ->cascadeOnUpdate();
 
             $table->float('price');
-            $table->integer('min_selling_quantity')->default(1);
+
+            $table->boolean('has_offer')->default(false);
+            $table->float('offer_price')->nullable();
+            $table->integer('max_selling_quantity')->nullable();
+            $table->date('offer_expires_at')->nullable();
             $table->timestamps();
         });
     }

@@ -17,8 +17,8 @@ class MarketFactory extends Factory
      */
     public function definition(): array
     {
-        return [ 
-            
+        return [
+
             'first_name'=> fake()->firstName(),
             'middle_name'=> fake()->firstName(),
             'last_name'=> fake()->lastName(),
@@ -26,7 +26,7 @@ class MarketFactory extends Factory
             'store_name'=>fake()->name(),
             'city'=>fake()->city(),
             'street'=>fake()->streetAddress(),
-            'is_subscriped'=>0,
+            'is_subscribed'=>0,
             'password'=>Hash::make('password'),
             'market_category_id' => 1,
             'subscription_expires_at'=>fake()->date('Y-m-d'),
