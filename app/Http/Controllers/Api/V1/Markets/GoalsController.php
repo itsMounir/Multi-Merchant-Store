@@ -2,27 +2,20 @@
 
 namespace App\Http\Controllers\Api\V1\Markets;
 
-use App\Filters\Markets\ProductsFilters;
 use App\Http\Controllers\Controller;
-use App\Models\{
-    Product,
-    Supplier
-};
+use App\Models\Goal;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class ProductsController extends Controller
+class GoalsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(ProductsFilters $productsFilters)
+    public function index()
     {
-        $products = $productsFilters->applyFilters(Product::query())
-            ->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
-            ->orderBy('product_supplier.price')
-            ->get();
-
-        return $this->indexOrShowResponse('products', $products);
+        $goals = Auth::user()->goals()->get();
+        return $this->indexOrShowResponse('goals',$goals);
     }
 
     /**
@@ -44,15 +37,15 @@ class ProductsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show(Goal $goal)
     {
-        return $this->indexOrShowResponse('product',$product);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product)
+    public function edit(Goal $goal)
     {
         //
     }
@@ -60,7 +53,7 @@ class ProductsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, Goal $goal)
     {
         //
     }
@@ -68,7 +61,7 @@ class ProductsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy(Goal $goal)
     {
         //
     }

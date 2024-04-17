@@ -25,6 +25,7 @@ class Bill extends Model
         'supplier_id',
         'market_note',
         'rejection_reason',
+        'has_additional_cost',
     ];
 
     protected $appends = ['payement_method'];
@@ -35,8 +36,7 @@ class Bill extends Model
     }
 
 
-    public function products(): BelongsToMany
-    {
+    public function products() : BelongsToMany {
         return $this->belongsToMany(Product::class);
 
     }
@@ -47,10 +47,12 @@ class Bill extends Model
         return $this->belongsTo(PayementMethod::class);
     }
 
+
+
     public function market()
     {
         return $this->belongsTo(Market::class);
 
     }
 
-}
+    }
