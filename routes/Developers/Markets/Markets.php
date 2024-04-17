@@ -5,7 +5,8 @@ use App\Http\Controllers\Api\V1\Markets\{
     SuppliersController,
     ProductsController,
     BillsController,
-    GoalsController
+    GoalsController,
+    MarketsController
 };
 
 Route::prefix('markets/')->middleware(['auth:sanctum', 'active', 'type.market'])->group(function () {
@@ -21,6 +22,9 @@ Route::prefix('markets/')->middleware(['auth:sanctum', 'active', 'type.market'])
 
     // Routes for Goals-related actions
     Route::get('goals', [GoalsController::class,'index']);
+
+    // Route for show market profile
+    Route::get('markets/{market}',[MarketsController::class,'show']);
 });
 
 

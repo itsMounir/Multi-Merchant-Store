@@ -31,6 +31,7 @@ class RegisterRequest extends FormRequest
             'street' => ['required'],
             'market_category_id' => ['required','exists:market_categories,id'],
             'store_name' => ['required'],
+            'image' => ['required','image'],
         ];
     }
 }

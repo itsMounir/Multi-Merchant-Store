@@ -32,7 +32,7 @@ class Market extends Authenticatable
         'street',
         'market_category_id',
         'representator_code',
-        'is_subscriped',
+        'is_subscribed',
         'store_name',
         'subscription_expires_at',
     ];
@@ -47,6 +47,8 @@ class Market extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'created_at',
+        'updated_at',
     ];
 
     /**
@@ -59,6 +61,27 @@ class Market extends Authenticatable
         'password' => 'hashed',
     ];
 
+    protected $appends = ['created_from', 'images'];
+
+    // created from attribute
+    public function getCreatedFromAttribute()
+    {
+        return $this->created_at->diffForHumans();
+    }
+
+    // images attribute
+    public function getImagesAttribute()
+    {
+        return $this->images()
+            ->get(['imageable_type', 'url'])
+            ->map(function ($image) {
+                $dir = explode('\\', $image->imageable_type)[2];
+                unset ($image->imageable_type);
+                return asset("public/$dir") . '/' . $image->url;
+            });
+    }
+
+
 
     public function isActive(): bool
     {
@@ -66,9 +89,10 @@ class Market extends Authenticatable
     }
 
 
-    public function image(): MorphOne
+    // morphs relation with images table
+    public function images()
     {
-        return $this->morphOne(Image::class, 'imageable');
+        return $this->morphMany(Image::class, 'imageable');
     }
 
     public function bills(): HasMany
