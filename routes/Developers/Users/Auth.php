@@ -25,6 +25,7 @@ Route::prefix('users/')->group(function () {
         Route::post('{id}/activate', [MarketUserController::class, 'activateMarketUser']); // activate market user
         Route::post('{id}/deactivate', [MarketUserController::class, 'deactivateMarketUser']); // deactivate market user
         Route::post('{id}/ban', [MarketUserController::class, 'banMarketUser']); // ban market user
+        Route::get('{id}/with-bills', [MarketUserController::class, 'userWithBills']); // get user with his bills
     });
 
     /**
@@ -35,5 +36,7 @@ Route::prefix('users/')->group(function () {
         Route::post('{id}/activate', [SupplierUserController::class, 'activateSupplierUser']); // activate supplier user 
         Route::post('{id}/deactivate', [SupplierUserController::class, 'deactivateSupplierUser']); // deactivate supplier user
         Route::post('{id}/ban', [SupplierUserController::class, 'banSupplierUser']); // ban supplier user
+        Route::get('{id}/with-bills', [SupplierUserController::class, 'userWithBills']); // get user with his bills
+        
     });
 });

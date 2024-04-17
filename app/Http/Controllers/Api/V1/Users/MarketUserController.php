@@ -9,20 +9,25 @@ use Illuminate\Http\Request;
 class MarketUserController extends Controller
 {
     /**
+     * To get user info with his outcoming Bills 
+     * @param ID $id
+     * @return JsonResponse
+     */
+    public function userWithBills($id)
+    {
+        $user = Market::with('bills')->findOrFail($id);
+        return response()->json(['user' => $user]);
+    }
+
+    /**
      * GET MARKET USERS BASED ON STATUS
      * @param Request $request
      * @return JsonResponse
      */
     public function marketUsers(Request  $request)
     {
-        $status = $request->query('status');
-        $query = Market::with('category:id,name');
-
-        if ($status) {
-            $query->where('status', $status);
-        }
-
-        $marketUsers = $query->orderBy('first_name', 'asc')->get();
+        $category = $request->query('category');
+        $marketUsers = Market::where('market_category_id', $category)->orderBy('first_name', 'asc')->get();
         return response()->json(['Supplier users' => $marketUsers]);
     }
     /**
@@ -32,14 +37,12 @@ class MarketUserController extends Controller
      */
     public function activateMarketUser($id)
     {
-        $user = Market::find($id);
-        if ($user) {
-            $user->status = 'نشط';
-            $user->save();
-            return response()->json(['message' => 'User has been activated successfully', 'user' => $user], 200);
-        } else {
-            return response()->json(['message' => 'User not found'], 404);
-        }
+        $user = Market::findOrFail($id);
+        if ($user->status = 'نشط')
+            return response()->json(['message' => 'User is alredy Activated']);
+        $user->status = 'نشط';
+        $user->save();
+        return response()->json(['message' => 'User has been activated successfully', 'user' => $user], 200);
     }
     /**
      * TO DEACTIVATE MARKET USER
@@ -48,16 +51,14 @@ class MarketUserController extends Controller
      */
     public function deactivateMarketUser($id)
     {
-        $user = Market::find($id);
-        if ($user) {
-            $user->status = 'غير نشط';
-            $user->save();
-            return response()->json(['message' => 'User has been deactivated successfully', 'user' => $user], 200);
-        } else {
-            return response()->json(['message' => 'User not found'], 404);
-        }
+        $user = Market::findOrFail($id);
+        if ($user->status = 'غير نشط')
+            return response()->json(['message' => 'User is alredy Deactivated']);
+        $user->status = 'غير نشط';
+        $user->save();
+        return response()->json(['message' => 'User has been deactivated successfully', 'user' => $user], 200);
     }
-    
+
     /**
      * TO BAN MARKET USER
      * @param ID $id
@@ -65,13 +66,11 @@ class MarketUserController extends Controller
      */
     public function banMarketUser($id)
     {
-        $user = Market::find($id);
-        if ($user) {
-            $user->status = 'محظور';
-            $user->save();
-            return response()->json(['message' => 'User has been banned successfully', 'user' => $user], 200);
-        } else {
-            return response()->json(['message' => 'User not found'], 404);
-        }
+        $user = Market::findOrFail($id);
+        if ($user->status = 'محظور')
+            return response()->json(['message' => 'User is alredy banned']);
+        $user->status = 'محظور';
+        $user->save();
+        return response()->json(['message' => 'User has been banned successfully', 'user' => $user], 200);
     }
 }

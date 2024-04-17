@@ -23,10 +23,11 @@ use App\Http\Controllers\Api\V1\Suppliers\BillController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
+//  Admin Section
 include __DIR__ . '/Developers/Users/Auth.php';
 include __DIR__ . '/Developers/Users/Bills.php';
 
+// Supplier Section
 include __DIR__ . '/Developers/Suppliers/Auth.php';
 
 // Market Section

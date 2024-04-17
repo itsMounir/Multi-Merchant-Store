@@ -29,6 +29,7 @@ class MarketFactory extends Factory
             'is_subscriped'=>0,
             'password'=>Hash::make('password'),
             'market_category_id' => 1,
+            'subscription_expires_at'=>fake()->date('Y-m-d'),
             'status'=>fake()->randomElement(['نشط','محظور','غير نشط']),
         ];
     }

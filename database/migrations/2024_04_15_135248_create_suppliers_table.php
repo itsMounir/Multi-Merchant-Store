@@ -12,6 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('suppliers', function (Blueprint $table) {
+
+            $table->foreignId('supplier_category_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
             $table->id();
             $table->string('first_name');
             $table->string('middle_name');
@@ -21,12 +27,7 @@ return new class extends Migration
             $table->string('password');
             $table->float('min_bill_price');
 
-
-            $table->foreignId('supplier_category_id')
-                ->constrained()
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-            $table->enum('status',['نشط','محظور','غير نشط'])->default('غير نشط');
+            $table->enum('status', ['نشط', 'محظور', 'غير نشط'])->default('غير نشط');
             $table->timestamps();
         });
     }

@@ -18,14 +18,15 @@ class SupplierFactory extends Factory
     public function definition(): array
     {
         return [
-            'first_name'=> fake()->firstName(),
-            'middle_name'=> fake()->firstName(),
-            'last_name'=> fake()->lastName(),
-            'phone_number'=>fake()->phoneNumber(),
-            'store_name'=>fake()->name(),
-            'password'=>Hash::make('password'),
-            'type'=>fake()->randomElement(['مورد','شركة']),
-            'status'=>fake()->randomElement(['نشط','محظور','غير نشط']),
+            'first_name' => fake()->firstName(),
+            'middle_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
+            'phone_number' => fake()->phoneNumber(),
+            'store_name' => fake()->name(),
+            'password' => Hash::make('password'),
+            'supplier_category_id' => fake()->randomElement([1, 2]),
+            'min_bill_price' => fake()->randomFloat(3, 250.0, 5000),
+            'status' => fake()->randomElement(['نشط', 'محظور', 'غير نشط']),
         ];
     }
 }
