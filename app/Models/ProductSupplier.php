@@ -21,6 +21,8 @@ class ProductSupplier extends Model
         'supplier_id',
         'product_id',
         'price',
+        'is_available',
+        'max_selling_quantity',
         'has_offer',
         'offer_price',
         'max_offer_quantity',

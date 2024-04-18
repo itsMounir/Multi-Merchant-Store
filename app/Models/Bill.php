@@ -26,6 +26,7 @@ class Bill extends Model
         'market_note',
         'rejection_reason',
         'has_additional_cost',
+        'delivery_duration',
     ];
 
     protected $appends = ['payement_method'];
