@@ -33,6 +33,7 @@ return new class extends Migration {
             $table->boolean('has_additional_cost');
             $table->string('market_note')->nullable();
             $table->string('rejection_reason')->nullable();
+            $table->date('delivery_duration');
             $table->softDeletes();
             $table->timestamps();
         });
