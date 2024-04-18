@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Api\V1\Markets;
 
-use App\Rules\Bills\ProductExistsForSupplier;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,9 +25,9 @@ class UpdateBillRequest extends FormRequest
         return [
             'supplier_id' => ['exists:suppliers,id'],
             'payement_method_id' => ['exists:payement_methods,id'],
-            'cart' => ['array'],
-            'cart.*.id' => [new ProductExistsForSupplier($this->input('supplier_id'))],
-            'cart.*.quantity' => ['integer'],
+            'products' => ['array'],
+            //'products.*.id' => [],
+            'products.*.quantity' => ['integer'],
         ];
     }
 

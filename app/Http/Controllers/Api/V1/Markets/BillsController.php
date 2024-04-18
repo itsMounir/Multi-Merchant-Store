@@ -88,26 +88,31 @@ class BillsController extends Controller
     public function update(UpdateBillRequest $request, Bill $bill)
     {
         return DB::transaction(function () use ($request, $bill) {
+            $bill->products()->detach();
+            $updated_bill = $request->all();
             $billService = new BillsServices;
             $market = Auth::user();
             $supplier = Supplier::find($request->supplier_id);
 
-            $total_price = $billService->calculatePrice($bill, $supplier);
+            $total_price = $billService->calculatePrice($updated_bill, $supplier);
 
-            $total_price -= $billService->discounts($supplier, $total_price);
+            $billService->checkSupplierRequirements($supplier, $updated_bill, $total_price);
+
+            $total_price -= $billService->supplierDiscount($supplier, $total_price);
 
             $bill->update([
                 'total_price' => $total_price,
-                'payement_method_id' => $request->payement_method_id ?? $bill->payement_method_id,
+                'payement_method_id' => $updated_bill['payement_method_id'] ?? $bill->payement_method_id,
                 'supplier_id' => $supplier->id,
                 'market_id' => $market->id,
-                'discount_code' => $request->discount_code ?? $bill->discount_code,
+                'market_note' => $updated_bill['market_note'] ?? $bill->market_note,
             ]);
 
-            foreach ($request->cart as $item) {
+            foreach ($updated_bill['products'] as $item) {
                 $bill->products()->syncWithoutDetaching([
                     $item['id'] => [
                         'quantity' => $item['quantity'],
+                        'created_at' => $bill->created_at,
                         'updated_at' => now(),
                     ],
                 ]);

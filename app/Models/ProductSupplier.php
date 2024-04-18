@@ -21,7 +21,12 @@ class ProductSupplier extends Model
         'supplier_id',
         'product_id',
         'price',
-        'min_selling_quantity',
+        'is_available',
+        'max_selling_quantity',
+        'has_offer',
+        'offer_price',
+        'max_offer_quantity',
+        'offer_expires_at',
     ];
 
     // public function bills() : BelongsToMany {

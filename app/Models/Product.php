@@ -31,8 +31,14 @@ class Product extends Model
 
     public function suppliers(): BelongsToMany
     {
-        return $this->belongsToMany(Supplier::class,'product_supplier')
-            ->withPivot('price');
+        return $this->belongsToMany(Supplier::class, 'product_supplier')
+            ->withPivot(
+                'price',
+                'has_offer',
+                'offer_price',
+                'max_offer_quantity',
+                'offer_expires_at',
+            );
 
     }
 
