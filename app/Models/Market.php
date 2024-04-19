@@ -66,7 +66,7 @@ class Market extends Authenticatable
     // created from attribute
     public function getCreatedFromAttribute()
     {
-        return $this->created_at->diffForHumans();
+        //return $this->created_at->diffForHumans();
     }
 
     // images attribute
