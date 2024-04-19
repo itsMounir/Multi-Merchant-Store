@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('password');
             $table->float('min_bill_price');
             $table->integer('min_selling_quantity');
+            $table->string('delivery_duration')->nullable();
 
             $table->enum('status', ['نشط', 'محظور', 'غير نشط'])->default('غير نشط');
             $table->timestamps();

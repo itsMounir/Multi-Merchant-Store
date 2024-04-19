@@ -19,6 +19,7 @@ class Bill extends Model
      */
     protected $fillable = [
         'total_price',
+        'recieved_price',
         'payement_method_id',
         'status',
         'market_id',

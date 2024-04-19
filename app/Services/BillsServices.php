@@ -85,16 +85,26 @@ class BillsServices
 
                 if ($product['id'] == $supplier_product['id']) {
                     $price = $supplier_product['pivot']['price'];
+                    $quantity = $product['quantity'];
 
                     if ($supplier_product['pivot']['has_offer']) {
 
-                        if ($product['quantity'] > $supplier_product['pivot']['max_offer_quantity']) {
-                            throw new IncorrectBillException('Products number of this bill : ' . $product['quantity'] . ' is more than the max offer quantity : ' . $supplier_product['pivot']['max_offer_quantity'] . ' .');
-                        }
-                        $price = $supplier_product['pivot']['offer_price'];
+                        // if ($product['quantity'] > $supplier_product['pivot']['max_offer_quantity']) {
+                        //     throw new IncorrectBillException('Products number of this bill : ' . $product['quantity'] . ' is more than the max offer quantity : ' . $supplier_product['pivot']['max_offer_quantity'] . ' .');
+                        // }
+                        // calculate the total price of products taken in the offer
+                        $total_price = min(
+                            $supplier_product['pivot']['max_offer_quantity'],
+                            $quantity
+                            )
+                            * $supplier_product['pivot']['offer_price'];
+
+                        $quantity -= $supplier_product['pivot']['max_offer_quantity'];
                     }
 
-                    $total_price += $price * $product['quantity'];
+                    if ($quantity > 0) {
+                        $total_price += $price * $quantity;
+                    }
                     $exist = true;
                     break;
                 }
