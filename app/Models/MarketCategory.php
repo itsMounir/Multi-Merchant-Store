@@ -19,6 +19,13 @@ class MarketCategory extends Model
         'name',
     ];
 
+
+    protected $dates = ['created_at'];
+
+    protected $casts = [
+        'created_at' => 'date:Y-m-d',
+    ];
+
     public function markets(): HasMany
     {
         return $this->hasMany(Market::class, 'market_category_id');

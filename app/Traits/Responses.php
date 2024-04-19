@@ -17,7 +17,7 @@ trait Responses {
         ], $code);
     }
 
-    public function indexOrShowResponse(string $data_key, Collection|Model $data, int $code = 200) : JsonResponse {
+    public function indexOrShowResponse(string $data_key, Collection|Model|int $data, int $code = 200) : JsonResponse {
         return response()->json([
             $data_key => $data
         ], $code);

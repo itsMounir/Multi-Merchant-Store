@@ -8,7 +8,8 @@ use App\Http\Controllers\Api\V1\Suppliers\Auth\{
 use App\Http\Controllers\Api\V1\Suppliers\{
     ProductSuppliersController,
     SupplierContoller,
-    BillController
+    BillController,
+    ReportController
 };
 
 Route::prefix('suppliers/')->group(function () {
@@ -32,5 +33,13 @@ Route::middleware(['auth:sanctum', 'type.supplier'])->group(function () {
     Route::post('update/{id}',[BillController::class,'update']);
     Route::post('reject/{id}',[BillController::class,'reject']);
     Route::post('accept/{id}',[BillController::class,'accept']);
+    Route::post('recive/{id}',[BillController::class,'recive']);
+    Route::post('is_available/{id}',[ProductSuppliersController::class,'is_available']);
+    Route::get('Bill_Recived',[ReportController::class,'Paid_Bill']);
+    Route::get('market',[ReportController::class,'getMarketsCount']);
+    Route::get('avg',[ReportController::class,'getAverageBillPrice']);
+    Route::get('price/product/delivery',[ReportController::class,'getDeliveredProductPrice']);
+    Route::get('available',[ProductSuppliersController::class,'get_product_available']);
+    Route::get('personal/data',[SupplierContoller::class,'Personal_Data']);
 
 });
