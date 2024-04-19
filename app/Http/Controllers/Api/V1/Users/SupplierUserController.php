@@ -3,14 +3,16 @@
 namespace App\Http\Controllers\Api\v1\Users;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\Users\SupplierProfileRequest;
 use App\Models\Supplier;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class SupplierUserController extends Controller
 {
     /**
      * To get user info with his incoming Bills 
-     * @param ID $id
+     * @param string $id
      * @return JsonResponse
      */
     public function userWithBills($id)
@@ -19,6 +21,12 @@ class SupplierUserController extends Controller
         return response()->json(['user' => $user]);
     }
 
+    public function profileEdit(SupplierProfileRequest $request, $id)
+    {
+        $user = Supplier::findOrFail($id);
+        $user->update($request->all());
+        return response()->json(['message' => 'User has been updated successfully', 'user' => $user], 200);
+    }
 
     /**
      * GET SUPPLIER USERS BASED ON STATUS
@@ -34,7 +42,7 @@ class SupplierUserController extends Controller
 
     /**
      * TO ACTIVATE SUPPLIER USER
-     * @param ID $id
+     * @param string $id
      * @return JsonResponse 
      */
     public function activateSupplierUser($id)
@@ -42,31 +50,16 @@ class SupplierUserController extends Controller
         $user = Supplier::find($id);
         if (!$user)
             return response()->json(['message' => 'User not found'], 404);
-        if ($user->status = 'نشط')
+        if ($user->status == 'نشط')
             return response()->json(['message' => 'User is alredy Activated....'], 200);
         $user->status = 'نشط';
         $user->save();
         return response()->json(['message' => 'User has been activated successfully', 'user' => $user], 200);
     }
-    /**
-     * TO DEACTIVATE SUPPLIER USER
-     * @param ID $id
-     * @return JsonResponse
-     */
-    public function deactivateSupplierUser($id)
-    {
-        $user = Supplier::find($id);
-        if (!$user)
-            return response()->json(['message' => 'User not found'], 404);
-        if ($user->status = 'غير نشط')
-            return response()->json(['message' => 'user already is Deactivated...'], 200);
-        $user->status = 'غير نشط';
-        $user->save();
-        return response()->json(['message' => 'User has been deactivated successfully', 'user' => $user], 200);
-    }
+
     /**
      * TO BAN SUPPLIER USER
-     * @param ID $id
+     * @param string $id
      * @return JsonResponse
      */
     public function banSupplierUser($id)
@@ -74,7 +67,7 @@ class SupplierUserController extends Controller
         $user = Supplier::find($id);
         if (!$user)
             return response()->json(['message' => 'User not found'], 404);
-        if ($user->status = 'محظور')
+        if ($user->status == 'محظور')
             return response()->json(['message' => 'User is alredy Banned...'], 200);
         $user->status = 'محظور';
         $user->save();

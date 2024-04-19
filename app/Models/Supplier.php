@@ -31,12 +31,11 @@ class Supplier extends Authenticatable
         'last_name',
         'phone_number',
         'password',
-        'discount_code',
-        'discount_by_code',
         'store_name',
         'status',
         'supplier_category_id',
         'min_bill_price',
+        'min_selling_quantity',
     ];
 
     protected $guard = ['supplier'];

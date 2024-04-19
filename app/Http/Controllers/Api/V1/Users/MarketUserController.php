@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Api\v1\Users;
 
 use App\Http\Controllers\Controller;
 use App\Models\Market;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class MarketUserController extends Controller
 {
     /**
      * To get user info with his outcoming Bills 
-     * @param ID $id
+     * @param string $id
      * @return JsonResponse
      */
     public function userWithBills($id)
@@ -32,42 +33,43 @@ class MarketUserController extends Controller
     }
     /**
      * TO ACTIVATE MARKET USER
-     * @param ID $id
+     * @param string $id
      * @return JsonResponse
      */
     public function activateMarketUser($id)
     {
         $user = Market::findOrFail($id);
-        if ($user->status = 'نشط')
+        if ($user->status == 'نشط')
             return response()->json(['message' => 'User is alredy Activated']);
         $user->status = 'نشط';
         $user->save();
         return response()->json(['message' => 'User has been activated successfully', 'user' => $user], 200);
     }
+    
     /**
      * TO DEACTIVATE MARKET USER
-     * @param ID $id
+     * @param string $id
      * @return JsonResponse
      */
-    public function deactivateMarketUser($id)
+   /* public function deactivateMarketUser($id)
     {
         $user = Market::findOrFail($id);
-        if ($user->status = 'غير نشط')
+        if ($user->status == 'غير نشط')
             return response()->json(['message' => 'User is alredy Deactivated']);
         $user->status = 'غير نشط';
         $user->save();
         return response()->json(['message' => 'User has been deactivated successfully', 'user' => $user], 200);
-    }
+    }*/
 
     /**
      * TO BAN MARKET USER
-     * @param ID $id
+     * @param string $id
      * @return JsonResponse
      */
     public function banMarketUser($id)
     {
         $user = Market::findOrFail($id);
-        if ($user->status = 'محظور')
+        if ($user->status == 'محظور')
             return response()->json(['message' => 'User is alredy banned']);
         $user->status = 'محظور';
         $user->save();
