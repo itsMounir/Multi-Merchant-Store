@@ -26,7 +26,3 @@ Route::prefix('markets/')->middleware(['auth:sanctum', 'active', 'type.market'])
     // Route for show market profile
     Route::get('markets/{market}',[MarketsController::class,'show']);
 });
-
-
-
-

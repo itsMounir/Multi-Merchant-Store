@@ -102,6 +102,7 @@ class Supplier extends Authenticatable
                 'offer_price',
                 'max_offer_quantity',
                 'offer_expires_at',
+                'delivery_duration',
             );
 
 
