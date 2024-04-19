@@ -30,6 +30,7 @@ Route::middleware(['auth:sanctum', 'type.supplier'])->group(function () {
     Route::post('price/{id}',[ProductSuppliersController::class,'update']);
     Route::get('bill',[BillController::class,'index']);
     Route::post('update/{id}',[BillController::class,'update']);
-    Route::delete('delete/{id}',[BillController::class,'destroy']);
+    Route::post('reject/{id}',[BillController::class,'reject']);
+    Route::post('accept/{id}',[BillController::class,'accept']);
 
 });
