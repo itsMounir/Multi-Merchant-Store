@@ -10,9 +10,9 @@ use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\Responses;
-use App\Http\Requests\Supplier\{
-    UpdatePriceRequest,
-    StoreRequestProduct
+use App\Http\Requests\Api\V1\Suppliers\{
+    StoreProductRequest,
+    UpdatePriceRequest
 };
 use Illuminate\Support\Facades\DB;
 class ProductSuppliersController extends Controller
@@ -39,7 +39,7 @@ class ProductSuppliersController extends Controller
     }
 
 
-    public function store(StoreRequestProduct $request)
+    public function store(StoreProductRequest $request)
     {
         $supplier = Auth::user();
         if (!$supplier) {
@@ -49,7 +49,7 @@ class ProductSuppliersController extends Controller
         try {
             foreach ($request['products'] as $product) {
                 $supplier->products()->syncWithoutDetaching([
-                    $product['id'] => ['price' => $product['price'],'price_after_sales'=>$product['price_after_sales']]
+                    $product['id'] => ['price' => $product['price'],'min_selling_quantity'=>$product['min_selling_quantity']]
                 ]);
             }
             DB::commit();
