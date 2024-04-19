@@ -4,7 +4,7 @@ namespace App\Http\Requests\Api\V1\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SupplierProfileRequest extends FormRequest
+class MarketProfileRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,11 +27,10 @@ class SupplierProfileRequest extends FormRequest
             'middle_name' => ['string', 'required'],
             'last_name' => ['string', 'required'],
             'phone_number' => ['string', 'unique:suppliers,phone_number,' . $user . ',id', 'required'],
-            'store_name' => ['string', 'unique:suppliers,store_name,' . $user . ',id', 'required'],
-            'supplier_category_id' => ['required'],
-            'delivery_duration'=>['nullable'],
-            'min_bill_price' => ['required'],
-            'min_selling_quantity' => ['required'],
+            'market_category_id' => ['required'],
+            'city' => ['string', 'required'],
+            'street' => ['string', 'required'],
+            'store_name' => ['string', 'unique:markets,store_name,' . $user . ',id', 'required'],
         ];
     }
 }

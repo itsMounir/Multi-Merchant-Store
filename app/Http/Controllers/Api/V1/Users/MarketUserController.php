@@ -3,12 +3,23 @@
 namespace App\Http\Controllers\Api\v1\Users;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\Users\MarketProfileRequest;
 use App\Models\Market;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class MarketUserController extends Controller
 {
+    /**
+     * Display User Profile.
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function profile($id)
+    {
+        $market = Market::findOrFail($id);
+        return response()->json(['user' => $market], 200);
+    }
     /**
      * To get user info with his outcoming Bills 
      * @param string $id
@@ -18,6 +29,19 @@ class MarketUserController extends Controller
     {
         $user = Market::with('bills')->findOrFail($id);
         return response()->json(['user' => $user]);
+    }
+
+    /**
+     * To change supplier profile
+     * @param MarketProfileRequest $request
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function profileEdit(MarketProfileRequest $request, $id)
+    {
+        $user = Market::findOrFail($id);
+        $user->update($request->all());
+        return response()->json(['message' => 'User has been updated successfully', 'user' => $user], 200);
     }
 
     /**
@@ -45,13 +69,13 @@ class MarketUserController extends Controller
         $user->save();
         return response()->json(['message' => 'User has been activated successfully', 'user' => $user], 200);
     }
-    
+
     /**
      * TO DEACTIVATE MARKET USER
      * @param string $id
      * @return JsonResponse
      */
-   /* public function deactivateMarketUser($id)
+    /* public function deactivateMarketUser($id)
     {
         $user = Market::findOrFail($id);
         if ($user->status == 'غير نشط')

@@ -11,6 +11,17 @@ use Illuminate\Http\Request;
 class SupplierUserController extends Controller
 {
     /**
+     * Display User Profile.
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function profile($id)
+    {
+        $supplier = Supplier::findOrFail($id);
+        return response()->json(['user' => $supplier], 200);
+    }
+
+    /**
      * To get user info with his incoming Bills 
      * @param string $id
      * @return JsonResponse
@@ -20,7 +31,12 @@ class SupplierUserController extends Controller
         $user = Supplier::with('bills')->findOrFail($id);
         return response()->json(['user' => $user]);
     }
-
+    /**
+     * To change supplier profile
+     * @param SupplierProfileRequest $request
+     * @param string $id
+     * @return JsonResponse
+     */
     public function profileEdit(SupplierProfileRequest $request, $id)
     {
         $user = Supplier::findOrFail($id);
