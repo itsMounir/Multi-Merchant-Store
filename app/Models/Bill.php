@@ -41,7 +41,7 @@ class Bill extends Model
     public function getAdditionalPriceAttribute()
     {
         if ($this->has_additional_cost) {
-            return $this->(total_price +1.5)/100;
+            return $this->total_price + $this->total_price*1.5/100;
         } else {
             return $this->total_price;
         }

@@ -29,10 +29,6 @@ class User extends Authenticatable
 
     protected $dates = ['created_at'];
 
-    protected $casts = [
-        'created_at' => 'date:Y-m-d',
-    ];
-
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -51,5 +47,6 @@ class User extends Authenticatable
     protected $casts = [
         //'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'created_at' => 'date:Y-m-d',
     ];
 }

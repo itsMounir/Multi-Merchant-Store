@@ -38,7 +38,7 @@ class BillController extends Controller
 
         $total_price = $billService->calculatePrice($bill, $market);
 
-        $total_price -= $billService->discounts($market, $total_price);
+        $total_price -= $billService->supplierDiscount($market, $total_price);
 
         $bill->update([
             'total_price' => $total_price,
@@ -87,8 +87,8 @@ class BillController extends Controller
         $supplier=Auth::user();
         $bill=Bill::where('id',$billId)->first();
         $bill->update([
-            'status'=>'تم التوصيل'
-            'recieved_price'=$request->recieved_price,
+            'status'=>'تم التوصيل',
+            'recieved_price'=>$request->recieved_price,
         ]);
         return $this->sudResponse('Done');
     }
