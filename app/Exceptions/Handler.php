@@ -81,8 +81,8 @@ class Handler extends ExceptionHandler
 
         if (
             $e instanceof ProductNotExistForSupplierException ||
-            $e instanceof InsufficientPriceForSupplierException ||
-            $e instanceof InActiveSupplierException
+            $e instanceof InActiveAccountException ||
+            $e instanceof IncorrectBillException
         ) {
             return response()->json([
                 'message' => $e->getMessage(),

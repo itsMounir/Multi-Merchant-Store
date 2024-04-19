@@ -26,13 +26,15 @@ return new class extends Migration {
                 ->constrained();
 
             $table->float('total_price');
+            $table->float('recieved_price')->default(0);
 
-            $table->enum('status', ['انتظار', 'جديد', 'ملغية', 'تم التوصيل', 'قيد التحضير'])
+            $table->enum('status', ['انتظار', 'جديد', 'ملغية', 'تم التوصيل', 'قيد التحضير','رفض الاستلام'])
                 ->default('انتظار');
 
             $table->boolean('has_additional_cost');
             $table->string('market_note')->nullable();
             $table->string('rejection_reason')->nullable();
+            $table->string('delivery_duration')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

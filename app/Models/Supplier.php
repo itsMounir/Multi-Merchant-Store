@@ -71,7 +71,7 @@ class Supplier extends Authenticatable
 
     public static function scopeActive(Builder $query): void
     {
-        $query->where('status','نشط');
+        $query->where('status', 'نشط');
     }
 
 
@@ -93,23 +93,33 @@ class Supplier extends Authenticatable
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class,'product_supplier')
-            ->withPivot('price','min_selling_quantity');
+        return $this->belongsToMany(Product::class, 'product_supplier')
+            ->withPivot(
+                'price',
+                'has_offer',
+                'offer_price',
+                'max_offer_quantity',
+                'offer_expires_at',
+                'delivery_duration',
+            );
 
 
     }
 
-    public function productSuppliers() : HasMany {
+    public function productSuppliers(): HasMany
+    {
         return $this->hasMany(ProductSupplier::class);
     }
 
 
-    public function supplierCategory() : BelongsTo {
+    public function supplierCategory(): BelongsTo
+    {
         return $this->belongsTo(SupplierCategory::class);
 
     }
 
-    public function goals() : HasMany {
+    public function goals(): HasMany
+    {
         return $this->hasMany(Goal::class);
     }
 

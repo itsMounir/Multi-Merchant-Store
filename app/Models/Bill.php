@@ -19,6 +19,7 @@ class Bill extends Model
      */
     protected $fillable = [
         'total_price',
+        'recieved_price',
         'payement_method_id',
         'status',
         'market_id',
@@ -26,6 +27,7 @@ class Bill extends Model
         'market_note',
         'rejection_reason',
         'has_additional_cost',
+        'delivery_duration',
     ];
 
     protected $appends = ['payement_method'];
@@ -35,8 +37,10 @@ class Bill extends Model
         return $this->payementMethod()->get(['name']);
     }
 
+
     public function products() : BelongsToMany {
         return $this->belongsToMany(Product::class);
+
     }
 
 
@@ -44,6 +48,9 @@ class Bill extends Model
     {
         return $this->belongsTo(PayementMethod::class);
     }
+
+
+
     public function market()
     {
         return $this->belongsTo(Market::class);
