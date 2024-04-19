@@ -16,7 +16,7 @@ class SuppliersController extends Controller
      */
     public function index(SuppliersFilters $suppliersFilters)
     {
-        $suppliers = $suppliersFilters->applyFilters(Supplier::query())->active()->site()->get();
+        $suppliers = $suppliersFilters->applyFilters(Supplier::query())->site()->get();
         return $this->indexOrShowResponse('suppliers',$suppliers);
     }
 
