@@ -26,4 +26,10 @@ class SupplierContoller extends Controller
 
 
     }
+
+    public function Personal_Data(){
+        $supplier=Auth::user();
+        return $this->indexOrShowResponse('message',$supplier);
+
+    }
 }

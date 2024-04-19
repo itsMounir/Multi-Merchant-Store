@@ -30,7 +30,22 @@ class Bill extends Model
         'delivery_duration',
     ];
 
-    protected $appends = ['payement_method'];
+    protected $appends = ['payement_method','additional_price'];
+
+    protected $dates = ['created_at'];
+
+    protected $casts = [
+        'created_at' => 'date:Y-m-d',
+    ];
+
+    public function getAdditionalPriceAttribute()
+    {
+        if ($this->has_additional_cost) {
+            return $this->(total_price +1.5)/100;
+        } else {
+            return $this->total_price;
+        }
+    }
 
     protected function getpayementMethodAttribute()
     {

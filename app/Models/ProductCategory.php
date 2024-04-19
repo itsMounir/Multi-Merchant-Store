@@ -19,6 +19,12 @@ class ProductCategory extends Model
         'name',
     ];
 
+    protected $dates = ['created_at'];
+
+    protected $casts = [
+        'created_at' => 'date:Y-m-d',
+    ];
+
     public function products() : HasMany {
         return $this->hasMany(Product::class);
     }
