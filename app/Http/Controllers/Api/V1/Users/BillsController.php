@@ -29,7 +29,7 @@ class BillsController extends Controller
             $bill->save();
             return $this->sudResponse('order has been declained ', 200);
         }
-        return response()->json(['message'=>'wsomething went wrong... please check _billDecision_'],);
+        return response()->json(['message' => 'something went wrong... please check _billDecision_'],);
     }
 
     /**
@@ -50,8 +50,8 @@ class BillsController extends Controller
     public function oldBills(Request $request)
     {
         $withFee = $request->query('fee');
-        $query = Bill::query();
-        
+        $query = Bill::query()->with('products');
+
         if ($withFee == '1' || $withFee == '0')
             $query->where('has_additional_cost', $withFee);
         $bills = $query->where('status', '!=', 'انتظار')->get();
