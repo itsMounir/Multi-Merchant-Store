@@ -4,18 +4,19 @@ namespace App\Http\Controllers\Api\V1\Markets;
 
 use App\Http\Controllers\Controller;
 use App\Models\Goal;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class GoalsController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * get goals achieved by the authenitcated market
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $goals = Auth::user()->goals()->get();
-        return $this->indexOrShowResponse('goals',$goals);
+        return $this->indexOrShowResponse('goals', $goals);
     }
 
     /**
