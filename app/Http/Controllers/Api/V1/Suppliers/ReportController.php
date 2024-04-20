@@ -69,8 +69,7 @@ class ReportController extends Controller
     public function Wasted_Bill(Request $request){
         $supplier=Auth::user();
         $billCount = $supplier->bills()
-        ->where('status', 'ملغية')
-        ->where('status','رفض الاستلام')
+        ->where('status', ['ملغية','رفض الاستلام'])
         ->whereBetween('created_at', [$request->start_date, $request->end_date])
         ->count();
         return $this->sudResponse( $billCount);
