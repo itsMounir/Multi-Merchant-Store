@@ -34,7 +34,7 @@ class BillsServices
 
         $new_bill = Bill::create([
             'total_price' => $total_price,
-            'payement_method_id' => $bill['payement_method_id'],
+            'payment_method_id' => $bill['payment_method_id'],
             'supplier_id' => $supplier->id,
             'market_id' => $market->id,
             'has_additional_cost' => !Auth::user()->is_subscriped,

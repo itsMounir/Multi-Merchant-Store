@@ -23,7 +23,7 @@ class BillFactory extends Factory
         return [
             'total_price' => fake()->randomNumber(5, true),
             'recieved_price' => fake()->randomNumber(5),
-            'payement_method_id' => fake()->randomElement([1, 2]),
+            'payment_method_id' => fake()->randomElement([1, 2]),
             'status' => fake()->randomElement(['انتظار', 'جديد', 'ملغية', 'تم التوصيل', 'قيد التحضير', 'رفض الاستلام']),
             'market_id' => fake()->randomElement($markets),
             'supplier_id' => fake()->randomElement($suppliers),

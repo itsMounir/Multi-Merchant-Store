@@ -24,7 +24,7 @@ class UpdateBillRequest extends FormRequest
     {
         return [
             'supplier_id' => ['exists:suppliers,id'],
-            'payement_method_id' => ['exists:payement_methods,id'],
+            'payment_method_id' => ['exists:payment_methods,id'],
             'products' => ['array'],
             //'products.*.id' => [],
             'products.*.quantity' => ['integer'],
