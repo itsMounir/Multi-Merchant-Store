@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Users;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Users\ProductRequest;
+use App\Http\Requests\Api\V1\Users\ProductUpdaterequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -32,7 +33,7 @@ class ProductController extends Controller
         $product = Product::create($request->all());
         return response()->json($product, 201);
     }
-    public function update(Request $request, $id)
+    public function update(ProductUpdaterequest $request, $id)
     {
         $product = Product::findOrFail($id);
         $product->update($request->all());
