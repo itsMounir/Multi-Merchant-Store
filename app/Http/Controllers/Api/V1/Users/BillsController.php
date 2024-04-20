@@ -50,11 +50,21 @@ class BillsController extends Controller
     public function oldBills(Request $request)
     {
         $withFee = $request->query('fee');
-        $query = Bill::query()->with('products');
+        $query = Bill::query()->with(['products' => function ($query) {
+            $query->withTrashed(); 
+        }]);
 
         if ($withFee == '1' || $withFee == '0')
             $query->where('has_additional_cost', $withFee);
         $bills = $query->where('status', '!=', 'انتظار')->get();
         return response()->json(['bills' => $bills]);
+    }
+
+    public function show($id)
+    {
+        $bill = Bill::with(['products' => function ($query) {
+            $query->withTrashed();
+        }])->findOrFail($id);
+        return response()->json(['bill' => $bill]);
     }
 }

@@ -36,6 +36,8 @@ class Bill extends Model
 
     protected $casts = [
         'created_at' => 'date:Y-m-d',
+        'deleted_at' => 'date:Y-m-d',
+        'updated_at' => 'date:Y-m-d',
     ];
 
     public function getAdditionalPriceAttribute()
@@ -49,7 +51,7 @@ class Bill extends Model
 
     protected function getpaymentMethodAttribute()
     {
-        return $this->payementMethod()->get(['name']);
+        return $this->paymentMethod()->get(['name']);
     }
 
 

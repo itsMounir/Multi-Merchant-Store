@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\V1\Users;
 
+use App\Models\Supplier;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SupplierProfileRequest extends FormRequest
@@ -22,6 +23,7 @@ class SupplierProfileRequest extends FormRequest
     public function rules(): array
     {
         $user = $this->route('id');
+        
         return [
             'first_name' => ['string', 'required'],
             'middle_name' => ['string', 'required'],

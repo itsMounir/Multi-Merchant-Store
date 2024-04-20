@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('discription');
             $table->integer('size');
             $table->string('size_of');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

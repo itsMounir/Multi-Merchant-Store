@@ -52,8 +52,12 @@ class MarketUserController extends Controller
     public function marketUsers(Request  $request)
     {
         $category = $request->query('category');
-        $marketUsers = Market::where('market_category_id', $category)->orderBy('first_name', 'asc')->get();
-        return response()->json(['Supplier users' => $marketUsers]);
+        if ($category)
+            $marketUsers = Market::where('market_category_id', $category)->orderBy('first_name', 'asc')->get();
+        else {
+            $marketUsers = Market::all();
+        }
+        return response()->json(['Market users' => $marketUsers]);
     }
     /**
      * TO ACTIVATE MARKET USER
