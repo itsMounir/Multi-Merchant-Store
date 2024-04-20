@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Api\V1\Markets\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\Auth\LoginRequest;
+use App\Http\Requests\Api\V1\Markets\Auth\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    public function create(Request $request) {
+    public function create(LoginRequest $request) {
         $credentials = $request->only('phone_number', 'password');
 
         if (! Auth::guard('market')->attempt($credentials)) {
