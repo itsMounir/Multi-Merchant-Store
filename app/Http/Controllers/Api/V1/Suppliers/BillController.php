@@ -4,25 +4,28 @@ namespace App\Http\Controllers\Api\V1\Suppliers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Bill;
-use App\Models\Supplier;
+use App\Models\{
+
+    Bill,
+    Supplier,
+    Market
+
+};
 use App\Traits\Responses;
 use Illuminate\Support\Facades\{
     Auth,
     DB
 };
-use App\Models\Market;
+
 use App\Services\BillsServices;
 class BillController extends Controller
 {
     use Responses;
-    public function index()
+    public function index(Request $request)
     {
         $supplier = Auth::user();
-        if (!$supplier) {
-            return $this->sudResponse('unauthorized',401);
-        }
-        $bills = $supplier->bills()->with(['market', 'products'])->get();
+        $bills = $supplier->bills()->with(['market', 'products'])
+        ->status($request->status)->get();
         return $this->indexOrShowResponse('message',$bills);
     }
 

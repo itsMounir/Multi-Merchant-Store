@@ -41,7 +41,7 @@ class Bill extends Model
     public function getAdditionalPriceAttribute()
     {
         if ($this->has_additional_cost) {
-            return $this->total_price + $this->total_price*1.5/100;
+            return $this->total_price+$this->total_price*1.5/100;
         } else {
             return $this->total_price;
         }
@@ -49,7 +49,7 @@ class Bill extends Model
 
     protected function getpaymentMethodAttribute()
     {
-        return $this->payementMethod()->get(['name']);
+        return $this->PaymentMethod()->get(['name']);
     }
 
 
@@ -59,7 +59,9 @@ class Bill extends Model
     }
 
 
-    public function paymentMethod(): BelongsTo
+
+    public function PaymentMethod(): BelongsTo
+
     {
         return $this->belongsTo(PaymentMethod::class);
     }
@@ -70,6 +72,14 @@ class Bill extends Model
     {
         return $this->belongsTo(Market::class);
 
+    }
+
+    public function scopeStatus($query, $status)
+    {
+        if(!empty($status)){
+        return $query->where('status', $status);
+        }
+        return $query;
     }
 
     }
