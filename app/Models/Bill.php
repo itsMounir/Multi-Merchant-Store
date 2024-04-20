@@ -49,7 +49,7 @@ class Bill extends Model
 
     protected function getpayementMethodAttribute()
     {
-        return $this->payementMethod()->get(['name']);
+        return $this->PaymentMethod()->get(['name']);
     }
 
 
@@ -59,9 +59,9 @@ class Bill extends Model
     }
 
 
-    public function payementMethod(): BelongsTo
+    public function PaymentMethod(): BelongsTo
     {
-        return $this->belongsTo(PayementMethod::class);
+        return $this->belongsTo(PaymentMethod::class);
     }
 
 
