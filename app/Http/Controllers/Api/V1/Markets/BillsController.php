@@ -10,7 +10,7 @@ use App\Http\Requests\Api\V1\Markets\{
 use App\Models\{
     Bill,
     Supplier,
-    PayementMethod
+    PaymentMethod
 };
 use App\Services\BillsServices;
 use Illuminate\Http\Request;
@@ -44,8 +44,8 @@ class BillsController extends Controller
      */
     public function create()
     {
-        $payement_methods = PayementMethod::get(['id', 'name']);
-        return $this->indexOrShowResponse('payement_methods', $payement_methods);
+        $payment_methods = PaymentMethod::get(['id', 'name']);
+        return $this->indexOrShowResponse('payment_methods', $payment_methods);
     }
 
     /**
@@ -102,7 +102,7 @@ class BillsController extends Controller
 
             $bill->update([
                 'total_price' => $total_price,
-                'payement_method_id' => $updated_bill['payement_method_id'] ?? $bill->payement_method_id,
+                'payment_method_id' => $updated_bill['payment_method_id'] ?? $bill->payment_method_id,
                 'supplier_id' => $supplier->id,
                 'market_id' => $market->id,
                 'market_note' => $updated_bill['market_note'] ?? $bill->market_note,

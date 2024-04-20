@@ -22,7 +22,7 @@ return new class extends Migration {
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->foreignId('payement_method_id')
+            $table->foreignId('payment_method_id')
                 ->constrained();
 
             $table->float('total_price');
