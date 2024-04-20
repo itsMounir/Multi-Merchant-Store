@@ -20,7 +20,7 @@ class Bill extends Model
     protected $fillable = [
         'total_price',
         'recieved_price',
-        'payement_method_id',
+        'payment_method_id',
         'status',
         'market_id',
         'supplier_id',
@@ -30,9 +30,24 @@ class Bill extends Model
         'delivery_duration',
     ];
 
-    protected $appends = ['payement_method'];
+    protected $appends = ['payment_method','additional_price'];
 
-    protected function getpayementMethodAttribute()
+    protected $dates = ['created_at'];
+
+    protected $casts = [
+        'created_at' => 'date:Y-m-d',
+    ];
+
+    public function getAdditionalPriceAttribute()
+    {
+        if ($this->has_additional_cost) {
+            return $this->total_price + $this->total_price*1.5/100;
+        } else {
+            return $this->total_price;
+        }
+    }
+
+    protected function getpaymentMethodAttribute()
     {
         return $this->payementMethod()->get(['name']);
     }
@@ -44,9 +59,9 @@ class Bill extends Model
     }
 
 
-    public function payementMethod(): BelongsTo
+    public function paymentMethod(): BelongsTo
     {
-        return $this->belongsTo(PayementMethod::class);
+        return $this->belongsTo(PaymentMethod::class);
     }
 
 

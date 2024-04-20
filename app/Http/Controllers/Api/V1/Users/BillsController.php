@@ -11,7 +11,7 @@ class BillsController extends Controller
 {
     /**
      * To accept or declain bill
-     * @param ID $id  
+     * @param string $id  
      * @param string $status
      * @return JsonResponse 
      */
@@ -29,6 +29,7 @@ class BillsController extends Controller
             $bill->save();
             return $this->sudResponse('order has been declained ', 200);
         }
+        return response()->json(['message'=>'wsomething went wrong... please check _billDecision_'],);
     }
 
     /**

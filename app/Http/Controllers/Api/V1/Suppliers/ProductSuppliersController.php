@@ -39,52 +39,41 @@ class ProductSuppliersController extends Controller
     }
 
 
-    public function store(StoreProductRequest $request)
-    {
-        $supplier = Auth::user();
-        if (!$supplier) {
-            return $this->sudResponse('Unauthorized', 401);
-        }
+    public function store(StoreProductRequest $request){
+
         DB::beginTransaction();
         try {
-            foreach ($request['products'] as $product) {
-                $supplier->products()->syncWithoutDetaching([
-                    $product['id'] => ['price' => $product['price'],'min_selling_quantity'=>$product['min_selling_quantity']]
-                ]);
-            }
+            $supplier = Auth::user();
+            $hasOffer = filter_var($request->has_offer, FILTER_VALIDATE_BOOLEAN);
+
+            $productData = [
+                'price' => $request->price,
+                'max_selling_quantity' => $request->max_selling_quantity,
+                'has_offer' => $hasOffer,
+                'offer_price' => $hasOffer ? $request->offer_price : null,
+                'max_offer_quantity' => $hasOffer ? $request->max_offer_quantity : null,
+                'offer_expires_at' => $hasOffer ? $request->offer_expires_at : null,
+            ];
+
+            $supplier->productSuppliers()->updateOrCreate([
+                'supplier_id' => $supplier->id,
+                'product_id' => $request->product_id,
+            ], $productData);
+
             DB::commit();
-            return $this->sudResponse('Products have been added successfully');
+            return $this->sudResponse('Product has been added.');
         } catch (Exception $e) {
             DB::rollBack();
-            return $this->sudResponse('An error occurred', 500);
+
+            return $this->sudResponse('An error occurred while adding the product.');
         }
-    }
+}
 
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Supplier $supplier)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Supplier $supplier)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdatePriceRequest $request, $product_id)
     {
         $supplier = Auth::user();
-
-
         if (!$supplier) {
             return $this->sudResponse('Unauthorized', 401);
         }
@@ -124,5 +113,29 @@ class ProductSuppliersController extends Controller
         $supplier->products()->detach($product_id);
         return $this->sudResponse('The product has been deleted');
 
+    }
+
+
+
+    public function is_available(Request $request, $product_id)
+    {
+        $supplier = Auth::user();
+        $product = ProductSupplier::where('id', $product_id)->first();
+
+            $product->update([
+                'is_available' => $request->is_available,
+            ]);
+
+            return $this->sudResponse('Done');
+
+    }
+
+
+    public function get_product_available(){
+        $supplier=Auth::user();
+        $product=$supplier->productSuppliers()
+        ->where('is_available',1)
+        ->get();
+        return $this->indexOrShowResponse('message',$product);
     }
 }

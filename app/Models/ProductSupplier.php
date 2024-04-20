@@ -29,6 +29,13 @@ class ProductSupplier extends Model
         'offer_expires_at',
     ];
 
+
+    protected $dates = ['created_at'];
+
+    protected $casts = [
+        'created_at' => 'date:Y-m-d',
+    ];
+
     // public function bills() : BelongsToMany {
     //     return $this->belongsToMany(Bill::class);
     // }

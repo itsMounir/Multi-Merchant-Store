@@ -22,9 +22,14 @@ class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'products' => 'required|array',
-            'products.*.id' => 'required|integer|exists:products,id',
-            'products.*.price' => 'required|numeric|min:0'
+        'product_id' => 'required',
+        'price' => 'required|numeric',
+        'max_selling_quantity' => 'required|numeric',
+        'has_offer' => 'nullable',
+        'offer_price' => 'required_if:has_offer,1|nullable|numeric',
+        'max_offer_quantity' => 'required_if:has_offer,1|nullable|numeric',
+        'offer_expires_at' => 'required_if:has_offer,1|nullable|date'
+
         ];
     }
 }

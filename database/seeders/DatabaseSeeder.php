@@ -5,11 +5,13 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\{
+    Bill,
+    BillProduct,
     Market,
     ProductCategory,
     MarketCategory,
     Product,
-    PayementMethod,
+    PaymentMethod,
     SupplierCategory,
     Supplier,
 };
@@ -21,11 +23,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        PayementMethod::create([
+        PaymentMethod::create([
             'name' => 'كاش'
         ]);
 
-        PayementMethod::create([
+        PaymentMethod::create([
             'name' => 'بطاقة'
         ]);
 
@@ -47,9 +49,11 @@ class DatabaseSeeder extends Seeder
         MarketCategory::create([
             'name' => 'market category',
         ]);
-        Product::factory(20)->create();
         Market::factory(10)->create();
         Supplier::factory(10)->create();
+        Product::factory(20)->create();
+        Bill::factory(50)->create();
+        BillProduct::factory(100)->create();
         // \App\Models\User::factory(10)->create();
     }
 }

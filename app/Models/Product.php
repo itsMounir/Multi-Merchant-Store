@@ -23,6 +23,13 @@ class Product extends Model
         'category_id',
     ];
 
+
+    protected $dates = ['created_at'];
+
+    protected $casts = [
+        'created_at' => 'date:Y-m-d',
+    ];
+
     //protected $appends = ['category'];
 
     // public function getCategoryAttribute() {

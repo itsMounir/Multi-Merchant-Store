@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Scopes\ActiveScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\{Model, Builder};
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +12,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Traits\HasPermissions;
 
 
@@ -31,14 +31,16 @@ class Supplier extends Authenticatable
         'last_name',
         'phone_number',
         'password',
-        'discount_code',
-        'discount_by_code',
         'store_name',
         'status',
         'supplier_category_id',
+        'delivery_duration',
         'min_bill_price',
         'min_selling_quantity',
     ];
+
+    protected $dates = ['created_at'];
+
 
     protected $guard = ['supplier'];
 
@@ -59,6 +61,7 @@ class Supplier extends Authenticatable
      */
     protected $casts = [
         'password' => 'hashed',
+        'created_at' => 'date:Y-m-d',
     ];
 
     /**
@@ -102,7 +105,7 @@ class Supplier extends Authenticatable
                 'offer_price',
                 'max_offer_quantity',
                 'offer_expires_at',
-                'delivery_duration',
+                'max_selling_quantity'
             );
 
 
@@ -123,6 +126,17 @@ class Supplier extends Authenticatable
     public function goals(): HasMany
     {
         return $this->hasMany(Goal::class);
+    }
+
+    public function deliveredProductPrice($startDate, $endDate)
+    {
+        return $this->bills()
+            ->where('status', 'تم التوصيل')
+            ->whereBetween('bills.created_at', [$startDate, $endDate])
+            ->join('bill_product', 'bills.id', '=', 'bill_product.bill_id')
+            ->join('product_supplier', 'bill_product.product_id', '=', 'product_supplier.product_id')
+            ->where('product_supplier.supplier_id', $this->id)
+            ->sum(DB::raw('product_supplier.price * bill_product.quantity'));
     }
 
 }
