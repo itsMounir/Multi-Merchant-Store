@@ -22,14 +22,6 @@ class Supplier extends Authenticatable
     use HasFactory, HasApiTokens, Notifiable, HasPermissions;
 
     /**
-     * The "booted" method of the model.
-     */
-    protected static function booted(): void
-    {
-        static::addGlobalScope(new ActiveScope);
-    }
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -114,7 +106,7 @@ class Supplier extends Authenticatable
                 'offer_price',
                 'max_offer_quantity',
                 'offer_expires_at',
-                'delivery_duration',
+                'max_selling_quantity'
             );
 
 
