@@ -6,10 +6,14 @@ use App\Http\Controllers\Api\V1\Markets\{
     ProductsController,
     BillsController,
     GoalsController,
-    MarketsController
+    MarketsController,
+    CategoriesController
 };
 
 Route::prefix('markets/')->middleware(['auth:sanctum', 'active', 'type.market'])->group(function () {
+
+    // Route for show suppliers categories
+    Route::get('supplier-categories',[CategoriesController::class,'index']);
 
     // Routes for Suppliers-related actions
     Route::apiResource('suppliers', SuppliersController::class)->only(['index', 'show']);

@@ -84,14 +84,15 @@ class BillsServices
             foreach ($supplier_products as $supplier_product) {
 
                 if ($product['id'] == $supplier_product['id']) {
+
                     $price = $supplier_product['pivot']['price'];
-                    $quantity = $product['quantity'];
+                    $quantity = $product['quantity']; // quantity requested
+                    if ($quantity > $supplier_product['pivot']['max_selling_quantity']) {
+                        throw new IncorrectBillException('Products count : ' . $quantity . ' of this bill is more than ' . $supplier->store_name . ' store maximum number of products : ' . $supplier_product['pivot']['max_selling_quantity'] . ' .');
+                    }
+
 
                     if ($supplier_product['pivot']['has_offer']) {
-
-                        // if ($product['quantity'] > $supplier_product['pivot']['max_offer_quantity']) {
-                        //     throw new IncorrectBillException('Products number of this bill : ' . $product['quantity'] . ' is more than the max offer quantity : ' . $supplier_product['pivot']['max_offer_quantity'] . ' .');
-                        // }
                         // calculate the total price of products taken in the offer
                         $total_price = min(
                             $supplier_product['pivot']['max_offer_quantity'],
@@ -103,7 +104,7 @@ class BillsServices
                     }
 
                     if ($quantity > 0) {
-                        $total_price += $price * $quantity;
+                        $total_price += $price * $quantity; // in case requested quantity is more than offer quantity
                     }
                     $exist = true;
                     break;
