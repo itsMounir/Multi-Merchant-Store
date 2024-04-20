@@ -39,6 +39,7 @@ class Supplier extends Authenticatable
         'supplier_category_id',
         'min_bill_price',
         'min_selling_quantity',
+        'delivery_duration',
     ];
 
     protected $dates = ['created_at'];
@@ -107,7 +108,7 @@ class Supplier extends Authenticatable
                 'offer_price',
                 'max_offer_quantity',
                 'offer_expires_at',
-                'delivery_duration',
+                
             );
 
 

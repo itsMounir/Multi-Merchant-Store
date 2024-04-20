@@ -86,45 +86,45 @@ class BillsController extends Controller
      * Update the specified resource in storage.
      */
     public function update(UpdateBillRequest $request, Bill $bill)
-    {
-        return DB::transaction(function () use ($request, $bill) {
-            $bill->products()->detach();
-            $updated_bill = $request->all();
-            $billService = new BillsServices;
-            $market = Auth::user();
-            $supplier = Supplier::find($request->supplier_id);
+{
+    return DB::transaction(function () use ($request, $bill) {
+        $bill->products()->detach();
+        $updated_bill = $request->all();
+        $billService = new BillsServices;
+        $supplier = Auth::user(); // المورد هو المستخدم الحالي
+        $market = Market::find($request->market_id); // البحث عن الماركت بدلاً من المورد
 
-            $total_price = $billService->calculatePrice($updated_bill, $supplier);
+        $total_price = $billService->calculatePrice($updated_bill, $market);
 
-            $billService->checkSupplierRequirements($supplier, $updated_bill, $total_price);
+        //$billService->checkSupplierRequirements($supplier, $updated_bill, $total_price);
 
-            $total_price -= $billService->supplierDiscount($supplier, $total_price);
+        //$total_price -= $billService->supplierDiscount($supplier, $total_price);
 
-            $bill->update([
-                'total_price' => $total_price,
-                'payement_method_id' => $updated_bill['payement_method_id'] ?? $bill->payement_method_id,
-                'supplier_id' => $supplier->id,
-                'market_id' => $market->id,
-                'market_note' => $updated_bill['market_note'] ?? $bill->market_note,
+        $bill->update([
+            'total_price' => $total_price,
+            'payment_method_id' => $updated_bill['payment_method_id'] ?? $bill->payment_method_id,
+            'supplier_id' => $supplier->id, // تأكد من أن الفاتورة تابعة للمورد الحالي
+            'market_id' => $market->id,
+            'supplier_note' => $updated_bill['supplier_note'] ?? $bill->supplier_note, // تغيير الملاحظة لتكون ملاحظة المورد
+        ]);
+
+        foreach ($updated_bill['products'] as $item) {
+            $bill->products()->syncWithoutDetaching([
+                $item['id'] => [
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'], // قد ترغب في تحديث السعر أيضًا
+                    'created_at' => $bill->created_at,
+                    'updated_at' => now(),
+                ],
             ]);
+        }
 
-            foreach ($updated_bill['products'] as $item) {
-                $bill->products()->syncWithoutDetaching([
-                    $item['id'] => [
-                        'quantity' => $item['quantity'],
-                        'created_at' => $bill->created_at,
-                        'updated_at' => now(),
-                    ],
-                ]);
-            }
+        $bill->save();
 
+        return $this->sudResponse('Bill Updated Successfully', 200); // تأكد من إرجاع رمز الحالة المناسب
+    });
+}
 
-            $bill->save();
-
-            return $this->sudResponse('Bill Updated Successfully');
-        });
-
-    }
 
     /**
      * Remove the specified resource from storage.

@@ -49,7 +49,7 @@ class Bill extends Model
 
     protected function getpayementMethodAttribute()
     {
-        return $this->PaymentMethod()->get(['name']);
+        //return $this->PaymentMethod()->get(['name']);
     }
 
 

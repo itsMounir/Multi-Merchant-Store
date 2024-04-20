@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Traits\Responses;
 use App\Http\Requests\Api\V1\Suppliers\{
     StoreProductRequest,
-    UpdatePriceRequest
+    UpdatePriceRequest,
+    AddOfferRequest
 };
 use Illuminate\Support\Facades\DB;
 class ProductSuppliersController extends Controller
@@ -131,11 +132,26 @@ class ProductSuppliersController extends Controller
     }
 
 
-    public function get_product_available(){
+    public function get_product_available_or_Not_available($id){
         $supplier=Auth::user();
         $product=$supplier->productSuppliers()
-        ->where('is_available',1)
+        ->where('is_available',$id)
         ->get();
         return $this->indexOrShowResponse('message',$product);
+    }
+
+    public function offer(AddOfferRequest $request ,$product_id){
+        $supplier=Auth::user();
+        $product=$supplier->products()
+        ->where('product_id',$product_id)
+        ->first();
+        $product->update([
+            'has_offer'=>$request->has_offer,
+            'offer_price'=>$request->offer_price,
+            'max_offer_quantity'=>$request->max_offer_quantity,
+            'offer_expires_at'=>$request->offer_expires_at
+        ]);
+        return $this->sudResponse('Done');
+
     }
 }

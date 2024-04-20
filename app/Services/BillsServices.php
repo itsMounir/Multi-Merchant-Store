@@ -77,6 +77,7 @@ class BillsServices
     public function calculatePrice($bill, $supplier): float
     {
 
+
         $total_price = 0.0;
         $supplier_products = $supplier->products->toArray();
         foreach ($bill['products'] as $product) {
@@ -89,10 +90,6 @@ class BillsServices
 
                     if ($supplier_product['pivot']['has_offer']) {
 
-                        // if ($product['quantity'] > $supplier_product['pivot']['max_offer_quantity']) {
-                        //     throw new IncorrectBillException('Products number of this bill : ' . $product['quantity'] . ' is more than the max offer quantity : ' . $supplier_product['pivot']['max_offer_quantity'] . ' .');
-                        // }
-                        // calculate the total price of products taken in the offer
                         $total_price = min(
                             $supplier_product['pivot']['max_offer_quantity'],
                             $quantity

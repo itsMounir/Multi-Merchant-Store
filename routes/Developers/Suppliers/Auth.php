@@ -27,10 +27,10 @@ Route::middleware(['auth:sanctum', 'type.supplier'])->group(function () {
     });
 
     Route::apiResource('suppliers',ProductSuppliersController::class);
+    Route::post('update/price/{id}',[ProductSuppliersController::class,'update']);
     Route::get('product',[SupplierContoller::class,'index']);
-    Route::post('price/{id}',[ProductSuppliersController::class,'update']);
     Route::get('bill',[BillController::class,'index']);
-    Route::post('update/{id}',[BillController::class,'update']);
+    Route::post('update/{bill}',[BillController::class,'update']);
     Route::post('reject/{id}',[BillController::class,'reject']);
     Route::post('accept/{id}',[BillController::class,'accept']);
     Route::post('recive/{id}',[BillController::class,'recive']);
@@ -39,7 +39,8 @@ Route::middleware(['auth:sanctum', 'type.supplier'])->group(function () {
     Route::get('market',[ReportController::class,'getMarketsCount']);
     Route::get('avg',[ReportController::class,'getAverageBillPrice']);
     Route::get('price/product/delivery',[ReportController::class,'getDeliveredProductPrice']);
-    Route::get('available',[ProductSuppliersController::class,'get_product_available']);
+    Route::get('available/{id}',[ProductSuppliersController::class,'get_product_available_or_Not_available']);
     Route::get('personal/data',[SupplierContoller::class,'Personal_Data']);
+    Route::post('offer/{id}',[ProductSuppliersController::class,'offer']);
 
 });
