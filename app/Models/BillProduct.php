@@ -15,4 +15,13 @@ class BillProduct extends Model
         'product_id',
         'quantity',
     ];
+
+
+    protected $dates = ['created_at'];
+
+    protected $casts = [
+        'created_at' => 'date:Y-m-d',
+    ];
 }
+
+

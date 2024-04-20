@@ -26,8 +26,7 @@ return new class extends Migration
 
             $table->float('price');
             $table->integer('max_selling_quantity');
-            $table->boolean('is_available');
-
+            $table->boolean('is_available')->default(1);
             $table->boolean('has_offer')->default(false);
             $table->float('offer_price')->nullable();
             $table->integer('max_offer_quantity')->nullable();

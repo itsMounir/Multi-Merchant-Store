@@ -6,13 +6,13 @@ use Exception;
 
 class InActiveAccountException extends Exception
 {
-    protected $account;
+    protected $account_name;
 
-    public function __construct($account)
+    public function __construct($account_name)
     {
-        $this->account = $account;
+        $this->account_name = $account_name;
 
-        $this->message = 'This account ' . $this->account . ' is inactive right now.';
+        $this->message = 'This account ' . $this->account_name . ' is inactive right now.';
 
         $this->code = 400;
     }

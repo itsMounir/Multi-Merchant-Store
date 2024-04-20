@@ -38,7 +38,7 @@ class BillController extends Controller
 
         $total_price = $billService->calculatePrice($bill, $market);
 
-        $total_price -= $billService->discounts($market, $total_price);
+        $total_price -= $billService->supplierDiscount($market, $total_price);
 
         $bill->update([
             'total_price' => $total_price,
@@ -57,31 +57,9 @@ class BillController extends Controller
             ]);
         }
 
-        $bill->save();
-
         return $this->sudResponse('Bill Updated Successfully');
     });
 }
-
-
-
-
-    /**
-     * Remove the specified resource from storage.
-     */
-   /* public function destroy(Request $request)
-    {
-
-        $supplier = Auth::user();
-        $bill = $supplier->bills()->where('id', $request->id)->where('status', '=', 'انتظار')->first();
-        if (!$bill) {
-            return $this->sudResponse('Not found', 404);
-        }
-        $bill->rejection_reason=$request->reason;
-        $bill->save();
-        $bill->delete();
-        return $this->sudResponse('Bill has been deleted');
-    }*/
 
 
     public function reject(Request $request,$billId){
@@ -92,19 +70,29 @@ class BillController extends Controller
             'rejection_reason'=>$request->reason,
 
         ]);
-        $bill->save();
-        return $this->sudResponse('bill has been rejected');
+        return $this->sudResponse('Done');
     }
 
-    public function accept($billId){
+    public function accept(Request $request,$billId){
         $supplier=Auth::user();
         $bill=Bill::where('id',$billId)->first();
         $bill->update([
             'status'=>'قيد التحضير',
-
+            'delivery_duration'=>$request->duration,
         ]);
-        $bill->save();
-        return $this->sudResponse('bill has been accepted');
+        return $this->sudResponse('Done');
     }
+
+    public function recive(Request $request,$billId){
+        $supplier=Auth::user();
+        $bill=Bill::where('id',$billId)->first();
+        $bill->update([
+            'status'=>'تم التوصيل',
+            'recieved_price'=>$request->recieved_price,
+        ]);
+        return $this->sudResponse('Done');
+    }
+
+
 
 }

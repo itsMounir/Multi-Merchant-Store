@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Markets;
 
+use App\Exceptions\InActiveAccountException;
 use App\Filters\Markets\ProductsFilters;
 use App\Filters\Markets\SuppliersFilters;
 use App\Http\Controllers\Controller;
@@ -42,9 +43,10 @@ class SuppliersController extends Controller
     public function show(Supplier $supplier,ProductsFilters $productsFilters)
     {
         // dd($supplier->products()->getQuery());
+        throw_if( $supplier->status != 'نشط',new InActiveAccountException($supplier->store_name));
         $products = $productsFilters->applyFilters($supplier->products()->getQuery())->get();
         return response()->json([
-            'supplier' => $supplier->with('goals')->get(),
+            'supplier' => $supplier->with('goals')->first(),
             'products' => $products,
         ]);
     }

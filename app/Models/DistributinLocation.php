@@ -21,6 +21,13 @@ class DistributinLocation extends Model
         'to_site',
     ];
 
+
+    protected $dates = ['created_at'];
+
+    protected $casts = [
+        'created_at' => 'date:Y-m-d',
+    ];
+
     public function supplier() : BelongsTo {
         return $this->belongsTo(Supplier::class);
     }

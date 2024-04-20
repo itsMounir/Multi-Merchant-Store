@@ -6,19 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class MarketCategory extends Model
+class PaymentMethod extends Model
 {
     use HasFactory;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'name',
-    ];
-
 
     protected $dates = ['created_at'];
 
@@ -26,8 +16,7 @@ class MarketCategory extends Model
         'created_at' => 'date:Y-m-d',
     ];
 
-    public function markets(): HasMany
-    {
-        return $this->hasMany(Market::class, 'market_category_id');
+    public function bills() : HasMany {
+        return $this->hasMany(Bill::class);
     }
 }

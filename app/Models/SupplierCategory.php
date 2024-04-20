@@ -13,6 +13,12 @@ class SupplierCategory extends Model
         'type',
     ];
 
+    protected $dates = ['created_at'];
+
+    protected $casts = [
+        'created_at' => 'date:Y-m-d',
+    ];
+
     public function suppliers() : HasMany {
         return $this->hasMany(Supplier::class);
     }
