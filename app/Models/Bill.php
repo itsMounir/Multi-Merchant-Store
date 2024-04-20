@@ -41,7 +41,7 @@ class Bill extends Model
     public function getAdditionalPriceAttribute()
     {
         if ($this->has_additional_cost) {
-            return $this->(total_price +1.5)/100;
+            return $this->total_price*0.015+$this->total_price;
         } else {
             return $this->total_price;
         }
@@ -70,6 +70,14 @@ class Bill extends Model
     {
         return $this->belongsTo(Market::class);
 
+    }
+
+    public function scopeStatus($query, $status)
+    {
+        if(!empty($status)){
+        return $query->where('status', $status);
+        }
+        return $query;
     }
 
     }
