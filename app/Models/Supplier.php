@@ -74,6 +74,12 @@ class Supplier extends Authenticatable
         });
     }
 
+    public function isActive(): bool
+    {
+        return ($this->status == 'نشط');
+    }
+
+
     public static function scopeActive(Builder $query): void
     {
         $query->where('status', 'نشط');
