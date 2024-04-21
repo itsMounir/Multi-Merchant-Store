@@ -12,6 +12,7 @@ use App\Models\{
     Supplier
 };
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class BillsServices
 {
@@ -50,6 +51,11 @@ class BillsServices
                 ],
             ]);
         }
+
+        // send a notification to the admin with the new bill.
+        // DB::afterCommit(function () {
+
+        // });
 
     }
 
