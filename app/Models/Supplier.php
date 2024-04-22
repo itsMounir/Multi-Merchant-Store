@@ -93,7 +93,7 @@ class Supplier extends Authenticatable
 
     public function distributionLocations(): HasMany
     {
-        return $this->hasMany(DistributinLocation::class);
+        return $this->hasMany(DistributionLocation::class);
     }
 
     public function bills(): HasMany
