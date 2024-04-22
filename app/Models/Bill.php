@@ -30,18 +30,20 @@ class Bill extends Model
         'delivery_duration',
     ];
 
-    protected $appends = ['payment_method','additional_price'];
+    protected $appends = ['additional_price', 'payment_method'];
 
     protected $dates = ['created_at'];
 
     protected $casts = [
         'created_at' => 'date:Y-m-d',
+        'deleted_at' => 'date:Y-m-d',
+        'updated_at' => 'date:Y-m-d',
     ];
 
     public function getAdditionalPriceAttribute()
     {
         if ($this->has_additional_cost) {
-            return $this->total_price+$this->total_price*1.5/100;
+            return $this->total_price + $this->total_price*1.5/100;
         } else {
             return $this->total_price;
         }
@@ -49,13 +51,13 @@ class Bill extends Model
 
     protected function getpaymentMethodAttribute()
     {
-        return $this->PaymentMethod()->get(['name']);
+        return $this->payementMethod()->get(['name']);
     }
 
 
-    public function products() : BelongsToMany {
+    public function products(): BelongsToMany
+    {
         return $this->belongsToMany(Product::class);
-
     }
 
 
@@ -67,19 +69,14 @@ class Bill extends Model
     }
 
 
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
+    }
 
     public function market()
     {
         return $this->belongsTo(Market::class);
-
-    }
-
-    public function scopeStatus($query, $status)
-    {
-        if(!empty($status)){
-        return $query->where('status', $status);
-        }
-        return $query;
     }
 
     }

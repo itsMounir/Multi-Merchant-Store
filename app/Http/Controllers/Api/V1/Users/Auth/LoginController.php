@@ -3,20 +3,20 @@
 namespace App\Http\Controllers\Api\V1\Users\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\Auth\LoginRequest;
-use Illuminate\Http\Request;
+use App\Http\Requests\Api\V1\users\Auth\LoginRequest;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    public function create(Request $request) {
-        $credentials = $request->only('email', 'password');
+    public function create(LoginRequest $request)
+    {
+        $credentials = $request->only('phone_number', 'password');
 
-        if (! Auth::attempt($credentials)) {
+        if (!Auth::guard('web')->attempt($credentials)) {
 
             return response()->json(['message' => 'your provided credentials cannot be verified.'], 401);
         }
-        $user = Auth::user();
+        $user = Auth::guard('web')->user();
 
         $token = $user->createToken('access_token', ['role:user'])->plainTextToken;
 
@@ -26,7 +26,8 @@ class LoginController extends Controller
         ]);
     }
 
-    public function destroy() {
+    public function destroy()
+    {
         Auth::user()->currentAccessToken()->delete();
 
         return response()->json(['message' => 'Logged out successfully.']);

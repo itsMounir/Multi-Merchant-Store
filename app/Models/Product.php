@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -19,12 +21,12 @@ class Product extends Model
     protected $fillable = [
         'name',
         'size',
+        'size_of',
         'discription',
-        'category_id',
+        'product_category_id',
     ];
 
-
-    protected $dates = ['created_at'];
+    protected $dates = ['created_at', 'deleted_at'];
 
     protected $casts = [
         'created_at' => 'date:Y-m-d',
@@ -46,11 +48,10 @@ class Product extends Model
                 'max_offer_quantity',
                 'offer_expires_at',
             );
-
     }
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(ProductCategory::class);
+        return $this->belongsTo(ProductCategory::class,'product_category_id');
     }
 }

@@ -5,11 +5,6 @@ use App\Http\Controllers\Api\V1\Markets\Auth\{
     RegisterController,
     VerificationController
 };
-use App\Http\Controllers\Api\V1\Markets\{
-    SuppliersController,
-    ProductsController,
-    BillsController
-};
 
 Route::prefix('markets/')->group(function () {
     // auth routes
