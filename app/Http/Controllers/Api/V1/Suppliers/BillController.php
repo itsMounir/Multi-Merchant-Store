@@ -48,8 +48,7 @@ class BillController extends Controller
 
         return DB::transaction(function () use ($request, $bill) {
             if ($bill->status != 'جديد') {
-        $total_price -= $billService->supplierDiscount($market, $total_price);
-                return $this->sudResponse('you can update bills whose status is New',403);
+                return $this->sudResponse('you can not update bills whose status is New',403);
             }
             $bill->products()->detach();
             $updated_bill = $request->all();
