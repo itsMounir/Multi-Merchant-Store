@@ -14,9 +14,19 @@ class City extends Model
         'parent_id'
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
     public function parent()
     {
         return $this->belongsTo(City::class, 'parent_id');
+    }
+
+    public function childrens() {
+        return $this->hasMany(City::class,'parent_id')
+        ->with(['childrens']);
     }
 
     public function distributionLocationsFrom()
