@@ -26,12 +26,7 @@ class Product extends Model
         'product_category_id',
     ];
 
-
-    protected $dates = ['created_at','deleted_at'];
-
-    protected $casts = [
-        'created_at' => 'date:Y-m-d',
-    ];
+    protected $dates = ['created_at', 'deleted_at'];
 
     //protected $appends = ['category'];
 
@@ -43,6 +38,7 @@ class Product extends Model
     {
         return $this->belongsToMany(Supplier::class, 'product_supplier')
             ->withPivot(
+                'name',
                 'price',
                 'has_offer',
                 'offer_price',
@@ -53,6 +49,6 @@ class Product extends Model
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(ProductCategory::class);
+        return $this->belongsTo(ProductCategory::class,'product_category_id');
     }
 }

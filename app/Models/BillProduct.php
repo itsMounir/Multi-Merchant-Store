@@ -19,9 +19,9 @@ class BillProduct extends Model
 
     protected $dates = ['created_at'];
 
-    protected $casts = [
+   /* protected $casts = [
         'created_at' => 'date:Y-m-d',
-    ];
+    ];*/
 }
 
 

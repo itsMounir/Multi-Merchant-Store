@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('supplier_categories', function (Blueprint $table) {
             $table->id();
-            $table->enum('type',['مورد','شركات','توريدات']);
+            $table->enum('type',['مورد','شركات','توريدات'])->unique();
             $table->timestamps();
         });
     }

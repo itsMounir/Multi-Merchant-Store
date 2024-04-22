@@ -75,7 +75,7 @@ class Market extends Authenticatable
             ->get(['imageable_type', 'url'])
             ->map(function ($image) {
                 $dir = explode('\\', $image->imageable_type)[2];
-                unset ($image->imageable_type);
+                unset($image->imageable_type);
                 return asset("public/$dir") . '/' . $image->url;
             });
     }
@@ -105,7 +105,7 @@ class Market extends Authenticatable
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(MarketCategory::class);
+        return $this->belongsTo(MarketCategory::class, 'market_category_id');
     }
 
     public function goals(): BelongsToMany
