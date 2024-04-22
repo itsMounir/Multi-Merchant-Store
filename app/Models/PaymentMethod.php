@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class PaymentMethod extends Model
 {
     use HasFactory;
-    protected $table = 'payement_methods';
+    protected $table = 'payment_methods';
 
     protected $dates = ['created_at'];
 
