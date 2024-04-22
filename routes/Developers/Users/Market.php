@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\V1\Users\MarketUserController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::prefix('users/market')->group(function () {
+Route::prefix('users/market/')->group(function () {
 
     Route::get('get', [MarketUserController::class, 'marketUsers']); // get filtered market users {activated- deactivated - baned}
     Route::post('activate/{id}', [MarketUserController::class, 'activateMarketUser']); // activate market user
