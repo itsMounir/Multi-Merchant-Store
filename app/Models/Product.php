@@ -26,8 +26,7 @@ class Product extends Model
         'product_category_id',
     ];
 
-
-    protected $dates = ['created_at','deleted_at'];
+    protected $dates = ['created_at', 'deleted_at'];
 
     protected $casts = [
         'created_at' => 'date:Y-m-d',
@@ -53,6 +52,6 @@ class Product extends Model
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(ProductCategory::class);
+        return $this->belongsTo(ProductCategory::class,'product_category_id');
     }
 }

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api\v1\Users;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\v1\Users\CategoryRequest;
 use App\Http\Requests\Api\V1\Users\SupplierProfileRequest;
 use App\Models\Supplier;
+use App\Models\SupplierCategory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -88,5 +90,51 @@ class SupplierUserController extends Controller
         $user->status = 'محظور';
         $user->save();
         return response()->json(['message' => 'User has been banned successfully', 'user' => $user], 200);
+    }
+
+
+
+    /**
+     * To get Markets categories
+     * @return JsonResponse
+     */
+    public function getCategories()
+    {
+        $categories = SupplierCategory::all();
+        return response()->json($categories, 200);
+    }
+    /**
+     * To create new category
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function createCategory(CategoryRequest $request)
+    {
+        $category = SupplierCategory::create(['type' => $request->name]);
+        return response()->json($category, 201);
+    }
+
+    /**
+     * To Update category
+     * @param CategoryRequest $request
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function updateCategory(CategoryRequest $request, $id)
+    {
+        $category = SupplierCategory::findOrFail($id);
+        $category->update($request->all());
+        return response()->json($category, 200);
+    }
+    /**
+     * To delete category
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function destroyCategory($id)
+    {
+        $category = SupplierCategory::findOrFail($id);
+        $category->delete();
+        return response()->json(null, 204);
     }
 }

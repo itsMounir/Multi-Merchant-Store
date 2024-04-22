@@ -30,7 +30,7 @@ class Bill extends Model
         'delivery_duration',
     ];
 
-    protected $appends = ['payment_method','additional_price'];
+    protected $appends = ['additional_price', 'payment_method'];
 
     protected $dates = ['created_at'];
 
@@ -43,7 +43,7 @@ class Bill extends Model
     public function getAdditionalPriceAttribute()
     {
         if ($this->has_additional_cost) {
-            return $this->total_price + $this->total_price*1.5/100;
+            return $this->total_price + $this->total_price * 1.5 / 100;
         } else {
             return $this->total_price;
         }
@@ -55,9 +55,9 @@ class Bill extends Model
     }
 
 
-    public function products() : BelongsToMany {
+    public function products(): BelongsToMany
+    {
         return $this->belongsToMany(Product::class);
-
     }
 
 
@@ -67,11 +67,13 @@ class Bill extends Model
     }
 
 
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
+    }
 
     public function market()
     {
         return $this->belongsTo(Market::class);
-
     }
-
-    }
+}
