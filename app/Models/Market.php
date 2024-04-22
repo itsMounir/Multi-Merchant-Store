@@ -28,8 +28,7 @@ class Market extends Authenticatable
         'last_name',
         'phone_number',
         'password',
-        'city',
-        'street',
+        'city_id',
         'market_category_id',
         'representator_code',
         'is_subscribed',
@@ -93,6 +92,10 @@ class Market extends Authenticatable
     public function images()
     {
         return $this->morphMany(Image::class, 'imageable');
+    }
+
+    public function city() : BelongsTo {
+        return $this->belongsTo(City::class);
     }
 
     public function bills(): HasMany

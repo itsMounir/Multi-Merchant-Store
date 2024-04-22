@@ -26,6 +26,21 @@ class Goal extends Model
         'created_at' => 'date:Y-m-d',
     ];*/
 
+    protected $appends = ['images'];
+
+    // images attribute
+    public function getImagesAttribute()
+    {
+        return $this->images()
+            ->get(['imageable_type', 'url'])
+            ->map(function ($image) {
+                $dir = explode('\\', $image->imageable_type)[2];
+                unset ($image->imageable_type);
+                return asset("public/$dir") . '/' . $image->url;
+            });
+    }
+
+
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
@@ -35,4 +50,11 @@ class Goal extends Model
     {
         return $this->belongsToMany(Market::class)->withTimestamps();
     }
+
+    // morphs relation with images table
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+
 }

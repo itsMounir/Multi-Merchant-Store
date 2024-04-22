@@ -15,14 +15,6 @@ use Illuminate\Support\Facades\Auth;
 class SuppliersController extends Controller
 {
     /**
-     * get suppliers categories
-     */
-    public function getCategories(): JsonResponse
-    {
-        $categories = SupplierCategory::get(['id', 'type']);
-        return $this->indexOrShowResponse('supplier_categories', $categories);
-    }
-    /**
      * Display a listing of the resource.
      */
     public function index(SuppliersFilters $suppliersFilters): JsonResponse
@@ -52,11 +44,10 @@ class SuppliersController extends Controller
      */
     public function show(Supplier $supplier, ProductsFilters $productsFilters): JsonResponse
     {
-        // dd($supplier->products()->getQuery());
         throw_if($supplier->status != 'نشط', new InActiveAccountException($supplier->store_name));
         $products = $productsFilters->applyFilters($supplier->products()->getQuery())->get();
         return response()->json([
-            'supplier' => $supplier->with('goals')->first(),
+            'supplier' => $supplier,
             'products' => $products,
         ]);
     }
