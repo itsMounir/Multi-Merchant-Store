@@ -29,6 +29,7 @@ include __DIR__ . '/Developers/Users/Bills.php';
 
 // Supplier Section
 include __DIR__ . '/Developers/Suppliers/Auth.php';
+include __DIR__ . '/Developers/Suppliers/Suppliers.php';
 
 // Market Section
 include __DIR__ . '/Developers/Markets/Auth.php';

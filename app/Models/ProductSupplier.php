@@ -32,9 +32,9 @@ class ProductSupplier extends Model
 
     protected $dates = ['created_at'];
 
-    protected $casts = [
+    /*protected $casts = [
         'created_at' => 'date:Y-m-d',
-    ];
+    ];*/
 
     // public function bills() : BelongsToMany {
     //     return $this->belongsToMany(Bill::class);

@@ -8,10 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class PaymentMethod extends Model
 {
     use HasFactory;
+    protected $table = 'payement_methods';
 
     protected $dates = ['created_at'];
 
-    protected $casts = [
-        'created_at' => 'date:Y-m-d',
-    ];
+   
 }

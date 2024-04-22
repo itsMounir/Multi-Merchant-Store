@@ -30,7 +30,14 @@ class BillController extends Controller
         $supplier = Auth::user();
         $bills = $supplier->bills()->with(['market', 'products'])
         ->status($request->status)->get();
-        return $this->indexOrShowResponse('message',$bills);
+        $Count = $bills->count();
+        $newBillsCount = Bill::newStatusCount();
+        $billsData = [
+            'Count' => $Count,
+            'New_bill_count'=>$newBillsCount,
+            'bills' => $bills
+        ];
+        return $this->indexOrShowResponse('message',$billsData);
     }
 
 
@@ -48,8 +55,6 @@ class BillController extends Controller
             $updated_bill = $request->all();
             $billService = new BillsServices;
             $supplier = Auth::user();
-
-
             $total_price = $billService->calculatePrice($updated_bill, $supplier);
             $total_price -= $billService->supplierDiscount($supplier, $total_price);
 
@@ -92,6 +97,8 @@ class BillController extends Controller
         return $this->sudResponse('Done');
     }
 
+
+
     public function accept(Request $request,$billId){
         $supplier=Auth::user();
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
@@ -105,11 +112,12 @@ class BillController extends Controller
         return $this->sudResponse('Done');
     }
 
+
     public function recive(Request $request,$billId){
         $supplier=Auth::user();
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
         $validatedData = $request->validate([
-        'recieved_price' => 'required|numeric',
+        'recieved_price' => 'nullable|numeric',
         ]);
         $bill->update([
             'status'=>'تم التوصيل',

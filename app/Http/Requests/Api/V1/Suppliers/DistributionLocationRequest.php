@@ -4,7 +4,7 @@ namespace App\Http\Requests\Api\V1\Suppliers;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AddOfferRequest extends FormRequest
+class DistributionLocationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,9 @@ class AddOfferRequest extends FormRequest
     public function rules(): array
     {
         return [
-        'has_offer' => 'required',
-        'offer_price' => 'required_if:has_offer,1|nullable|numeric',
-        'max_offer_quantity' => 'required_if:has_offer,1|nullable|numeric',
-        'offer_expires_at' => 'required_if:has_offer,1|nullable|date'
+            'Distribution.from_site' => 'required|string|max:255',
+            'Distribution.to_sites' => 'required|array',
+            'Distribution.to_sites.*' => 'string|max:255'
         ];
     }
 }

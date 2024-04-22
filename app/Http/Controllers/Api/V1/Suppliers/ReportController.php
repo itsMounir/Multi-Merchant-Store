@@ -24,10 +24,12 @@ class ReportController extends Controller
         $supplier = Auth::user();
         $billCount = $supplier->bills()
             ->where('status', 'تم التوصيل')
-            ->whereBetween('created_at', [$request->start_date, $request->end_date])
+            ->whereDate('created_at', '>=', $request->start_date)
+            ->whereDate('created_at', '<=', $request->end_date)
             ->count();
-        return $this->sudResponse( $billCount);
+        return $this->sudResponse($billCount);
     }
+
 
 
 
@@ -35,7 +37,8 @@ class ReportController extends Controller
     public function getMarketsCount(Request $request){
         $supplier = Auth::user();
         $marketsCount = $supplier->bills()
-            ->whereBetween('created_at', [$request->start_date, $request->end_date])
+        ->whereDate('created_at', '>=', $request->start_date)
+        ->whereDate('created_at', '<=', $request->end_date)
             ->with('market')
             ->get()
             ->unique('market_id')
@@ -48,7 +51,8 @@ class ReportController extends Controller
     public function getAverageBillPrice(Request $request){
         $supplier = Auth::user();
         $averageBillPrice = $supplier->bills()
-            ->whereBetween('created_at', [$request->start_date, $request->end_date])
+        ->whereDate('created_at', '>=', $request->start_date)
+        ->whereDate('created_at', '<=', $request->end_date)
             ->where('status', 'تم التوصيل')
             ->avg('total_price');
         return $this->indexOrShowResponse('message',$averageBillPrice);
@@ -70,7 +74,8 @@ class ReportController extends Controller
         $supplier=Auth::user();
         $billCount = $supplier->bills()
         ->where('status', ['ملغية','رفض الاستلام'])
-        ->whereBetween('created_at', [$request->start_date, $request->end_date])
+        ->whereDate('created_at', '>=', $request->start_date)
+        ->whereDate('created_at', '<=', $request->end_date)
         ->count();
         return $this->sudResponse( $billCount);
     }
@@ -81,7 +86,8 @@ class ReportController extends Controller
         $supplier=Auth::user();
         $billCount=$supplier->bills()
         ->where('status','جديد')
-        ->whereBetween('created_at',[$request->start_date,$request->end_date])
+        ->whereDate('created_at', '>=', $request->start_date)
+        ->whereDate('created_at', '<=', $request->end_date)
         ->count();
         return $this->sudResponse($billCount);
 

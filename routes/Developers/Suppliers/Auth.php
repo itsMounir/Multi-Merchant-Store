@@ -21,26 +21,3 @@ Route::prefix('suppliers/')->group(function () {
 
 
 // supplier section
-Route::middleware(['auth:sanctum', 'type.supplier'])->group(function () {
-    Route::get('shit',function () {
-        return response()->json('shit');
-    });
-
-    Route::apiResource('suppliers',ProductSuppliersController::class);
-    Route::post('update/price/{id}',[ProductSuppliersController::class,'update']);
-    Route::get('product',[SupplierContoller::class,'index']);
-    Route::get('bill',[BillController::class,'index']);
-    Route::post('update/{bill}',[BillController::class,'update']);
-    Route::post('reject/{id}',[BillController::class,'reject']);
-    Route::post('accept/{id}',[BillController::class,'accept']);
-    Route::post('recive/{id}',[BillController::class,'recive']);
-    Route::post('is_available/{id}',[ProductSuppliersController::class,'is_available']);
-    Route::get('Bill_Recived',[ReportController::class,'Paid_Bill']);
-    Route::get('market',[ReportController::class,'getMarketsCount']);
-    Route::get('avg',[ReportController::class,'getAverageBillPrice']);
-    Route::get('price/product/delivery',[ReportController::class,'getDeliveredProductPrice']);
-    Route::get('available/{id}',[ProductSuppliersController::class,'get_product_available_or_Not_available']);
-    Route::get('personal/data',[SupplierContoller::class,'Personal_Data']);
-    Route::post('offer/{id}',[ProductSuppliersController::class,'offer']);
-
-});

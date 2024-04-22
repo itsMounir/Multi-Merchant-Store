@@ -34,9 +34,9 @@ class Bill extends Model
 
     protected $dates = ['created_at'];
 
-    protected $casts = [
+   /* protected $casts = [
         'created_at' => 'date:Y-m-d',
-    ];
+    ];*/
 
     public function getAdditionalPriceAttribute()
     {
@@ -49,8 +49,9 @@ class Bill extends Model
 
     protected function getpayementMethodAttribute()
     {
-        //return $this->PaymentMethod()->get(['name']);
+        return $this->PaymentMethod()->get('name');
     }
+
 
 
     public function products() : BelongsToMany {
@@ -61,7 +62,7 @@ class Bill extends Model
 
     public function PaymentMethod(): BelongsTo
     {
-        return $this->belongsTo(PaymentMethod::class);
+        return $this->belongsTo(PaymentMethod::class,'payement_method_id');
     }
 
 
@@ -80,4 +81,9 @@ class Bill extends Model
         return $query;
     }
 
+    public function scopeNewStatusCount($query)
+    {
+        return $query->where('status', 'جديد')->count();
     }
+
+}

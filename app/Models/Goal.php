@@ -22,9 +22,9 @@ class Goal extends Model
 
     protected $dates = ['created_at'];
 
-    protected $casts = [
+   /* protected $casts = [
         'created_at' => 'date:Y-m-d',
-    ];
+    ];*/
 
     public function supplier(): BelongsTo
     {
