@@ -12,6 +12,12 @@ class BillsFilters extends BaseFilter
 {
     public function status(Builder $query): Builder
     {
-        return $query->where('status', $this->request->input('status'));
+        if ($this->request->input('status') == 'حالية') {
+            return $query->where('status', 'انتظار')->orWhere('status','جديد')->orWhere('status','قيد التحضير');
+        }
+        elseif ($this->request->input('status') == 'سابقة'){
+            return $query->where('status', 'ملغية')->orWhere('status','تم التوصيل')->orWhere('status','رفض الاستلام');
+        }
+        return $query;
     }
 }

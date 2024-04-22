@@ -39,7 +39,7 @@ class BillPolicy
      */
     public function update(Market $market, Bill $bill): bool
     {
-        return ($bill->status == 'انتظار') && ($market->id == $bill->market_id);
+        return ($bill->isUpdatable()) && ($market->id == $bill->market_id);
     }
 
     /**
@@ -47,7 +47,7 @@ class BillPolicy
      */
     public function delete(Market $market, Bill $bill): bool
     {
-        return ($bill->status == 'انتظار') && ($market->id == $bill->market_id);
+        return ($bill->isUpdatable()) && ($market->id == $bill->market_id);
     }
 
     // /**

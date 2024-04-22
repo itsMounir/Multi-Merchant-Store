@@ -32,33 +32,3 @@ return new class extends Migration
         Schema::dropIfExists('users');
     }
 };
-
-
-/** Schema::create('goals', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('supplier_id')
-                ->constrained()
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-
-            $table->string('starting_date');
-            $table->string('expiring_date');
-            $table->float('min_price');
-            $table->float('discount_price');
-            $table->timestamps();
-        });*/
-
-        /**Schema::create('goal_market', function (Blueprint $table) {
-
-            $table->foreignId('goal_id')
-                ->constrained()
-                ->cascadeOnUpdate();
-
-            $table->foreignId('market_id')
-                ->constrained()
-                ->cascadeOnUpdate();
-
-            $table->primary(['goal_id','market_id']);
-            $table->timestamps();
-        }); */

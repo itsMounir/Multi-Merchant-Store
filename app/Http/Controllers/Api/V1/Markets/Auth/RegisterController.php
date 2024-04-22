@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Markets\Auth;
 use App\Http\Requests\Api\V1\Markets\Auth\RegisterRequest;
+use App\Models\City;
 use App\Models\Market;
 use App\Models\MarketCategory;
 use App\Notifications\verfication_code;
@@ -16,8 +17,12 @@ class RegisterController extends Controller
 {
     use Images;
     public function create(Request $request) {
+        $cities = City::whereNull('parent_id')->with('childrens')->get();
         $categories = MarketCategory::get(['id','name']);
-        return $this->indexOrShowResponse('categories',$categories);
+        return response()->json([
+            'market_categories' => $categories,
+            'cities' => $cities
+        ]);
     }
 
     public function store(RegisterRequest $request) {
@@ -33,7 +38,6 @@ class RegisterController extends Controller
 
             $market->images()->create(['url' => $image]);
             $this->saveImages([$request_image], [$image], 'Markets');
-
 
             $token = $market->createToken('access_token', ['role:market'])->plainTextToken;
 

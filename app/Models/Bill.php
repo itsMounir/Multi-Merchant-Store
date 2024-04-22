@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,19 +31,26 @@ class Bill extends Model
         'delivery_duration',
     ];
 
-    protected $appends = ['additional_price', 'payment_method'];
+    protected $appends = ['created_from','payment_method','additional_price'];
 
     protected $dates = ['created_at'];
 
-   /* protected $casts = [
-        'created_at' => 'date:Y-m-d',
+    // created from attribute
+    public function getCreatedFromAttribute()
+    {
+        return $this->created_at->diffForHumans();
+    }
 
-        'deleted_at' => 'date:Y-m-d',
-        'updated_at' => 'date:Y-m-d',
-    ];
+    public function isUpdatable()
+    {
+        $created_at_datetime = Carbon::parse($this->created_at);
 
-    ];*/
+        $expiration_time = $created_at_datetime->addMinutes(10);
 
+        $current_time = Carbon::now();
+
+        return $current_time->lt($expiration_time);
+    }
 
     public function getAdditionalPriceAttribute()
     {

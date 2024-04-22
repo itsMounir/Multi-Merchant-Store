@@ -18,18 +18,21 @@ return new class extends Migration {
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
+            $table->foreignId('city_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
             $table->string('first_name');
             $table->string('middle_name');
             $table->string('last_name');
             $table->string('store_name');
             $table->string('phone_number')->unique();
             $table->string('password');
-            $table->string('city');
-            $table->string('street');
             $table->string('representator_code')->nullable();
             $table->boolean('is_subscribed')->default(true);
             $table->date('subscription_expires_at');
-            $table->enum('status',['نشط','محظور','غير نشط'])->default('غير نشط');
+            $table->enum('status', ['نشط', 'محظور', 'غير نشط'])->default('غير نشط');
             $table->timestamps();
         });
     }

@@ -93,7 +93,7 @@ class Supplier extends Authenticatable
 
     public function distributionLocations(): HasMany
     {
-        return $this->hasMany(DistributionLocation::class,'supplier_id');
+        return $this->hasMany(DistributionLocation::class);
     }
 
     public function bills(): HasMany
@@ -132,6 +132,12 @@ class Supplier extends Authenticatable
         return $this->hasMany(Goal::class);
     }
 
+    // morphs relation with images table
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+
     public function deliveredProductPrice($startDate, $endDate)
     {
         return $this->bills()
@@ -144,17 +150,8 @@ class Supplier extends Authenticatable
             ->sum(DB::raw('product_supplier.price * bill_product.quantity'));
     }
 
-
     public function category()
     {
         return $this->belongsTo(SupplierCategory::class, 'supplier_category_id');
     }
-
-    public function isActive(): bool
-    {
-        return ($this->status == 'نشط');
-    }
-
-
-
 }
