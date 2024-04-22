@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class DistributinLocation extends Model
+class DistributionLocation extends Model
 {
     use HasFactory;
+    protected $table = 'distribution_locations';
 
     /**
      * The attributes that are mass assignable.
@@ -24,9 +25,9 @@ class DistributinLocation extends Model
 
     protected $dates = ['created_at'];
 
-    protected $casts = [
+    /*protected $casts = [
         'created_at' => 'date:Y-m-d',
-    ];
+    ];*/
 
     public function supplier() : BelongsTo {
         return $this->belongsTo(Supplier::class);

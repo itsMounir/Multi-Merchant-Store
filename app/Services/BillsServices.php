@@ -83,6 +83,7 @@ class BillsServices
     public function calculatePrice($bill, $supplier): float
     {
 
+
         $total_price = 0.0;
         $supplier_products = $supplier->products->toArray();
         foreach ($bill['products'] as $product) {
@@ -99,7 +100,9 @@ class BillsServices
 
 
                     if ($supplier_product['pivot']['has_offer']) {
+
                         // calculate the total price of products taken in the offer
+
                         $total_price = min(
                             $supplier_product['pivot']['max_offer_quantity'],
                             $quantity

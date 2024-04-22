@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('distributin_locations', function (Blueprint $table) {
+        Schema::create('distribution_locations', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('supplier_id')
@@ -19,8 +19,8 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->string('from_site');
-            $table->string('to_site');
+            $table->string('from_site')->nullable();
+            $table->string('to_site')->nullable();
             $table->timestamps();
         });
     }

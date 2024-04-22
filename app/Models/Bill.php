@@ -34,11 +34,15 @@ class Bill extends Model
 
     protected $dates = ['created_at'];
 
-    protected $casts = [
+   /* protected $casts = [
         'created_at' => 'date:Y-m-d',
+
         'deleted_at' => 'date:Y-m-d',
         'updated_at' => 'date:Y-m-d',
     ];
+
+    ];*/
+
 
     public function getAdditionalPriceAttribute()
     {
@@ -51,12 +55,13 @@ class Bill extends Model
 
     protected function getpaymentMethodAttribute()
     {
+
         return $this->payementMethod()->get(['name']);
     }
 
 
-    public function products(): BelongsToMany
-    {
+    public function products() : BelongsToMany {
+
         return $this->belongsToMany(Product::class);
     }
 
@@ -65,7 +70,7 @@ class Bill extends Model
     public function PaymentMethod(): BelongsTo
 
     {
-        return $this->belongsTo(PaymentMethod::class);
+        return $this->belongsTo(PaymentMethod::class,'payement_method_id');
     }
 
 
@@ -79,4 +84,9 @@ class Bill extends Model
         return $this->belongsTo(Market::class);
     }
 
+    public function scopeNewStatusCount($query)
+    {
+        return $query->where('status', 'جديد')->count();
     }
+
+}

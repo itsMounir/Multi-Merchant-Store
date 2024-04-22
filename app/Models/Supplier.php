@@ -37,6 +37,7 @@ class Supplier extends Authenticatable
         'delivery_duration',
         'min_bill_price',
         'min_selling_quantity',
+        'delivery_duration',
     ];
 
     protected $dates = ['created_at'];
@@ -61,7 +62,6 @@ class Supplier extends Authenticatable
      */
     protected $casts = [
         'password' => 'hashed',
-        'created_at' => 'date:Y-m-d',
     ];
 
     /**
@@ -93,7 +93,7 @@ class Supplier extends Authenticatable
 
     public function distributionLocations(): HasMany
     {
-        return $this->hasMany(DistributinLocation::class);
+        return $this->hasMany(DistributionLocation::class,'supplier_id');
     }
 
     public function bills(): HasMany
@@ -112,6 +112,7 @@ class Supplier extends Authenticatable
                 'max_offer_quantity',
                 'offer_expires_at',
                 'max_selling_quantity'
+
             );
     }
 
@@ -135,15 +136,25 @@ class Supplier extends Authenticatable
     {
         return $this->bills()
             ->where('status', 'تم التوصيل')
-            ->whereBetween('bills.created_at', [$startDate, $endDate])
+            ->whereDate('bills.created_at', '>=', $startDate)
+            ->whereDate('bills.created_at', '<=', $endDate)
             ->join('bill_product', 'bills.id', '=', 'bill_product.bill_id')
             ->join('product_supplier', 'bill_product.product_id', '=', 'product_supplier.product_id')
             ->where('product_supplier.supplier_id', $this->id)
             ->sum(DB::raw('product_supplier.price * bill_product.quantity'));
     }
 
+
     public function category()
     {
         return $this->belongsTo(SupplierCategory::class, 'supplier_category_id');
     }
+
+    public function isActive(): bool
+    {
+        return ($this->status == 'نشط');
+    }
+
+
+
 }
