@@ -25,7 +25,8 @@ class ProductCategory extends Model
         'created_at' => 'date:Y-m-d',
     ];
 
-    public function products() : HasMany {
+    public function products() : HasMany 
+    {
         return $this->hasMany(Product::class);
     }
 }

@@ -25,6 +25,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 //  Admin Section
 include __DIR__ . '/Developers/Users/Auth.php';
+include __DIR__ . '/Developers/Users/Market.php';
+include __DIR__ . '/Developers/Users/Supplier.php';
 include __DIR__ . '/Developers/Users/Bills.php';
 include __DIR__ . '/Developers/Users/Products.php';
 

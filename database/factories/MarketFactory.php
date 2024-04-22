@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\MarketCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,20 +18,21 @@ class MarketFactory extends Factory
      */
     public function definition(): array
     {
+        $category = MarketCategory::pluck('id')->toArray();
         return [
 
-            'first_name'=> fake()->firstName(),
-            'middle_name'=> fake()->firstName(),
-            'last_name'=> fake()->lastName(),
-            'phone_number'=>fake()->phoneNumber(),
-            'store_name'=>fake()->name(),
-            'city'=>fake()->city(),
-            'street'=>fake()->streetAddress(),
-            'is_subscribed'=>0,
-            'password'=>Hash::make('password'),
-            'market_category_id' => 1,
-            'subscription_expires_at'=>fake()->date('Y-m-d'),
-            'status'=>fake()->randomElement(['نشط','محظور','غير نشط']),
+            'first_name' => fake()->firstName(),
+            'middle_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
+            'phone_number' => fake()->phoneNumber(),
+            'store_name' => fake()->name(),
+            'city' => fake()->city(),
+            'street' => fake()->streetAddress(),
+            'is_subscribed' => 0,
+            'password' => Hash::make('password'),
+            'market_category_id' => fake()->randomElement($category),
+            'subscription_expires_at' => fake()->date('Y-m-d'),
+            'status' => fake()->randomElement(['نشط', 'محظور', 'غير نشط']),
         ];
     }
 }

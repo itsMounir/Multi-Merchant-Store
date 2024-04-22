@@ -113,8 +113,6 @@ class Supplier extends Authenticatable
                 'offer_expires_at',
                 'max_selling_quantity'
             );
-
-
     }
 
     public function productSuppliers(): HasMany
@@ -126,7 +124,6 @@ class Supplier extends Authenticatable
     public function supplierCategory(): BelongsTo
     {
         return $this->belongsTo(SupplierCategory::class);
-
     }
 
     public function goals(): HasMany
@@ -145,5 +142,8 @@ class Supplier extends Authenticatable
             ->sum(DB::raw('product_supplier.price * bill_product.quantity'));
     }
 
+    public function category()
+    {
+        return $this->belongsTo(SupplierCategory::class, 'supplier_category_id');
+    }
 }
-
