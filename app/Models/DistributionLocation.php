@@ -17,8 +17,8 @@ class DistributionLocation extends Model
      */
     protected $fillable = [
         'supplier_id',
-        'from_site',
-        'to_site',
+        'from_city_id',
+        'to_city_id',
     ];
 
 
@@ -28,7 +28,18 @@ class DistributionLocation extends Model
         'created_at' => 'date:Y-m-d',
     ];
 
-    public function supplier() : BelongsTo {
+    public function supplier(): BelongsTo
+    {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function fromCity()
+    {
+        return $this->belongsTo(City::class, 'from_city_id');
+    }
+
+    public function toCity()
+    {
+        return $this->belongsTo(City::class, 'to_city_id');
     }
 }

@@ -31,7 +31,7 @@ class Bill extends Model
         'delivery_duration',
     ];
 
-    protected $appends = ['updatable','created_from','payment_method','additional_price'];
+    protected $appends = ['created_from','payment_method','additional_price'];
 
     protected $dates = ['created_at'];
 
@@ -47,7 +47,7 @@ class Bill extends Model
         return $this->created_at->diffForHumans();
     }
 
-    public function getUpdatableAttribute()
+    public function isUpdatable()
     {
         $created_at_datetime = Carbon::parse($this->created_at);
 

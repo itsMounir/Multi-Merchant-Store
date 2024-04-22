@@ -134,6 +134,12 @@ class Supplier extends Authenticatable
         return $this->hasMany(Goal::class);
     }
 
+    // morphs relation with images table
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+
     public function deliveredProductPrice($startDate, $endDate)
     {
         return $this->bills()
@@ -144,6 +150,7 @@ class Supplier extends Authenticatable
             ->where('product_supplier.supplier_id', $this->id)
             ->sum(DB::raw('product_supplier.price * bill_product.quantity'));
     }
+
 
 }
 

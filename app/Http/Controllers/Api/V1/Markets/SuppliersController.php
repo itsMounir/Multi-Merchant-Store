@@ -15,14 +15,6 @@ use Illuminate\Support\Facades\Auth;
 class SuppliersController extends Controller
 {
     /**
-     * get suppliers categories
-     */
-    public function getCategories(): JsonResponse
-    {
-        $categories = SupplierCategory::get(['id', 'type']);
-        return $this->indexOrShowResponse('supplier_categories', $categories);
-    }
-    /**
      * Display a listing of the resource.
      */
     public function index(SuppliersFilters $suppliersFilters): JsonResponse
