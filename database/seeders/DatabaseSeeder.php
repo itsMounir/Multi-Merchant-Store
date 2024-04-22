@@ -87,10 +87,6 @@ class DatabaseSeeder extends Seeder
         ]);
         User::factory(10)->create();
 
-        SupplierCategory::create([
-            'type' => 'توريدات',
-        ]);
-
         ProductCategory::create([
             'name' => 'product category',
         ]);
