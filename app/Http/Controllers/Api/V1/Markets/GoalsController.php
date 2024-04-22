@@ -13,10 +13,17 @@ class GoalsController extends Controller
     /**
      * get goals achieved by the authenitcated market
      */
-    public function index(): JsonResponse
-    {
+    public function getAchievedGoals() : JsonResponse {
         $goals = Auth::user()->goals()->get();
         return $this->indexOrShowResponse('goals', $goals);
+    }
+    /**
+     * get slider offers
+     */
+    public function index(): JsonResponse
+    {
+        $offers = Goal::latest()->get();
+        return $this->indexOrShowResponse('offers',$offers);
     }
 
     /**

@@ -52,11 +52,10 @@ class SuppliersController extends Controller
      */
     public function show(Supplier $supplier, ProductsFilters $productsFilters): JsonResponse
     {
-        // dd($supplier->products()->getQuery());
         throw_if($supplier->status != 'نشط', new InActiveAccountException($supplier->store_name));
         $products = $productsFilters->applyFilters($supplier->products()->getQuery())->get();
         return response()->json([
-            'supplier' => $supplier->with('goals')->first(),
+            'supplier' => $supplier,
             'products' => $products,
         ]);
     }

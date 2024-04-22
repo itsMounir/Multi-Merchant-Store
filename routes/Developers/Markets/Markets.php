@@ -23,8 +23,11 @@ Route::prefix('markets/')->middleware(['auth:sanctum', 'active', 'type.market'])
     // Routes for Bills-related actions
     Route::resource('bills', BillsController::class)->except('edit');
 
-    // Routes for Goals-related actions
-    Route::get('goals', [GoalsController::class, 'index']);
+    // Routes for show the achieved goals by aurhenticated market
+    Route::get('goals', [GoalsController::class, 'getAchievedGoals']);
+
+    // Route for get sliders offers
+    Route::get('slider', [GoalsController::class, 'index']);
 
     // Route for show market profile
     Route::get('markets/{market}', [MarketsController::class, 'show']);
