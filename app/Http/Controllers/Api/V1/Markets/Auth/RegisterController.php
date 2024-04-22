@@ -34,7 +34,6 @@ class RegisterController extends Controller
             $market->images()->create(['url' => $image]);
             $this->saveImages([$request_image], [$image], 'Markets');
 
-
             $token = $market->createToken('access_token', ['role:market'])->plainTextToken;
 
             return response()->json([
