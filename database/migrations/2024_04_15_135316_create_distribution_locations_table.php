@@ -18,11 +18,6 @@ return new class extends Migration {
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->foreignId('from_city_id')
-                ->references('id')->on('cities')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-
             $table->foreignId('to_city_id')
                 ->references('id')->on('cities')
                 ->cascadeOnDelete()

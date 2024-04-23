@@ -26,7 +26,7 @@ class MarketFactory extends Factory
             'last_name' => fake()->lastName(),
             'phone_number' => fake()->phoneNumber(),
             'store_name' => fake()->name(),
-            'city' => fake()->city(),
+            'city_id' => 1,
             'street' => fake()->streetAddress(),
             'is_subscribed' => 0,
             'password' => Hash::make('password'),
