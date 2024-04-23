@@ -9,7 +9,6 @@ use App\Models\{
     Bill,
     Supplier,
     Market
-
 };
 use App\Http\Requests\Api\V1\Markets\{
     StoreBillRequest,
@@ -48,8 +47,8 @@ class BillController extends Controller
 
         return DB::transaction(function () use ($request, $bill) {
             if ($bill->status != 'جديد') {
-        $total_price -= $billService->supplierDiscount($market, $total_price);
-                return $this->sudResponse('you can update bills whose status is New',403);
+
+                return $this->sudResponse('you can  update bills whose status is New',403);
             }
             $bill->products()->detach();
             $updated_bill = $request->all();
@@ -57,7 +56,6 @@ class BillController extends Controller
             $supplier = Auth::user();
             $total_price = $billService->calculatePrice($updated_bill, $supplier);
             $total_price -= $billService->supplierDiscount($supplier, $total_price);
-
 
             $bill->update([
                 'total_price' => $total_price,
@@ -74,13 +72,13 @@ class BillController extends Controller
                 ]);
             }
 
-
             $bill->save();
 
             return $this->sudResponse('Bill Updated Successfully');
         });
 
     }
+
 
 
 
