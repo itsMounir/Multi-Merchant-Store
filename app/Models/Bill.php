@@ -64,7 +64,7 @@ class Bill extends Model
     protected function getpaymentMethodAttribute()
     {
 
-        return $this->payementMethod()->get(['name']);
+        return $this->paymentMethod()->get(['name']);
     }
 
 
@@ -78,7 +78,7 @@ class Bill extends Model
     public function PaymentMethod(): BelongsTo
 
     {
-        return $this->belongsTo(PaymentMethod::class,'payement_method_id');
+        return $this->belongsTo(PaymentMethod::class,'payment_method_id');
     }
 
 
@@ -96,5 +96,15 @@ class Bill extends Model
     {
         return $query->where('status', 'جديد')->count();
     }
+
+    public function scopeStatus($query, $status = null)
+    {
+        if (!is_null($status)) {
+            return $query->where('status', $status);
+        }
+
+        return $query;
+    }
+
 
 }

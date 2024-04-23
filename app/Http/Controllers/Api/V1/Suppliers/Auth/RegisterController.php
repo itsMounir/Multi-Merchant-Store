@@ -20,17 +20,19 @@ use Illuminate\Support\Facades\DB;
 
 class RegisterController extends Controller
 {
-    public function create(RegisterSupplier $request1,DistributionLocationRequest $request2) {
-        return DB::transaction(function () use ($request1,$request2) {
+    public function create(RegisterSupplier $request1, DistributionLocationRequest $request2) {
+        return DB::transaction(function () use ($request1, $request2) {
             $supplier = Supplier::create($request1->all());
-            $fromSite = $request2->input('Distribution.from_site');
-            $toSites = $request2->input('Distribution.to_sites');
-            foreach ($toSites as $toSite) {
-                DistributionLocation::create([
-                    'supplier_id' => $supplier->id,
-                    'from_site' => $fromSite,
-                    'to_site' => $toSite,
-                ]);
+            $fromCityId = $request2->input('Distribution.id');
+            $toCityIds = $request2->input('Distribution.to_sites');
+            if (!empty($toCityIds)) {
+                foreach ($toCityIds as $toCityId) {
+                    DistributionLocation::create([
+                        'supplier_id' => $supplier->id,
+                        'from_city_id' => $fromCityId,
+                        'to_city_id' => $toCityId,
+                    ]);
+                }
             }
             $token = $supplier->createToken('access_token', ['role:supplier'])->plainTextToken;
             return response()->json([
