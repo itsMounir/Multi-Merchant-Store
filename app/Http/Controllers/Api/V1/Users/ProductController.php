@@ -29,6 +29,12 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
+    public function trash()
+    {
+        $products = Product::onlyTrashed()->get();
+        return response()->json($products);
+    }
+
     public function show($id)
     {
         $product = Product::with('category:id,name')->findOrFail($id);
