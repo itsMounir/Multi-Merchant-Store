@@ -22,16 +22,18 @@ class RegisterSupplier extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => 'required|string|max:255',
-            'middle_name' => 'nullable|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'phone_number' => 'required|string|unique:suppliers,phone_number',
+            'first_name' => 'required|string',
+            'middle_name' => 'nullable|string',
+            'last_name' => 'required|string',
+            'phone_number' => 'required|string|unique:suppliers,phone_number|digits:11',
             'password' => 'required|string|min:6',
-            'store_name' => 'required|string|max:255',
+            'store_name' => 'required|string',
             'supplier_category_id' => 'required|integer|exists:supplier_categories,id',
             'min_bill_price' => 'required|numeric',
             'min_selling_quantity' => 'required|integer',
-            'delivery_duration' => 'required|string|max:255',
+            'delivery_duration' => 'required|string',
+            'city_id' => 'required|integer|exists:cities,id',
+            'image' => ['required','image'],
 
         ];
     }

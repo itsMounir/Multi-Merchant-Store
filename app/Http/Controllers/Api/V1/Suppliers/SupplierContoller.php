@@ -21,7 +21,7 @@ class SupplierContoller extends Controller
         if(!$supplier){
             return $this->sudResponse('Unauthorized',401);
         }
-        $data=ProductCategory::with('products')->get();
+        $data=ProductCategory::with(['products'.'Images'])->get();
         return $this->indexOrShowResponse('message',$data);
 
 

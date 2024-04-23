@@ -22,9 +22,8 @@ class DistributionLocationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'Distribution.id' => 'required|integer|exists:cities,id',
-            'Distribution.to_sites' => 'required|array',
-            'Distribution.to_sites.*' => 'required|integer|distinct|exists:cities,id',
+            'to_sites' => 'required|array',
+            'to_sites.*' => 'required|integer|distinct|exists:cities,id',
         ];
     }
 }

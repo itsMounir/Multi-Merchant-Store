@@ -83,6 +83,17 @@ class Supplier extends Authenticatable
             });
         });
     }
+    public function getImagesAttribute()
+    {
+        return $this->images()
+            ->get(['imageable_type', 'url'])
+            ->map(function ($image) {
+                $dir = explode('\\', $image->imageable_type)[2];
+                unset($image->imageable_type);
+                return asset("public/$dir") . '/' . $image->url;
+            });
+    }
+
 
     public function isActive(): bool
     {
