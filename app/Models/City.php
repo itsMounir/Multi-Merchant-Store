@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class City extends Model
 {
@@ -29,13 +30,16 @@ class City extends Model
         ->with(['childrens']);
     }
 
-    public function distributionLocationsFrom()
-    {
-        return $this->hasMany(DistributionLocation::class, 'from_city_id');
-    }
-
-    public function distributionLocationsTo()
+    public function distributionLocationsTo() : HasMany
     {
         return $this->hasMany(DistributionLocation::class, 'to_city_id');
+    }
+
+    public function markets() : HasMany {
+        return $this->hasMany(Market::class);
+    }
+
+    public function suppliers() : HasMany {
+        return $this->hasMany(Supplier::class);
     }
 }

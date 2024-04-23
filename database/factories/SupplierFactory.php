@@ -25,6 +25,7 @@ class SupplierFactory extends Factory
             'last_name' => fake()->lastName(),
             'phone_number' => fake()->phoneNumber(),
             'store_name' => fake()->name(),
+            'city_id' => 1,
             'password' => Hash::make('password'),
             'supplier_category_id' => fake()->randomElement($category),
             'min_bill_price' => fake()->randomFloat(3, 250.0, 5000),
