@@ -38,6 +38,7 @@ class Supplier extends Authenticatable
         'min_bill_price',
         'min_selling_quantity',
         'delivery_duration',
+        'city_id',
     ];
 
     protected $dates = ['created_at'];
@@ -67,10 +68,19 @@ class Supplier extends Authenticatable
     /**
      * Scope a query to only include same-site suppliers.
      */
+    // public static function scopeSite(Builder $query): void
+    // {
+    //     $query->whereHas('distributionLocations', function ($query) {
+    //         return $query->where('to_city_id', Auth::user()->city_id);
+    //     });
+    // }
+
     public static function scopeSite(Builder $query): void
     {
         $query->whereHas('distributionLocations', function ($query) {
-            return $query->where('to_site', Auth::user()->city);
+            return $query->whereHas('toCity',function ($query) {
+                return $query->where('parent_id' , Auth::user()->city->parent_id);
+            });
         });
     }
 
@@ -89,6 +99,10 @@ class Supplier extends Authenticatable
     public function image(): MorphOne
     {
         return $this->morphOne(Image::class, 'imageable');
+    }
+
+    public function city() : BelongsTo {
+        return $this->belongsTo(City::class);
     }
 
     public function distributionLocations(): HasMany
