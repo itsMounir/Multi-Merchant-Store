@@ -41,7 +41,7 @@ class SupplierUserController extends Controller
      */
     public function profileEdit(SupplierProfileRequest $request, $id)
     {
-        $user = Supplier::findOrFail($id);
+        $user = Supplier::with('category')->findOrFail($id);
         $user->update($request->all());
         return response()->json(['message' => 'User has been updated successfully', 'user' => $user], 200);
     }

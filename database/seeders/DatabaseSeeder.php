@@ -28,9 +28,9 @@ class DatabaseSeeder extends Seeder
     {
 
         Role::insert([
-            ['guard_name' => 'user', 'name' => 'owner', 'created_at' => now()],
-            ['guard_name' => 'user', 'name' => 'admin', 'created_at' => now()],
-            ['guard_name' => 'user', 'name' => 'employee', 'created_at' => now()]
+            ['guard_name' => 'web', 'name' => 'owner', 'created_at' => now()],
+            ['guard_name' => 'web', 'name' => 'admin', 'created_at' => now()],
+            ['guard_name' => 'web', 'name' => 'employee', 'created_at' => now()]
         ]);
 
         PaymentMethod::insert([
@@ -87,17 +87,11 @@ class DatabaseSeeder extends Seeder
         ]);
         User::factory(10)->create();
 
-        ProductCategory::create([
-            'name' => 'product category',
-        ]);
-        MarketCategory::create([
-            'name' => 'market category',
-        ]);
-        // Market::factory(10)->create();
-        // Supplier::factory(10)->create();
-        // Product::factory(20)->create();
-        // Bill::factory(50)->create();
-        // BillProduct::factory(100)->create();
-        // \App\Models\User::factory(10)->create();
+        Market::factory(10)->create();
+        Supplier::factory(10)->create();
+        Product::factory(20)->create();
+        Bill::factory(10)->create();
+
+        BillProduct::factory(30)->create();
     }
 }
