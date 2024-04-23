@@ -10,12 +10,12 @@ Route::prefix('users/market/')->group(function () {
     Route::post('activate/{id}', [MarketUserController::class, 'activateMarketUser']); // activate market user
     Route::post('ban/{id}', [MarketUserController::class, 'banMarketUser']); // ban market user
     Route::get('profile/{id}', [MarketUserController::class, 'profile']); // get user profile
-    Route::post('profile/edit/{id}', [MarketUserController::class, 'profileEdit']); // Edit user profile
+    Route::put('profile/edit/{id}', [MarketUserController::class, 'profileEdit']); // Edit user profile
     Route::get('with-bills/{id}', [MarketUserController::class, 'userWithBills']); // get user with his bills
 
     Route::get('category', [MarketUserController::class, 'getCategories']); // get market categories
     Route::post('category', [MarketUserController::class, 'createCategory']); // add market category
-    Route::put('category{id}', [MarketUserController::class, 'updateCategory']); // edit market category
+    Route::put('category/{id}', [MarketUserController::class, 'updateCategory']); // edit market category
     Route::delete('category/{id}', [MarketUserController::class, 'destroyCategory']); // delete market category
 
 });
