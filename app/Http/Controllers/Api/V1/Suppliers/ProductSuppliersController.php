@@ -12,7 +12,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Traits\Responses;
 use App\Http\Requests\Api\V1\Suppliers\{
     StoreProductRequest,
-    UpdatePriceRequest
+    UpdatePriceRequest,
+    AddOfferRequest,
+    UpdateOfferRequest
 };
 use Illuminate\Support\Facades\DB;
 class ProductSuppliersController extends Controller
@@ -22,21 +24,11 @@ class ProductSuppliersController extends Controller
     public function index()
     {
         $supplier=Auth::user();
-        if(!$supplier){
-            return $this->sudResponse('Unauthorized',401);
-        }
-        $product=$supplier->products;
+        $product=$supplier->products()->get();
         return $this->indexOrShowResponse('message',$product);
     }
 
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
 
     public function store(StoreProductRequest $request){
@@ -48,6 +40,7 @@ class ProductSuppliersController extends Controller
 
             $productData = [
                 'price' => $request->price,
+                'product_id'=>$request->product_id,
                 'max_selling_quantity' => $request->max_selling_quantity,
                 'has_offer' => $hasOffer,
                 'offer_price' => $hasOffer ? $request->offer_price : null,
@@ -74,13 +67,7 @@ class ProductSuppliersController extends Controller
     public function update(UpdatePriceRequest $request, $product_id)
     {
         $supplier = Auth::user();
-        if (!$supplier) {
-            return $this->sudResponse('Unauthorized', 401);
-        }
         $productSupplier = $this->findProductSupplier($supplier->id, $product_id);
-        if (!$productSupplier) {
-            return $this->sudResponse('Not found', 404);
-        }
         $productSupplier->update(['price' => $request->price]);
         return $this->sudResponse('price has been updated');
     }
@@ -103,13 +90,7 @@ class ProductSuppliersController extends Controller
     public function destroy($product_id)
     {
         $supplier=Auth::user();
-        if(!$supplier){
-            return $this->sudResponse('Unauthorized',401);
-        }
         $product=$supplier->products()->find($product_id);
-        if(!$product){
-            return $this->sudResponse('Not found',404);
-        }
         $supplier->products()->detach($product_id);
         return $this->sudResponse('The product has been deleted');
 
@@ -120,8 +101,8 @@ class ProductSuppliersController extends Controller
     public function is_available(Request $request, $product_id)
     {
         $supplier = Auth::user();
-        $product = ProductSupplier::where('id', $product_id)->first();
-
+        $product = $supplier->products()->find($product_id)
+        ->first();
             $product->update([
                 'is_available' => $request->is_available,
             ]);
@@ -131,11 +112,35 @@ class ProductSuppliersController extends Controller
     }
 
 
-    public function get_product_available(){
+    public function get_product_available_or_Not_available($id){
         $supplier=Auth::user();
-        $product=$supplier->productSuppliers()
-        ->where('is_available',1)
+        $product=$supplier->products()
+        ->where('is_available',$id)
         ->get();
         return $this->indexOrShowResponse('message',$product);
     }
+
+
+
+    public function offer(AddOfferRequest $request, $product_id)
+    {
+        $supplier = Auth::user();
+        $product = $supplier->productSuppliers()->find($product_id);
+        $product->update($request->only([
+            'has_offer', 'offer_price', 'max_offer_quantity', 'offer_expires_at'
+        ]));
+        return $this->sudResponse('Offer added successfully');
+    }
+
+
+
+
+  public function update_offer(UpdateOfferRequest $request, $productId){
+    $supplier = Auth::user();
+    $supplier->products()->updateExistingPivot($productId, $request->only([
+        'price', 'offer_price', 'offer_expires_at', 'max_offer_quantity'
+    ]));
+    return $this->sudResponse('Offer updated successfully');
+}
+
 }

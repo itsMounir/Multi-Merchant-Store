@@ -8,6 +8,7 @@ use App\Models\{
     Product,
     Supplier
 };
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
@@ -15,12 +16,12 @@ class ProductsController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(ProductsFilters $productsFilters)
+    public function index(ProductsFilters $productsFilters): JsonResponse
     {
         $products = $productsFilters->applyFilters(Product::query())
             ->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
             ->orderBy('product_supplier.price')
-            ->get(['product_id','product_category_id','discription','name','size','size_of','supplier_id','price','max_selling_quantity']);
+            ->get(['product_id', 'product_category_id', 'discription', 'name', 'size', 'size_of', 'supplier_id', 'price', 'max_selling_quantity']);
 
         return $this->indexOrShowResponse('products', $products);
     }
@@ -44,9 +45,9 @@ class ProductsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show(Product $product): JsonResponse
     {
-        return $this->indexOrShowResponse('product',$product);
+        return $this->indexOrShowResponse('product', $product);
     }
 
     /**

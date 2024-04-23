@@ -7,6 +7,8 @@ use App\Filters\Markets\ProductsFilters;
 use App\Filters\Markets\SuppliersFilters;
 use App\Http\Controllers\Controller;
 use App\Models\Supplier;
+use App\Models\SupplierCategory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,10 +17,10 @@ class SuppliersController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(SuppliersFilters $suppliersFilters)
+    public function index(SuppliersFilters $suppliersFilters): JsonResponse
     {
         $suppliers = $suppliersFilters->applyFilters(Supplier::query())->active()->site()->get();
-        return $this->indexOrShowResponse('suppliers',$suppliers);
+        return $this->indexOrShowResponse('suppliers', $suppliers);
     }
 
     /**
@@ -40,13 +42,12 @@ class SuppliersController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Supplier $supplier,ProductsFilters $productsFilters)
+    public function show(Supplier $supplier, ProductsFilters $productsFilters): JsonResponse
     {
-        // dd($supplier->products()->getQuery());
-        throw_if( $supplier->status != 'نشط',new InActiveAccountException($supplier->store_name));
+        throw_if($supplier->status != 'نشط', new InActiveAccountException($supplier->store_name));
         $products = $productsFilters->applyFilters($supplier->products()->getQuery())->get();
         return response()->json([
-            'supplier' => $supplier->with('goals')->first(),
+            'supplier' => $supplier,
             'products' => $products,
         ]);
     }

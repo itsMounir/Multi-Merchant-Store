@@ -28,10 +28,6 @@ class Product extends Model
 
     protected $dates = ['created_at', 'deleted_at'];
 
-    protected $casts = [
-        'created_at' => 'date:Y-m-d',
-    ];
-
     //protected $appends = ['category'];
 
     // public function getCategoryAttribute() {
@@ -42,6 +38,7 @@ class Product extends Model
     {
         return $this->belongsToMany(Supplier::class, 'product_supplier')
             ->withPivot(
+                'name',
                 'price',
                 'has_offer',
                 'offer_price',

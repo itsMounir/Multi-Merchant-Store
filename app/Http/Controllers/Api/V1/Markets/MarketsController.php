@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Markets;
 use App\Http\Controllers\Controller;
 use App\Models\Market;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -37,10 +38,10 @@ class MarketsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Market $market)
+    public function show(Market $market): JsonResponse
     {
-        throw_if(Auth::user()->id != $market->id,new AuthorizationException);
-        return $this->indexOrShowResponse('market',$market);
+        throw_if(Auth::user()->id != $market->id, new AuthorizationException);
+        return $this->indexOrShowResponse('market', $market);
     }
 
     /**

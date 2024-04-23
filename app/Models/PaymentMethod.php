@@ -9,8 +9,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class PaymentMethod extends Model
 {
     use HasFactory;
+    protected $table = 'payment_methods';
 
     protected $dates = ['created_at'];
+
 
     protected $casts = [
         'created_at' => 'date:Y-m-d',
@@ -19,4 +21,7 @@ class PaymentMethod extends Model
     public function bills() : HasMany {
         return $this->hasMany(Bill::class);
     }
+
+
+
 }

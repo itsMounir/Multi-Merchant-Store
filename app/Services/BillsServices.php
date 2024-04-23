@@ -12,6 +12,7 @@ use App\Models\{
     Supplier
 };
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class BillsServices
 {
@@ -51,6 +52,11 @@ class BillsServices
             ]);
         }
 
+        // send a notification to the admin with the new bill.
+        // DB::afterCommit(function () {
+
+        // });
+
     }
 
     public function checkSupplierRequirements($supplier, $bill, $total_price)
@@ -77,6 +83,7 @@ class BillsServices
     public function calculatePrice($bill, $supplier): float
     {
 
+
         $total_price = 0.0;
         $supplier_products = $supplier->products->toArray();
         foreach ($bill['products'] as $product) {
@@ -93,7 +100,9 @@ class BillsServices
 
 
                     if ($supplier_product['pivot']['has_offer']) {
+
                         // calculate the total price of products taken in the offer
+
                         $total_price = min(
                             $supplier_product['pivot']['max_offer_quantity'],
                             $quantity

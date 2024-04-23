@@ -91,7 +91,7 @@ class DatabaseSeeder extends Seeder
         Supplier::factory(10)->create();
         Product::factory(20)->create();
         Bill::factory(10)->create();
-        
+
         BillProduct::factory(30)->create();
     }
 }

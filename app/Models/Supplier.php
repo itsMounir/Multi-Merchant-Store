@@ -37,6 +37,7 @@ class Supplier extends Authenticatable
         'delivery_duration',
         'min_bill_price',
         'min_selling_quantity',
+        'delivery_duration',
     ];
 
     protected $dates = ['created_at'];
@@ -61,7 +62,6 @@ class Supplier extends Authenticatable
      */
     protected $casts = [
         'password' => 'hashed',
-        'created_at' => 'date:Y-m-d',
     ];
 
     /**
@@ -73,6 +73,12 @@ class Supplier extends Authenticatable
             return $query->where('to_site', Auth::user()->city);
         });
     }
+
+    public function isActive(): bool
+    {
+        return ($this->status == 'نشط');
+    }
+
 
     public static function scopeActive(Builder $query): void
     {
@@ -87,7 +93,7 @@ class Supplier extends Authenticatable
 
     public function distributionLocations(): HasMany
     {
-        return $this->hasMany(DistributinLocation::class);
+        return $this->hasMany(DistributionLocation::class);
     }
 
     public function bills(): HasMany
@@ -106,6 +112,7 @@ class Supplier extends Authenticatable
                 'max_offer_quantity',
                 'offer_expires_at',
                 'max_selling_quantity'
+
             );
     }
 
@@ -125,11 +132,18 @@ class Supplier extends Authenticatable
         return $this->hasMany(Goal::class);
     }
 
+    // morphs relation with images table
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+
     public function deliveredProductPrice($startDate, $endDate)
     {
         return $this->bills()
             ->where('status', 'تم التوصيل')
-            ->whereBetween('bills.created_at', [$startDate, $endDate])
+            ->whereDate('bills.created_at', '>=', $startDate)
+            ->whereDate('bills.created_at', '<=', $endDate)
             ->join('bill_product', 'bills.id', '=', 'bill_product.bill_id')
             ->join('product_supplier', 'bill_product.product_id', '=', 'product_supplier.product_id')
             ->where('product_supplier.supplier_id', $this->id)

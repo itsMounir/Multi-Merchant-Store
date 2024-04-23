@@ -13,6 +13,7 @@ use App\Models\{
     PaymentMethod
 };
 use App\Services\BillsServices;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{
     Auth,
@@ -33,7 +34,7 @@ class BillsController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(BillsFilters $billsFilters)
+    public function index(BillsFilters $billsFilters): JsonResponse
     {
         $bills = $billsFilters->applyFilters(Auth::user()->bills()->getQuery())->get();
         return $this->indexOrShowResponse('bills', $bills);
@@ -42,7 +43,7 @@ class BillsController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): JsonResponse
     {
         $payment_methods = PaymentMethod::get(['id', 'name']);
         return $this->indexOrShowResponse('payment_methods', $payment_methods);
@@ -69,7 +70,7 @@ class BillsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Bill $bill)
+    public function show(Bill $bill): JsonResponse
     {
         return $this->indexOrShowResponse('bill', $bill);
     }
@@ -125,6 +126,7 @@ class BillsController extends Controller
         });
 
     }
+
 
     /**
      * Remove the specified resource from storage.
