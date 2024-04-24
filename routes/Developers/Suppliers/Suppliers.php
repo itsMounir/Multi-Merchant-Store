@@ -35,6 +35,8 @@ Route::middleware(['auth:sanctum', 'type.supplier','active'])->group(function ()
 
     Route::post('update/Distribution',[SupplierContoller::class,'updateDistributionLocations']);
 
+    Route::post('add/discount',[SupplierContoller::class,'add_Discount']);
+
 /**============================================================================================================ */
 
     Route::apiResource('bills',BillController::class)->only(['index']);
