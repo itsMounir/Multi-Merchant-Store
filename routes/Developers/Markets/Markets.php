@@ -29,6 +29,6 @@ Route::prefix('markets/')->middleware(['auth:sanctum', 'active', 'type.market'])
     // Routes for show the achieved goals by aurhenticated market
     Route::get('goals', GoalsController::class);
 
-    // Route for show market profile
-    Route::get('markets/{market}', [MarketsController::class, 'show']);
+    // Route for show market profile and update it.
+    Route::apiResource('markets', MarketsController::class)->only(['show', 'update']);
 });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Markets;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\Markets\UpdateMarketRequest;
 use App\Models\Market;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
@@ -55,9 +56,10 @@ class MarketsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Market $market)
+    public function update(UpdateMarketRequest $request, Market $market)
     {
-        //
+        $market->update(['store_name' => $request->store_name]);
+        return $this->sudResponse('updated successfully');
     }
 
     /**
