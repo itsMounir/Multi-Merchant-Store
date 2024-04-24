@@ -135,7 +135,7 @@ class BillsServices
         if ($supplier->goals()->count() > 0) {
             $goals = $supplier->goals()->orderByDesc('min_bill_price')->get();
             foreach ($goals as $goal) {
-                if ($total_price >= $goal->min_price) {
+                if ($total_price >= $goal->min_bill_price) {
                     Auth::user()->goals()->attach($goal);
                     return $goal->discount_price;
                 }
