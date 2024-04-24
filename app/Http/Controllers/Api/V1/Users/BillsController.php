@@ -70,7 +70,11 @@ class BillsController extends Controller
         $bills = $query->where('status', '!=', 'انتظار')->get();
         return response()->json(['bills' => $bills]);
     }
-
+    /**
+     * To get Bill by ID
+     * @param string $id
+     * @return JsonResponse
+     */
     public function show($id)
     {
         $bill = Bill::with(['products' => function ($query) {
