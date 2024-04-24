@@ -5,8 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Suppliers\ProductSuppliersController;
 use App\Http\Controllers\Api\V1\Suppliers\SuppliersController;
 use App\Http\Controllers\Api\V1\Suppliers\BillController;
-
-
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -23,12 +23,22 @@ use App\Http\Controllers\Api\V1\Suppliers\BillController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+/*
+Route::middleware('auth:sanctum')->get('x', function () {
+
+    $user = auth()->user();
+    $roler = $user->hasPermissionTo('x', 'owner');
+    return "1";
+});*/
+
+
 //  Admin Section
 include __DIR__ . '/Developers/Users/Auth.php';
 include __DIR__ . '/Developers/Users/Market.php';
 include __DIR__ . '/Developers/Users/Supplier.php';
 include __DIR__ . '/Developers/Users/Bills.php';
 include __DIR__ . '/Developers/Users/Products.php';
+include __DIR__ . '/Developers/Users/Cities.php';
 
 // Supplier Section
 include __DIR__ . '/Developers/Suppliers/Auth.php';

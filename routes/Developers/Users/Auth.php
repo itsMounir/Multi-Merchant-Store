@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\Users\Auth\{
     CreateAccountController,
     LoginController,
 };
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,7 +16,10 @@ Route::prefix('users/auth/')->group(function () {
     Route::post('logout', [LoginController::class, 'destroy'])->middleware(['auth:sanctum', 'type.user']);
 });
 
-Route::middleware('auth.session')->get('xx', function () {
-     $x= auth()->user();
-     return $x;
+Route::middleware(['auth:sanctum', 'ownerMiddleware'])->get('xx', function () {
+    $id = auth()->user()->id;
+    $user = User::find($id);
+    $user->assignRole('owner');
+    $permission = $user->getRoleNames();
+    return $permission;
 });
