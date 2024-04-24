@@ -10,7 +10,8 @@ use App\Models\{
     Product,
     ProductSupplier,
     ProductCategory,
-    DistributionLocation
+    DistributionLocation,
+
 
 };
 
@@ -21,7 +22,8 @@ use Illuminate\Support\Facades\{
 };
 use App\Http\Requests\Api\V1\Suppliers\{
     UpdateDistributionlocations,
-    UpdateName
+    UpdateName,
+    AddDiscountRequest
 };
 
 class SupplierContoller extends Controller
@@ -71,5 +73,24 @@ class SupplierContoller extends Controller
         return $this->sudResponse('Distribution locations updated successfully');
     }
 
+
+    public function add_Discount(AddDiscountRequest $request)
+    {
+
+        $supplier = Auth::user();
+        $offer=$request->input('discount');
+        foreach ($offer as $offerData) {
+            $supplier->goals()->create([
+                'starting_date' => $offerData['starting_date'],
+                'expiring_date' => $offerData['expiring_date'],
+                'min_price' => $offerData['min_price'],
+                'discount_price' => $offerData['discount_price'],
+            ]);
+        }
+        return $this->sudResponse('Discount added successfully');
+    }
 }
+
+
+
 

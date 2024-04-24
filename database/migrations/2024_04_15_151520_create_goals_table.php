@@ -21,7 +21,7 @@ return new class extends Migration
 
             $table->date('starting_date');
             $table->date('expiring_date');
-            $table->float('min_price');
+            $table->float('min_bill_price');
             $table->float('discount_price');
             $table->timestamps();
         });
