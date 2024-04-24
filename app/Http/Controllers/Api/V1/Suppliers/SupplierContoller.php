@@ -78,14 +78,8 @@ class SupplierContoller extends Controller
     {
 
         $supplier = Auth::user();
-        $offer=$request->input('discount');
-        foreach ($offer as $offerData) {
-            $supplier->goals()->create([
-                'starting_date' => $offerData['starting_date'],
-                'expiring_date' => $offerData['expiring_date'],
-                'min_price' => $offerData['min_price'],
-                'discount_price' => $offerData['discount_price'],
-            ]);
+        foreach ($request->input('discount') as $offerData) {
+            $supplier->goals()->create($offerData);
         }
         return $this->sudResponse('Discount added successfully');
     }
