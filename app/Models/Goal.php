@@ -15,7 +15,7 @@ class Goal extends Model
         'supplier_id',
         'starting_date',
         'expiring_date',
-        'min_price',
+        'min_bill_price',
         'discount_price',
     ];
 
