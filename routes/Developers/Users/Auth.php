@@ -1,21 +1,26 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Users\Auth\{
-    CreateAccountController,
-    LoginController,
+    EmployeeController,
+    AuthController,
 };
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 
 
 Route::prefix('users/auth/')->group(function () {
 
-    Route::post('account/create', [CreateAccountController::class, 'create']);
-    Route::post('login', [LoginController::class, 'create']);
-    Route::post('logout', [LoginController::class, 'destroy'])->middleware(['auth:sanctum', 'type.user']);
+    Route::post('login', [AuthController::class, 'create']);
+    Route::post('logout', [AuthController::class, 'destroy'])->middleware(['auth:sanctum', 'type.user']);
 });
+Route::prefix('users/employee')->group(function () {
 
+    Route::post('create', [EmployeeController::class, 'create']);
+    Route::get('list', [EmployeeController::class, 'index']);
+    Route::get('info/{id}', [EmployeeController::class, 'show']);
+    Route::put('update/{id}', [EmployeeController::class, 'update']);
+    Route::delete('delete/{id}', [EmployeeController::class, 'destroy']);
+});
 Route::middleware(['auth:sanctum', 'ownerMiddleware'])->get('xx', function () {
     $id = auth()->user()->id;
     $user = User::find($id);
