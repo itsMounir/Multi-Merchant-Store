@@ -4,7 +4,7 @@ namespace App\Http\Requests\Api\V1\Suppliers;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DistributionLocationRequest extends FormRequest
+class UpdateName extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,9 @@ class DistributionLocationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'to_sites' => 'required|array',
-            'to_sites.*' => 'required|integer|distinct|exists:cities,id',
+            'first_name' => 'nullable|string',
+            'middle_name' => 'nullable|string',
+            'last_name' => 'nullable|string',
         ];
     }
 }

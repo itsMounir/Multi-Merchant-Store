@@ -31,6 +31,12 @@ Route::middleware(['auth:sanctum', 'type.supplier','active'])->group(function ()
 
     Route::get('personal/data',[SupplierContoller::class,'Personal_Data']);
 
+    Route::post('update/name',[SupplierContoller::class,'edit_name']);
+
+    Route::post('update/Distribution',[SupplierContoller::class,'updateDistributionLocations']);
+
+    Route::post('add/discount',[SupplierContoller::class,'add_Discount']);
+
 /**============================================================================================================ */
 
     Route::apiResource('bills',BillController::class)->only(['index']);

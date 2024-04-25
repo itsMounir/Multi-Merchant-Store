@@ -18,24 +18,99 @@ use App\Models\{
     User,
 };
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
+
+    private function rolesAndPermissions()
+    {
+        $owner = User::find(1);
+        $admin = User::find(2);
+    }
+
+    private function cities()
+    {
+        /** Big Cities */
+        city::insert([
+            ['name' => 'الأسكندرية', 'parent_id' => null, 'created_at' => now()],
+
+        ]);
+
+        /** Small cities*/
+        City::insert([
+            ["name" => "ابوقير", "parent_id" => 1, "created_at" => now()],
+            ["name" => "الاصلاح", "parent_id" => 1, "created_at" => now()],
+            ["name" => "طوسون", "parent_id" => 1, "created_at" => now()],
+            ["name" => "المعمورة", "parent_id" => 1, "created_at" => now()],
+            ["name" => "المنتزه", "parent_id" => 1, "created_at" => now()],
+            ["name" => "المندرة", "parent_id" => 1, "created_at" => now()],
+            ["name" => "العماروة", "parent_id" => 1, "created_at" => now()],
+            ["name" => "الملاحة", "parent_id" => 1, "created_at" => now()],
+            ["name" => "العصافرة", "parent_id" => 1, "created_at" => now()],
+            ["name" => "شارع الجيش", "parent_id" => 1, "created_at" => now()],
+            ["name" => "سيدي بشر", "parent_id" => 1, "created_at" => now()],
+            ["name" => "سيدي بشر - مدينة بنك فيصل", "parent_id" => 1, "created_at" => now()],
+            ["name" => "شارع 15", "parent_id" => 1, "created_at" => now()],
+            ["name" => "دربالة", "parent_id" => 1, "created_at" => now()],
+            ["name" => "فيكتوريا", "parent_id" => 1, "created_at" => now()],
+            ["name" => "الساعة", "parent_id" => 1, "created_at" => now()],
+            ["name" => "ابو سلیمان", "parent_id" => 1, "created_at" => now()],
+            ["name" => "غبريال", "parent_id" => 1, "created_at" => now()],
+            ["name" => "اكوس", "parent_id" => 1, "created_at" => now()],
+            ["name" => "العوايد", "parent_id" => 1, "created_at" => now()],
+            ["name" => "الزوايدة", "parent_id" => 1, "created_at" => now()],
+            ["name" => "خورشید", "parent_id" => 1, "created_at" => now()],
+            ["name" => "سموحة", "parent_id" => 1, "created_at" => now()],
+            ["name" => "مطار سموحة", "parent_id" => 1, "created_at" => now()],
+            ["name" => "الظاهرية", "parent_id" => 1, "created_at" => now()],
+            ["name" => "سيدي جابر", "parent_id" => 1, "created_at" => now()],
+            ["name" => "جناكليس", "parent_id" => 1, "created_at" => now()],
+            ["name" => "رشدي", "parent_id" => 1, "created_at" => now()],
+            ["name" => "بولکلی", "parent_id" => 1, "created_at" => now()],
+            ["name" => "الإبراهيمية", "parent_id" => 1, "created_at" => now()],
+            ["name" => "سبورتننج", "parent_id" => 1, "created_at" => now()],
+            ["name" => "كليوباترا", "parent_id" => 1, "created_at" => now()],
+            ["name" => "الحضرة الجديدة", "parent_id" => 1, "created_at" => now()],
+            ["name" => "الحضرة القديمة", "parent_id" => 1, "created_at" => now()],
+            ["name" => "الشاطبي", "parent_id" => 1, "created_at" => now()],
+            ["name" => "كامب شيزار", "parent_id" => 1, "created_at" => now()],
+            ["name" => "حجر النواتيه", "parent_id" => 1, "created_at" => now()],
+            ["name" => "محطة الرمل", "parent_id" => 1, "created_at" => now()],
+            ["name" => "محطة مصر", "parent_id" => 1, "created_at" => now()],
+            ["name" => "المنشية", "parent_id" => 1, "created_at" => now()],
+            ["name" => "بحري", "parent_id" => 1, "created_at" => now()],
+            ["name" => "الانفوشي", "parent_id" => 1, "created_at" => now()],
+            ["name" => "رأس التين", "parent_id" => 1, "created_at" => now()],
+            ["name" => "الورديان", "parent_id" => 1, "created_at" => now()],
+            ["name" => "الدخيلة", "parent_id" => 1, "created_at" => now()],
+            ["name" => "البيطاش", "parent_id" => 1, "created_at" => now()],
+            ["name" => "الهانوفيل", "parent_id" => 1, "created_at" => now()],
+            ["name" => "أبو يوسف", "parent_id" => 1, "created_at" => now()]
+        ]);
+    }
+
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
-
         Role::insert([
             ['guard_name' => 'web', 'name' => 'owner', 'created_at' => now()],
             ['guard_name' => 'web', 'name' => 'admin', 'created_at' => now()],
             ['guard_name' => 'web', 'name' => 'employee', 'created_at' => now()]
         ]);
 
-        City::insert([
-            'name' => 'egypt'
+        Permission::insert([
+            ['name' => 'bill-accept-delete', 'guard_name' => 'web', 'created_at' => now()],
+            ['name' => 'bill-view', 'guard_name' => 'web', 'created_at' => now()],
+            ['name' => 'product-CRUD', 'guard_name' => 'web', 'created_at' => now()],
+            ['name' => 'product-category-CRUD', 'guard_name' => 'web', 'created_at' => now()],
+            ['name' => 'user-activate-ban', 'guard_name' => 'web', 'created_at' => now()],
+            ['name' => 'user-view', 'guard_name' => 'web', 'created_at' => now()],
+            ['name' => 'user-category-CRUD', 'guard_name' => 'web', 'created_at' => now()],
+            ['name' => 'city-CRUD', 'guard_name' => 'web', 'created_at' => now()],
         ]);
 
         PaymentMethod::insert([
@@ -90,13 +165,15 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('password')
             ]
         ]);
-        User::factory(10)->create();
-
-       // Market::factory(10)->create();
+        // User::factory(10)->create();
+        $this->cities();
+        Market::factory(10)->create();
         Supplier::factory(10)->create();
         Product::factory(20)->create();
-       // Bill::factory(10)->create();
+        Bill::factory(10)->create();
 
-      //  BillProduct::factory(30)->create();
+        BillProduct::factory(30)->create();
+
+        // $this->rolesAndPermissions();
     }
 }

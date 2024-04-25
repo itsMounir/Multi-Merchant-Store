@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Api\V1\Suppliers;
+namespace App\Http\Requests\api\v1\users;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DistributionLocationRequest extends FormRequest
+class CityRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,8 @@ class DistributionLocationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'to_sites' => 'required|array',
-            'to_sites.*' => 'required|integer|distinct|exists:cities,id',
+            'name' => ['required', 'string',],
+            'parent_id' => ['nullable']
         ];
     }
 }
