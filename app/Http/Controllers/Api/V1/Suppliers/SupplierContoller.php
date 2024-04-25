@@ -31,7 +31,6 @@ class SupplierContoller extends Controller
 
     use Responses;
     public function index(){
-        //عرض المنتجات في المستودع الاساسي
         $supplier=Auth::user();
         if(!$supplier){
             return $this->sudResponse('Unauthorized',401);
@@ -82,6 +81,12 @@ class SupplierContoller extends Controller
             $supplier->goals()->create($offerData);
         }
         return $this->sudResponse('Discount added successfully');
+    }
+
+    public function get_Discount(){
+        $supplier=Auth::user();
+        $data=$supplier->goals()->get()->with(['supplier']);
+        return $this->sudResponse($data);
     }
 }
 
