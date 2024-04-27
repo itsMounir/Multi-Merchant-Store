@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api\V1\Markets;
 
 use App\Http\Controllers\Controller;
-use App\Models\Goal;
-use App\Models\SupplierCategory;
+use App\Models\{
+    Slider,
+    SupplierCategory
+};
 use Illuminate\Http\Request;
 
 class StartingPageController extends Controller
@@ -14,7 +16,7 @@ class StartingPageController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $offers = Goal::latest()->get();
+        $offers = Slider::latest()->get();
         $categories = SupplierCategory::get(['id', 'type']);
         return response()->json([
             'offers' => $offers ,
