@@ -110,7 +110,7 @@ class BillController extends Controller
             ]);
         $bill->update([
             'status'=>'ملغية',
-            'rejection_reason'=>$request->reason,
+            'rejection_reason'=>$request->rejection_reason,
 
         ]);
         $market = Market::find($bill->market_id);
@@ -129,7 +129,7 @@ class BillController extends Controller
             'delivery_duration' => 'required',
             ]);
         $bill->update([
-            'status'=>'جاري التحضير',
+            'status'=>'قيد التحضير',
             'delivery_duration'=>$validatedData['delivery_duration'],
         ]);
         return $this->sudResponse('تم بنجاح');

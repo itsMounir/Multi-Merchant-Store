@@ -57,6 +57,8 @@ Route::middleware(['auth:sanctum', 'type.supplier','active'])->group(function ()
 
     Route::post('recive/{id}',[BillController::class,'recive']);
 
+    Route::post('refuse/{id}',[BillController::class,'Refused']);
+
     /**============================================================================================================ */
 
     Route::get('reports',[ReportController::class,'reports']);
