@@ -46,7 +46,7 @@ class SupplierContoller extends Controller
             return $this->sudResponse('Unauthorized',401);
         }
         $data=Product::get();
-        return $this->indexOrShowResponse('body',$data);
+        return $this->indexOrShowResponse('products',$data);
 
 
     }
