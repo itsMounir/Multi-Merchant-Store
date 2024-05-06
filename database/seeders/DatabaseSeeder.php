@@ -130,9 +130,9 @@ class DatabaseSeeder extends Seeder
 
         Permission::insert([
             ['name' => 'user-stuff', 'guard_name' => 'web', 'created_at' => now()],
-            // Deal with user's account - accept & cancel & ban user - user's category 
+            // Deal with user's account - accept & cancel & ban user - user's category
             ['name' => 'bill-stuff', 'guard_name' => 'web', 'created_at' => now()],
-            // Deal with bill's Business - accept and cancel Bill - bill's category 
+            // Deal with bill's Business - accept and cancel Bill - bill's category
             ['name' => 'product-stuff', 'guard_name' => 'web', 'created_at' => now()],
             // Deal with product's Business - CRUD - product's category
             ['name' => 'city-stuff', 'guard_name' => 'web', 'created_at' => now()],
