@@ -47,7 +47,7 @@ Route::middleware(['auth:sanctum', 'type.supplier','active'])->group(function ()
 
 /**============================================================================================================ */
 
-    Route::apiResource('bills',BillController::class)->only(['index']);
+    Route::apiResource('bills',BillController::class);
 
     Route::post('update/bill/{bill}',[BillController::class,'update']);
 

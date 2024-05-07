@@ -56,8 +56,26 @@ class BillController extends Controller
         return $this->indexOrShowResponse('body', $billsData);
     }
 
+    
+    public function show($billId){
+        $supplier = Auth::user();
+        $bill = $supplier->bills()->with(['market.city', 'supplier', 'products.category'])->find($billId);
 
+        if (!$bill) {
+            return $this->indexOrShowResponse('Not found', 404);
+        }
+        $productIds = $bill->products->pluck('id');
+        $bill->load([
+            'products' => function ($query) use ($productIds, $supplier) {
+                $query->whereIn('products.id', $productIds)
+                      ->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
+                      ->where('product_supplier.supplier_id', $supplier->id)
+                      ->select('products.*', 'product_supplier.price as price');
+            }
+        ]);
 
+        return $this->indexOrShowResponse('body', $bill);
+    }
 
 
 
