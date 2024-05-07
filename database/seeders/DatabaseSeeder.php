@@ -119,6 +119,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        /*
         Role::insert([
             ['guard_name' => 'web', 'name' => 'supper_admin', 'created_at' => now()],
             ['guard_name' => 'web', 'name' => 'admin', 'created_at' => now()],
@@ -200,6 +201,6 @@ class DatabaseSeeder extends Seeder
       //  BillProduct::factory(5)->create();
         // $this->rolesAndPermissions();
 
-        $this->rolesAndPermissions();
+        $this->rolesAndPermissions();*/
     }
 }

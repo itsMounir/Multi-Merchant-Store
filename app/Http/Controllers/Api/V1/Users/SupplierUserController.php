@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Api\v1\Users;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\v1\Users\CategoryRequest;
 use App\Http\Requests\Api\V1\Users\SupplierProfileRequest;
 use App\Models\Supplier;
-use App\Models\SupplierCategory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -19,18 +17,31 @@ class SupplierUserController extends Controller
      */
     public function profile($id)
     {
+
         $supplier = Supplier::with(['category:id,type', 'city:id,name', 'distributionLocations'])->findOrFail($id);
+        $this->authorize('view', $supplier);
+
+        $supplier->category_name = $supplier->category->type;
+        unset($supplier->category);
+        $supplier->city_name = $supplier->city->name;
+        unset($supplier->city);
         return response()->json(['user' => $supplier], 200);
     }
 
     /**
-     * To get user info with his incoming Bills 
+     * To get user info with his incoming Bills
      * @param string $id
      * @return JsonResponse
      */
     public function userWithBills($id)
     {
         $user = Supplier::with(['category:id,type', 'bills.products'])->findOrFail($id);
+        $this->authorize('view', $user);
+
+        $user->category_name = $user->category->type;
+        unset($user->category);
+        $user->city_name = $user->city->name;
+        unset($user->city);
         return response()->json(['user' => $user]);
     }
     /**
@@ -42,38 +53,67 @@ class SupplierUserController extends Controller
     public function profileEdit(SupplierProfileRequest $request, $id)
     {
         $user = Supplier::findOrFail($id);
+        $this->authorize('update', $user);
         $user->update($request->all());
         $user = Supplier::with('category:id,type', 'city:id,name', 'distributionLocations')->findOrFail($id);
+
+        $user->category_name = $user->category->type;
+        unset($user->category);
+        $user->city_name = $user->city->name;
+        unset($user->city);
         return response()->json(['message' => 'User has been updated successfully', 'user' => $user], 200);
     }
 
     /**
-     * GET SUPPLIER USERS BASED ON STATUS
+     * GET SUPPLIER USERS BASED ON category
      * @param Request $request
      * @return JsonResponse
      */
-    public function supplierUsers(Request  $request)
+    public function index(Request  $request)
     {
+        $this->authorize('viewAny', Supplier::class);
+
         $category = $request->query('category');
-        $supplierUsers = Supplier::query()->with('category:id,type', 'city:id,name', 'distributionLocations')->where('supplier_category_id', $category)->orderBy('first_name', 'asc')->get();
-        return response()->json(['supplier users' => $supplierUsers]);
+        if ($category) {
+            $suppliers = Supplier::query()->with('category:id,type', 'city:id,name', 'distributionLocations')->where('supplier_category_id', $category)->orderBy('first_name', 'asc')->get();
+        } else {
+            $suppliers = Supplier::with('category:id,name')->get();
+        }
+
+        $suppliers->each(function ($item) {
+            $item->category_name = $item->category->type;
+            unset($item->category);
+            $item->city_name = $item->city->name;
+            unset($item->city);
+        });
+        return response()->json(['supplier users' => $suppliers]);
     }
 
     /**
      * TO ACTIVATE SUPPLIER USER
      * @param string $id
-     * @return JsonResponse 
+     * @return JsonResponse
      */
     public function activateSupplierUser($id)
     {
         $user = Supplier::with('category:id,type', 'city:id,name', 'distributionLocations')->findOrFail($id);
-        if (!$user)
-            return response()->json(['message' => 'User not found'], 404);
-        if ($user->status == 'نشط')
-            return response()->json(['message' => 'User is alredy Activated....'], 200);
-        $user->status = 'نشط';
-        $user->save();
-        return response()->json(['message' => 'User has been activated successfully', 'user' => $user], 200);
+        $this->authorize('update', $user);
+        try {
+            if (!$user)
+                return response()->json(['message' => 'User not found'], 404);
+            if ($user->status == 'نشط')
+                return response()->json(['message' => 'User is alredy Activated....'], 200);
+            $user->status = 'نشط';
+            $user->save();
+
+            $user->category_name = $user->category->type;
+            unset($user->category);
+            $user->city_name = $user->city->name;
+            unset($user->city);
+            return response()->json(['message' => 'User has been activated successfully', 'user' => $user], 200);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), $e->getCode() ?: 500);
+        }
     }
 
     /**
@@ -84,58 +124,23 @@ class SupplierUserController extends Controller
     public function banSupplierUser($id)
     {
         $user = Supplier::with('category:id,type', 'city:id,name', 'distributionLocations')->findOrFail($id);
-        if (!$user)
-            return response()->json(['message' => 'User not found'], 404);
-        if ($user->status == 'محظور')
-            return response()->json(['message' => 'User is alredy Banned...'], 200);
-        $user->status = 'محظور';
-        $user->save();
-        return response()->json(['message' => 'User has been banned successfully', 'user' => $user], 200);
-    }
+        $this->authorize('update', $user);
+        try {
+            if (!$user)
+                return response()->json(['message' => 'User not found'], 404);
+            if ($user->status == 'محظور')
+                return response()->json(['message' => 'User is alredy Banned...'], 200);
+            $user->status = 'محظور';
+            $user->save();
 
+            $user->category_name = $user->category->type;
+            unset($user->category);
+            $user->city_name = $user->city->name;
+            unset($user->city);
 
-
-    /**
-     * To get Markets categories
-     * @return JsonResponse
-     */
-    public function getCategories()
-    {
-        $categories = SupplierCategory::all();
-        return response()->json($categories, 200);
-    }
-    /**
-     * To create new category
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function createCategory(CategoryRequest $request)
-    {
-        $category = SupplierCategory::create(['type' => $request->name]);
-        return response()->json($category, 201);
-    }
-
-    /**
-     * To Update category
-     * @param CategoryRequest $request
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function updateCategory(CategoryRequest $request, $id)
-    {
-        $category = SupplierCategory::findOrFail($id);
-        $category->update($request->all());
-        return response()->json($category, 200);
-    }
-    /**
-     * To delete category
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function destroyCategory($id)
-    {
-        $category = SupplierCategory::findOrFail($id);
-        $category->delete();
-        return response()->json(null, 204);
+            return response()->json(['message' => 'User has been banned successfully', 'user' => $user], 200);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), $e->getCode() ?: 500);
+        }
     }
 }

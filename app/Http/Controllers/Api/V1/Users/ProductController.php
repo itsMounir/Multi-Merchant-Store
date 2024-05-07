@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1\Users;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\v1\Users\CategoryRequest;
 use App\Http\Requests\Api\V1\Users\ProductRequest;
 use App\Http\Requests\Api\V1\Users\ProductUpdaterequest;
 use App\Models\Product;
@@ -30,7 +29,7 @@ class ProductController extends Controller
         if ($category)
             $products = Product::with('category:id,name')->where('product_category_id', $category)->get();
         else {
-            $products = Product::with('category:id,name')->all();
+            $products = Product::with('category:id,name')->get();
         }
         return response()->json($products, 200);
     }

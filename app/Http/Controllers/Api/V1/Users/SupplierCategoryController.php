@@ -4,73 +4,61 @@ namespace App\Http\Controllers\api\v1\users;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\v1\Users\CategoryRequest;
-use App\Models\ProductCategory;
+use App\Models\SupplierCategory;
+use Illuminate\Http\JsonResponse;
 
-
-class ProductCategoryController extends Controller
+class SupplierCategoryController extends Controller
 {
     /**
-     * Display a listing of Product Categories.
+     * To get Markets categories
      * @return JsonResponse
      */
-
     public function index()
     {
-        $this->authorize('viewAny', ProductCategory::class);
-        $categories = ProductCategory::all();
+        $this->authorize('viewAny', SupplierCategory::class);
+        $categories = SupplierCategory::all();
         return response()->json($categories, 200);
     }
 
 
     /**
-     * To create and store a new category
+     * To create new category
      * @param CategoryRequest $request
      * @return JsonResponse
      */
     public function store(CategoryRequest $request)
     {
-        $this->authorize('create', ProductCategory::class);
+        $this->authorize('create', SupplierCategory::class);
 
-        $category = ProductCategory::create($request->all());
+        $category = SupplierCategory::create(['type' => $request->name]);
         return response()->json($category, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $category = ProductCategory::findOrFail($id);
-        $this->authorize('view', $category);
-        return response()->json($category, 200);
-    }
 
 
     /**
-     * To update a category
+     * To Update category
      * @param CategoryRequest $request
      * @param string $id
      * @return JsonResponse
      */
     public function update(CategoryRequest $request, string $id)
     {
-        $category = ProductCategory::findOrFail($id);
+        $category = SupplierCategory::findOrFail($id);
         $this->authorize('update', $category);
-
         $category->update($request->all());
         return response()->json($category, 200);
     }
 
     /**
-     * To delete a category
+     * To delete category
      * @param string $id
      * @return JsonResponse
      */
-    public function destroy(String $id)
+    public function destroy(string $id)
     {
-        $category = ProductCategory::findOrFail($id);
+        $category = SupplierCategory::findOrFail($id);
         $this->authorize('delete', $category);
-
         $category->delete();
         return response()->json(null, 204);
     }
