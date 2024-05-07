@@ -56,7 +56,7 @@ class BillController extends Controller
         return $this->indexOrShowResponse('body', $billsData);
     }
 
-    
+
     public function show($billId){
         $supplier = Auth::user();
         $bill = $supplier->bills()->with(['market.city', 'supplier', 'products.category'])->find($billId);
@@ -93,12 +93,12 @@ class BillController extends Controller
             $supplier = Auth::user();
             $total_price = $billService->calculatePrice($updated_bill, $supplier);
             $total_price -= $billService->marketDiscount(Market::find($bill->market_id), $total_price);
-
+            $delivery_duration = $request->input('delivery_duration');
             $bill->update([
                 'total_price' => $total_price,
-                'status'=>'تم القبول',
+                'status' => 'قيد التحضير',
+                'delivery_duration' => $delivery_duration ?: $bill->delivery_duration,
             ]);
-            //return $bill;
 
             foreach ($updated_bill['products'] as $item) {
                 $bill->products()->syncWithoutDetaching([
@@ -106,6 +106,7 @@ class BillController extends Controller
                         'quantity' => $item['quantity'],
                         'created_at' => $bill->created_at,
                         'updated_at' => now(),
+
                     ],
                 ]);
             }
@@ -140,7 +141,7 @@ class BillController extends Controller
 
 
 
-    public function accept(Request $request,$billId){
+    /*public function accept(Request $request,$billId){
         $supplier=Auth::user();
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
         $validatedData = $request->validate([
@@ -151,7 +152,7 @@ class BillController extends Controller
             'delivery_duration'=>$validatedData['delivery_duration'],
         ]);
         return $this->sudResponse('تم بنجاح');
-    }
+    }*/
 
 
     public function recive(Request $request,$billId){

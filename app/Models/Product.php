@@ -12,8 +12,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Product extends Model
 {
     use HasFactory;
-    use SoftDeletes;
-
     /**
      * The attributes that are mass assignable.
      *
@@ -68,3 +66,4 @@ class Product extends Model
             });
     }
 }
+
