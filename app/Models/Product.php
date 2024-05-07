@@ -66,7 +66,3 @@ class Product extends Model
             });
     }
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> supplier
