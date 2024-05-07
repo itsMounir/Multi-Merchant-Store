@@ -28,9 +28,9 @@ class BillFactory extends Factory
             'market_id' => fake()->randomElement($markets),
             'supplier_id' => fake()->randomElement($suppliers),
             'market_note' => fake()->paragraph(1),
-            'rejection_reason' => null,
+            //'rejection_reason' => null,
             'has_additional_cost' => fake()->randomElement([0, 1]),
-            'delivery_duration' => null,
+            //'delivery_duration' => null,
         ];
     }
 }
