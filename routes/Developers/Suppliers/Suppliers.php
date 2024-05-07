@@ -47,15 +47,17 @@ Route::middleware(['auth:sanctum', 'type.supplier','active'])->group(function ()
 
 /**============================================================================================================ */
 
-    Route::apiResource('bills',BillController::class)->only(['index']);
+    Route::apiResource('bills',BillController::class);
 
     Route::post('update/bill/{bill}',[BillController::class,'update']);
 
     Route::post('reject/{id}',[BillController::class,'reject']);
 
-    Route::post('accept/{id}',[BillController::class,'accept']);
+    //Route::post('accept/{id}',[BillController::class,'accept']);
 
     Route::post('recive/{id}',[BillController::class,'recive']);
+
+    Route::post('refuse/{id}',[BillController::class,'Refused']);
 
     /**============================================================================================================ */
 

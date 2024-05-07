@@ -28,9 +28,9 @@ return new class extends Migration
             $table->integer('max_selling_quantity');
             $table->boolean('is_available')->default(1);
             $table->boolean('has_offer')->default(false);
-            $table->float('offer_price')->nullable();
-            $table->integer('max_offer_quantity')->nullable();
-            $table->date('offer_expires_at')->nullable();
+            $table->float('offer_price')->default('0');
+            $table->integer('max_offer_quantity')->default('0');
+            $table->date('offer_expires_at')->default('9999-1-1');
             $table->timestamps();
         });
     }

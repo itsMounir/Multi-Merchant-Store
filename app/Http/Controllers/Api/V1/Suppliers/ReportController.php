@@ -73,7 +73,8 @@ class ReportController extends Controller
         ];
 
 
-        return $this->indexOrShowResponse('message',$responseData);
+
+        return $this->indexOrShowResponse('body',$responseData);
     }
 
 
