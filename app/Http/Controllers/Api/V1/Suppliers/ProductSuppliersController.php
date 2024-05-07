@@ -25,7 +25,7 @@ class ProductSuppliersController extends Controller
     {
         $supplier=Auth::user();
         $product=$supplier->products()->get();
-        return $this->indexOrShowResponse('message',$product);
+        return $this->indexOrShowResponse('body',$product);
     }
 
 
@@ -54,8 +54,8 @@ class ProductSuppliersController extends Controller
             ], $productData);
 
             DB::commit();
-            return $this->sudResponse('تم اضافة المنتج بنتجاح');
-        } catch (Exception $e) {
+            return $this->sudResponse('تم اضافة المنتج بنجاح');
+        } catch (\Exception $e) {
             DB::rollBack();
 
             return $this->sudResponse('!حدث خطأ ما ');
@@ -122,7 +122,7 @@ class ProductSuppliersController extends Controller
         $product=$supplier->products()
         ->where('is_available',$id)
         ->get();
-        return $this->indexOrShowResponse('message',$product);
+        return $this->indexOrShowResponse('body',$product);
     }
 
 

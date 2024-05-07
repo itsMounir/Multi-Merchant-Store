@@ -36,6 +36,7 @@ class LoginController extends Controller
             'message' => 'تم تسجيل الدخول بنجاح',
             'access_token' => $accessToken->plainTextToken,
             'refresh_token' => $refreshToken->plainTextToken,
+            'supplier'=>$supplier,
         ]);
     }
 
@@ -64,6 +65,7 @@ class LoginController extends Controller
             'message' => '.تم إنشاء الرمز بنجاح',
             'access_token' => $accessToken->plainTextToken,
             'refresh_token' => $refreshToken->plainTextToken,
+            'supplier' => $supplier,
         ]);
     }
 

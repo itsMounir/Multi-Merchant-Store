@@ -4,57 +4,43 @@ namespace App\Http\Controllers\api\v1\users;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\v1\Users\CategoryRequest;
-use App\Models\ProductCategory;
+use App\Models\MarketCategory;
+use Illuminate\Http\JsonResponse;
 
-
-class ProductCategoryController extends Controller
+class MarketCategoryController extends Controller
 {
     /**
-     * Display a listing of Product Categories.
+     * To get Markets categories
      * @return JsonResponse
      */
-
     public function index()
     {
-        $this->authorize('viewAny', ProductCategory::class);
-        $categories = ProductCategory::all();
+        $this->authorize('viewAny', MarketCategory::class);
+        
+        $categories = MarketCategory::all();
         return response()->json($categories, 200);
     }
-
-
     /**
-     * To create and store a new category
+     * create new category
      * @param CategoryRequest $request
      * @return JsonResponse
      */
     public function store(CategoryRequest $request)
     {
-        $this->authorize('create', ProductCategory::class);
-
-        $category = ProductCategory::create($request->all());
+        $this->authorize('create', MarketCategory::class);
+        $category = MarketCategory::create($request->all());
         return response()->json($category, 201);
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $category = ProductCategory::findOrFail($id);
-        $this->authorize('view', $category);
-        return response()->json($category, 200);
-    }
-
-
-    /**
-     * To update a category
+     * Update category
      * @param CategoryRequest $request
      * @param string $id
      * @return JsonResponse
      */
     public function update(CategoryRequest $request, string $id)
     {
-        $category = ProductCategory::findOrFail($id);
+        $category = MarketCategory::findOrFail($id);
         $this->authorize('update', $category);
 
         $category->update($request->all());
@@ -62,15 +48,14 @@ class ProductCategoryController extends Controller
     }
 
     /**
-     * To delete a category
+     * delete category
      * @param string $id
      * @return JsonResponse
      */
-    public function destroy(String $id)
+    public function destroy(string $id)
     {
-        $category = ProductCategory::findOrFail($id);
+        $category = MarketCategory::findOrFail($id);
         $this->authorize('delete', $category);
-
         $category->delete();
         return response()->json(null, 204);
     }

@@ -3,7 +3,7 @@
 namespace App\Policies\web;
 
 use App\Models\User;
-use App\Models\supplier;
+use App\Models\Supplier;
 use Illuminate\Auth\Access\Response;
 
 class SupplierPolicy
@@ -13,15 +13,15 @@ class SupplierPolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $user->hasRole(['admin', 'supervisor']);
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, supplier $supplier): bool
+    public function view(User $user, Supplier $supplier): bool
     {
-        //
+        return $user->hasRole(['admin', 'supervisor']);
     }
 
     /**
@@ -29,38 +29,38 @@ class SupplierPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->hasRole(['admin', 'supervisor']);
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, supplier $supplier): bool
+    public function update(User $user, Supplier $supplier): bool
     {
-        //
+        return $user->hasRole(['admin', 'supervisor']);
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, supplier $supplier): bool
+    public function delete(User $user, Supplier $supplier): bool
     {
-        //
+        return $user->hasRole(['admin', 'supervisor']);
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, supplier $supplier): bool
+    public function restore(User $user, Supplier $supplier): bool
     {
-        //
+        return $user->hasRole(['admin', 'supervisor']);
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, supplier $supplier): bool
+    public function forceDelete(User $user, Supplier $supplier): bool
     {
-        //
+        return $user->hasRole(['admin', 'supervisor']);
     }
 }

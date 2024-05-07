@@ -45,8 +45,8 @@ class SupplierContoller extends Controller
         if(!$supplier){
             return $this->sudResponse('Unauthorized',401);
         }
-        $data=ProductCategory::with(['products'])->get();
-        return $this->indexOrShowResponse('message',$data);
+        $data=Product::get();
+        return $this->indexOrShowResponse('products',$data);
 
 
     }
@@ -64,7 +64,9 @@ class SupplierContoller extends Controller
     public function Personal_Data(){
         $supplier = Auth::user();
         $supplier->load('city', 'supplierCategory', 'distributionLocations');
-        return $this->indexOrShowResponse('message', $supplier);
+        $supplierImages = $supplier->getImagesAttribute();
+        $supplier->image = $supplierImages;
+        return $this->indexOrShowResponse('body', $supplier);
     }
 
     public function edit_name(UpdateName $request){

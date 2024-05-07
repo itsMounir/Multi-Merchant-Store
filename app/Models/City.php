@@ -26,8 +26,7 @@ class City extends Model
     }
 
     public function childrens() {
-        return $this->hasMany(City::class,'parent_id')
-        ->with(['childrens']);
+        return $this->hasMany(City::class,'parent_id');
     }
 
     public function distributionLocationsTo() : HasMany

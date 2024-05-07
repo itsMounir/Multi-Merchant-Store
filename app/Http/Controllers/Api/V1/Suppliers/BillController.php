@@ -28,18 +28,54 @@ class BillController extends Controller
     public function index(Request $request)
     {
         $supplier = Auth::user();
-        $bills = $supplier->bills()->with(['market', 'products'])
-        ->status($request->status)->get();
+        $billsQuery = $supplier->bills()->with(['products.category','market.city', 'supplier'])
+                          ->status($request->status);
+        $bills = $billsQuery->get();
         $Count = $bills->count();
         $newBillsCount = Bill::newStatusCount($supplier->id);
+        $results = [];
+        foreach ($bills as $bill) {
+            $productIds = $bill->products->pluck('id');
+            $bill->load([
+                'products' => function ($query) use ($productIds, $supplier) {
+                    $query->whereIn('products.id', $productIds)
+                          ->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
+                          ->where('product_supplier.supplier_id', $supplier->id)
+                          ->select('products.*', 'product_supplier.price as price');
+                }
+            ]);
+            $results[] = $bill;
+        }
+
         $billsData = [
             'Count' => $Count,
-            'New_bill_count'=>$newBillsCount,
-            'bills' => $bills
+            'New_bill_count' => $newBillsCount,
+            'bills' => $results
         ];
-        return $this->indexOrShowResponse('message',$billsData);
+
+        return $this->indexOrShowResponse('body', $billsData);
     }
 
+
+    public function show($billId){
+        $supplier = Auth::user();
+        $bill = $supplier->bills()->with(['market.city', 'supplier', 'products.category'])->find($billId);
+
+        if (!$bill) {
+            return $this->indexOrShowResponse('Not found', 404);
+        }
+        $productIds = $bill->products->pluck('id');
+        $bill->load([
+            'products' => function ($query) use ($productIds, $supplier) {
+                $query->whereIn('products.id', $productIds)
+                      ->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
+                      ->where('product_supplier.supplier_id', $supplier->id)
+                      ->select('products.*', 'product_supplier.price as price');
+            }
+        ]);
+
+        return $this->indexOrShowResponse('body', $bill);
+    }
 
 
 
@@ -57,11 +93,12 @@ class BillController extends Controller
             $supplier = Auth::user();
             $total_price = $billService->calculatePrice($updated_bill, $supplier);
             $total_price -= $billService->marketDiscount(Market::find($bill->market_id), $total_price);
-
+            $delivery_duration = $request->input('delivery_duration');
             $bill->update([
                 'total_price' => $total_price,
+                'status' => 'قيد التحضير',
+                'delivery_duration' => $delivery_duration ?: $bill->delivery_duration,
             ]);
-            //return $bill;
 
             foreach ($updated_bill['products'] as $item) {
                 $bill->products()->syncWithoutDetaching([
@@ -69,6 +106,7 @@ class BillController extends Controller
                         'quantity' => $item['quantity'],
                         'created_at' => $bill->created_at,
                         'updated_at' => now(),
+
                     ],
                 ]);
             }
@@ -88,11 +126,10 @@ class BillController extends Controller
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
         $validatedData = $request->validate([
             'rejection_reason' => 'required',
-            'status'=>'required',
             ]);
         $bill->update([
-            'status'=>$request->status,
-            'rejection_reason'=>$request->reason,
+            'status'=>'ملغية',
+            'rejection_reason'=>$request->rejection_reason,
 
         ]);
         $market = Market::find($bill->market_id);
@@ -104,19 +141,18 @@ class BillController extends Controller
 
 
 
-    public function accept(Request $request,$billId){
+    /*public function accept(Request $request,$billId){
         $supplier=Auth::user();
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
         $validatedData = $request->validate([
             'delivery_duration' => 'required',
-            'status'=>'required',
             ]);
         $bill->update([
-            'status'=>$request->status,
+            'status'=>'قيد التحضير',
             'delivery_duration'=>$validatedData['delivery_duration'],
         ]);
         return $this->sudResponse('تم بنجاح');
-    }
+    }*/
 
 
     public function recive(Request $request,$billId){
@@ -124,15 +160,27 @@ class BillController extends Controller
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
         $validatedData = $request->validate([
             'recieved_price' => 'required',
-            'status'=>'required',
             ]);
         $bill->update([
-            'status'=>$request->status,
+            'status'=>'تم التوصيل',
             'recieved_price'=>$request['recieved_price'],
         ]);
         return $this->sudResponse('تم بنجاح');
     }
 
 
+
+    public function Refused(Request $request,$billId){
+        $supplier=Auth::user();
+        $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
+        $validatedData = $request->validate([
+            'rejection_reason' => 'required',
+            ]);
+        $bill->update([
+            'status'=>'رفض الاستلام',
+            'rejection_reason'=>$validatedData['rejection_reason'],
+        ]);
+        return $this->sudResponse('تم بنجاح');
+    }
 
 }

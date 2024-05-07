@@ -196,11 +196,11 @@ class DatabaseSeeder extends Seeder
         Market::factory(10)->create();
         Supplier::factory(10)->create();
         Product::factory(20)->create();
-        Bill::factory(10)->create();
+       // Bill::factory(10)->create();
 
-        BillProduct::factory(5)->create();
+      //  BillProduct::factory(5)->create();
         // $this->rolesAndPermissions();
-        */
-        $this->rolesAndPermissions();
+
+        $this->rolesAndPermissions();*/
     }
 }
