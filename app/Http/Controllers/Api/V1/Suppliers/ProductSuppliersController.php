@@ -40,12 +40,13 @@ class ProductSuppliersController extends Controller
 
             $productData = [
                 'price' => $request->price,
-                'product_id'=>$request->product_id,
+                'product_id' => $request->product_id,
                 'max_selling_quantity' => $request->max_selling_quantity,
                 'has_offer' => $hasOffer,
-                'offer_price' => $hasOffer ? $request->offer_price : null,
-                'max_offer_quantity' => $hasOffer ? $request->max_offer_quantity : null,
-                'offer_expires_at' => $hasOffer ? $request->offer_expires_at : null,
+
+                'offer_price' => $hasOffer ? $request->offer_price : 0,
+                'max_offer_quantity' => $hasOffer ? $request->max_offer_quantity : 0,
+                'offer_expires_at' => $hasOffer ? $request->offer_expires_at : '9999-1-1',
             ];
 
             $supplier->productSuppliers()->updateOrCreate([
