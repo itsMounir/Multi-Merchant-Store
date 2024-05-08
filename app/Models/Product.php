@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Product extends Model
 {
     use HasFactory;
+    use SoftDeletes;
     /**
      * The attributes that are mass assignable.
      *
@@ -47,7 +48,7 @@ class Product extends Model
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(ProductCategory::class,'product_category_id');
+        return $this->belongsTo(ProductCategory::class, 'product_category_id');
     }
 
     public function image(): MorphOne
@@ -62,7 +63,7 @@ class Product extends Model
             ->map(function ($image) {
                 $dir = explode('\\', $image->imageable_type)[2];
                 unset($image->imageable_type);
-                return asset("public/$dir") . '/' . $image->url;
+                return asset("storage/public/$dir") . '/' . $image->url;
             });
     }
 }
