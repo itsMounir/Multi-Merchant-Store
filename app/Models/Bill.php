@@ -33,8 +33,11 @@ class Bill extends Model
 
     protected $appends = ['created_from', 'payment_method', 'additional_price', 'waffarnalak'];
 
-    protected $dates = ['created_at'];
-
+    protected $dates = ['created_at','updated_at'];
+    protected $casts = [
+        'created_at' => 'date:Y-m-d',
+        'updated_at' => 'date:Y-m-d',
+    ];
     // created from attribute
     public function getCreatedFromAttribute()
     {

@@ -40,6 +40,7 @@ include __DIR__ . '/Developers/Users/Bills.php';
 include __DIR__ . '/Developers/Users/Offers.php';
 include __DIR__ . '/Developers/Users/Products.php';
 include __DIR__ . '/Developers/Users/Cities.php';
+include __DIR__ . '/Developers/Users/Statistics.php';
 
 // Supplier Section
 include __DIR__ . '/Developers/Suppliers/Auth.php';
