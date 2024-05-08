@@ -35,6 +35,10 @@ class Bill extends Model
 
     protected $dates = ['created_at'];
 
+    protected $hidden=[
+        'deleted_at'
+    ];
+
     // created from attribute
     public function getCreatedFromAttribute()
     {
