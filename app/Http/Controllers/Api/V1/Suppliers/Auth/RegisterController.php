@@ -42,7 +42,7 @@ class RegisterController extends Controller
                 $image_name = $this->setImagesName([$request_image])[0];
 
                 $supplier->image()->create(['url' => $image_name]);
-                $this->saveImages([$request_image], [$image_name], 'Supplier');
+                $this->saveImages([$request_image], [$image_name], 'public/Supplier');
             }
 
             $supervisor =User::role('supervisor')->get();
