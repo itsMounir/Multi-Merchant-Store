@@ -23,7 +23,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $this->authorize('viewAny', Product::class);
+        $this->authorize('test', Product::class);
 
         $category = $request->query('category');
         if ($category)
@@ -72,7 +72,7 @@ class ProductController extends Controller
                 $request_image = $request->file('image');
                 $image_name = $this->setImagesName([$request_image])[0];
                 $product->image()->create(['url' => $image_name]);
-                $this->saveImages([$request_image], [$image_name], 'products');
+                $this->saveImages([$request_image], [$image_name], 'public/products');
             }
             $id = $product->id;
             $product = Product::with('category:id,name')->findOrFail($id);
