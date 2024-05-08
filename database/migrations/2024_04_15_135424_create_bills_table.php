@@ -28,7 +28,7 @@ return new class extends Migration {
             $table->float('total_price');
             $table->float('recieved_price')->default(0);
 
-            $table->enum('status', ['انتظار', 'جديد', 'ملغية', 'تم التوصيل', 'قيد التحضير','رفض الاستلام','تم القبول'])
+            $table->enum('status', ['انتظار', 'جديد', 'ملغية', 'تم التوصيل', 'قيد التحضير','رفض الاستلام'])
                 ->default('انتظار');
             $table->boolean('has_additional_cost');
             $table->string('market_note')->default('');
