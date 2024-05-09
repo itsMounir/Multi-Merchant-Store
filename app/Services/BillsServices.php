@@ -56,7 +56,7 @@ class BillsServices
         }
 
         // update the users to recieve the notification !!!!!!!!!!!!
-        $moderator = User::role('Moderator')->get();
+        $moderator = User::role('moderator')->get();
 
         // send a notification to the moderator with the new bill.
         DB::afterCommit(function () use ($moderator,$new_bill) {
