@@ -75,7 +75,7 @@ class MarketUserController extends Controller
      * @param string $id
      * @return JsonResponse
      */
-    public function activateUser(String $id)
+    public function activate(String $id)
     {
         $market = Market::findOrFail($id);
         $this->authorize('update', $market);
@@ -98,7 +98,7 @@ class MarketUserController extends Controller
      * @param string $id
      * @return JsonResponse
      */
-    public function banUser(String $id)
+    public function ban(String $id)
     {
         $market = Market::findOrFail($id);
         $this->authorize('update', $market);
@@ -107,6 +107,7 @@ class MarketUserController extends Controller
             if ($market->status === "محظور")
                 return response()->json(['message' => 'User is alredy banned']);
             $market->status = "محظور";
+            $market->tokens()->delete();
             $market->save();
 
 
