@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1\Users;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\Supplier;
 use App\Models\Market;
 use App\Models\Bill;

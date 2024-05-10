@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\api\v1\users\StatisticsController;
+use App\Http\Controllers\Api\V1\Users\StatisticsController;
 use Illuminate\Support\Facades\Route;
 
 

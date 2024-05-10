@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Requests\Api\V1\users\Auth;
+namespace App\Http\Requests\Api\V1\Users\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\EgyptPhoneNumber;
 
 class LoginRequest extends FormRequest
 {
@@ -22,7 +23,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone_number' => ['required', 'string'],
+            'phone_number' => ['required', new EgyptPhoneNumber],
             'password' => ['required', 'string']
         ];
     }

@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Api\V1\Users;
 
+use App\Filters\Markets\ProductsFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Users\ProductRequest;
 use App\Http\Requests\Api\V1\Users\ProductUpdaterequest;
+use App\Traits\Images;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
-use App\Traits\Images;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -32,6 +34,17 @@ class ProductController extends Controller
             $products = Product::with('category:id,name')->get();
         }
         return response()->json($products, 200);
+    }
+
+    /**
+     * Search by name 
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function search(Request $request): JsonResponse
+    {
+        $products = Product::where('name', 'like', '%' . $request->query('name') . '%')->get();
+        return response()->json([$products], 200);
     }
     /**
      * To get trashed products
