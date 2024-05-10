@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies\web;
+namespace App\Policies\Web;
 
 use App\Models\SupplierCategory;
 use App\Models\User;

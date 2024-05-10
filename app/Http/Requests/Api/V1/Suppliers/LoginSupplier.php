@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Api\V1\Users;
+namespace App\Http\Requests\Api\V1\Suppliers;
 
+use App\Rules\EgyptPhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CategoryRequest extends FormRequest
+class LoginSupplier extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +23,8 @@ class CategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required' , 'string', 'unique:market_categories,name,' . $this->route('id') . ',id'],
+            'phone_number' => ['required','string','exists:suppliers,phone_number',new EgyptPhoneNumber],
+            'password' => 'required|string|min:6',
         ];
     }
 }

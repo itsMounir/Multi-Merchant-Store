@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api\V1\Users\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Requests\Api\V1\users\Auth\CreateAccountRequest;
-use App\Http\Requests\api\v1\users\auth\UpdateEmployeeRequest;
+use App\Http\Requests\Api\V1\Users\Auth\CreateAccountRequest;
+use App\Http\Requests\Api\V1\Users\Auth\UpdateEmployeeRequest;
 use Spatie\Permission\Traits\HasRoles;
 
 class EmployeeController extends Controller

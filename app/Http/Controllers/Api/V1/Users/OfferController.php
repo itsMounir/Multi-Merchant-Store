@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Users;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\api\v1\users\OfferRequest;
+use App\Http\Requests\Api\V1\Users\OfferRequest;
 use App\Models\Offer;
 use App\Traits\Images;
 use Illuminate\Http\JsonResponse;
