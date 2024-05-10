@@ -15,16 +15,15 @@ class SupplierUserController extends Controller
      * @param string $id
      * @return JsonResponse
      */
-    public function profile($id)
+    public function show($id)
     {
 
         $supplier = Supplier::with(['category:id,type', 'city:id,name', 'distributionLocations'])->findOrFail($id);
         $this->authorize('view', $supplier);
 
         $supplier->category_name = $supplier->category->type;
-        unset($supplier->category);
         $supplier->city_name = $supplier->city->name;
-        unset($supplier->city);
+
         return response()->json(['user' => $supplier], 200);
     }
 
@@ -39,9 +38,7 @@ class SupplierUserController extends Controller
         $this->authorize('view', $user);
 
         $user->category_name = $user->category->type;
-        unset($user->category);
         $user->city_name = $user->city->name;
-        unset($user->city);
         return response()->json(['user' => $user]);
     }
     /**
@@ -50,7 +47,7 @@ class SupplierUserController extends Controller
      * @param string $id
      * @return JsonResponse
      */
-    public function profileEdit(SupplierProfileRequest $request, $id)
+    public function update(SupplierProfileRequest $request, $id)
     {
         $user = Supplier::findOrFail($id);
         $this->authorize('update', $user);
@@ -58,9 +55,8 @@ class SupplierUserController extends Controller
         $user = Supplier::with('category:id,type', 'city:id,name', 'distributionLocations')->findOrFail($id);
 
         $user->category_name = $user->category->type;
-        unset($user->category);
         $user->city_name = $user->city->name;
-        unset($user->city);
+
         return response()->json(['message' => 'User has been updated successfully', 'user' => $user], 200);
     }
 
@@ -71,21 +67,19 @@ class SupplierUserController extends Controller
      */
     public function index(Request  $request)
     {
+
         $this->authorize('viewAny', Supplier::class);
 
         $category = $request->query('category');
         if ($category) {
             $suppliers = Supplier::query()->with('category:id,type', 'city:id,name', 'distributionLocations')->where('supplier_category_id', $category)->orderBy('first_name', 'asc')->get();
         } else {
-            $suppliers = Supplier::with('category:id,name')->get();
+            $suppliers = Supplier::with('category:id,type', 'city:id,name')->get();
         }
-
-        $suppliers->each(function ($item) {
-            $item->category_name = $item->category->type;
-            unset($item->category);
-            $item->city_name = $item->city->name;
-            unset($item->city);
-        });
+        foreach ($suppliers as $supplier) {
+            $supplier->category_name = $supplier->category->type;
+            $supplier->city_name = $supplier->city->name;
+        }
         return response()->json(['supplier users' => $suppliers]);
     }
 
@@ -107,9 +101,7 @@ class SupplierUserController extends Controller
             $user->save();
 
             $user->category_name = $user->category->type;
-            unset($user->category);
             $user->city_name = $user->city->name;
-            unset($user->city);
             return response()->json(['message' => 'User has been activated successfully', 'user' => $user], 200);
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), $e->getCode() ?: 500);
@@ -134,9 +126,7 @@ class SupplierUserController extends Controller
             $user->save();
 
             $user->category_name = $user->category->type;
-            unset($user->category);
             $user->city_name = $user->city->name;
-            unset($user->city);
 
             return response()->json(['message' => 'User has been banned successfully', 'user' => $user], 200);
         } catch (\Exception $e) {
