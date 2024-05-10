@@ -1,18 +1,22 @@
 <?php
 
-namespace App\Http\Controllers\api\v1\users;
+namespace App\Http\Controllers\Api\V1\Users;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Supplier;
 use App\Models\Market;
-use App\Models\Product;
 use App\Models\Bill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 class StatisticsController extends Controller
 {
+
+    public function getPublicStatistics(Request $request){
+        
+
+    }
 
     public function getBillStatistics(Request $request)
     {
@@ -54,6 +58,8 @@ class StatisticsController extends Controller
 
     public function getUsersStatistics()
     {
+        // $start_date = $request->query('start_date');
+        // $end_date = $request->query('end_date');
         $subscribed_users = Market::with('city', 'category')->where('is_subscribed', 1)->latest()->get();
         $unSubscribed_users = Market::with('city', 'category')->where('is_subscribed', 0)->latest()->get();
         $number_of_subscribed_users = count($subscribed_users);

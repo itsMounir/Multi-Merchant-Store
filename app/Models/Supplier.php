@@ -75,14 +75,6 @@ class Supplier extends Authenticatable
         });
     }
 
-    // public static function scopeSite(Builder $query): void
-    // {
-    //     $query->whereHas('distributionLocations', function ($query) {
-    //         return $query->whereHas('toCity',function ($query) {
-    //             return $query->where('parent_id' , Auth::user()->city->parent_id);
-    //         });
-    //     });
-    // }
     public function getImagesAttribute()
     {
         return $this->images()
@@ -90,7 +82,7 @@ class Supplier extends Authenticatable
             ->map(function ($image) {
                 $dir = explode('\\', $image->imageable_type)[2];
                 unset($image->imageable_type);
-                return asset("public/$dir") . '/' . $image->url;
+                return asset("storage/$dir") . '/' . $image->url;
             });
     }
 
@@ -136,8 +128,8 @@ class Supplier extends Authenticatable
                 'offer_price',
                 'max_offer_quantity',
                 'offer_expires_at',
-                'max_selling_quantity'
-
+                'max_selling_quantity',
+                'is_available'
             );
     }
 

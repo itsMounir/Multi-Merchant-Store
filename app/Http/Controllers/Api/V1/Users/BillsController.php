@@ -21,7 +21,7 @@ class BillsController extends Controller
             $query->withTrashed()->with('category');
         }, 'market.category', 'supplier.category'])->findOrFail($id);
 
-        $this->authorize('update', $bill);
+        $this->authorize('webUpdate', $bill);
 
         if ($bill->status != 'انتظار')
             return response()->json(['message' => 'you can`t accept this bill... it is alredy accepted or canceled'], 422);
@@ -41,7 +41,7 @@ class BillsController extends Controller
             $query->withTrashed()->with('category');
         }, 'market.category', 'supplier.category'])->findOrFail($id);
 
-        $this->authorize('update', $bill);
+        $this->authorize('webUpdate', $bill);
 
         if ($bill->status != 'انتظار')
             return response()->json(['message' => 'you can`t cancel this bill... it is alredy accepted or canceled'], 422);
@@ -55,7 +55,7 @@ class BillsController extends Controller
      */
     public function newBills()
     {
-        $this->authorize('viewAny', Bill::class);
+        $this->authorize('webViewAny', Bill::class);
         $bills = Bill::with('products.category', 'market.category', 'supplier.category')->where('status', 'انتظار')->get();
         return response()->json(['bills' => $bills]);
     }
@@ -67,7 +67,7 @@ class BillsController extends Controller
      */
     public function oldBills(Request $request)
     {
-        $this->authorize('viewAny', Bill::class);
+        $this->authorize('webViewAny', Bill::class);
 
         $withFee = $request->query('fee');
         $query = Bill::query()->with(['products' => function ($query) {
@@ -90,7 +90,7 @@ class BillsController extends Controller
             $query->withTrashed();
         }, 'market.category', 'supplier.category'])->findOrFail($id);
 
-        $this->authorize('view', $bill);
+        $this->authorize('webView', $bill);
 
         return response()->json(['bill' => $bill]);
     }
