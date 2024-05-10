@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Policies\web;
+namespace App\Policies\Web;
 
-use App\Models\user;
+use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
 class EmployeePolicy

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Policies\web;
+namespace App\Policies\Web;
 
 use App\Models\User;
-use App\Models\marketCategory;
+use App\Models\MarketCategory;
 use Illuminate\Auth\Access\Response;
 
 class MarketCategoryPolicy

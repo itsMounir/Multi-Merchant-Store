@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Users\BillsController;
-use App\Http\Controllers\api\v1\users\OfferController;
 use Illuminate\Support\Facades\Route;
 
 
