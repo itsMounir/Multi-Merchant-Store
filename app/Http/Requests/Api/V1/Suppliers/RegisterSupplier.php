@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\V1\Suppliers;
 
+use App\Rules\EgyptPhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterSupplier extends FormRequest
@@ -25,7 +26,7 @@ class RegisterSupplier extends FormRequest
             'first_name' => 'required|string',
             'middle_name' => 'nullable|string',
             'last_name' => 'required|string',
-            'phone_number' => 'required|string|unique:suppliers,phone_number|digits:11',
+            'phone_number' => ['required','string','unique:suppliers,phone_number',new EgyptPhoneNumber],
             'password' => 'required|string|min:6',
             'store_name' => 'required|string',
             'supplier_category_id' => 'required|integer|exists:supplier_categories,id',
