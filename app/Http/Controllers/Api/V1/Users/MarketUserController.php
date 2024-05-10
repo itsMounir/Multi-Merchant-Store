@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\v1\Users;
+namespace App\Http\Controllers\Api\V1\Users;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Users\MarketProfileRequest;
@@ -17,11 +17,8 @@ class MarketUserController extends Controller
      */
     public function show(String $id)
     {
-        $market = Market::with('category:id,name')->findOrFail($id);
+        $market = Market::findOrFail($id);
         $this->authorize('view', $market);
-
-        $market->category_name = $market->category->name;
-        unset($market->category);
 
         return response()->json(['user' => $market], 200);
     }
@@ -32,11 +29,8 @@ class MarketUserController extends Controller
      */
     public function userWithBills(String $id)
     {
-        $market = Market::with(['bills.products', 'category:id,name'])->findOrFail($id);
+        $market = Market::with('bills.products')->findOrFail($id);
         $this->authorize('view', $market);
-
-        $market->category_name = $market->category->name;
-        unset($market->category);
 
         return response()->json(['user' => $market]);
     }
@@ -53,11 +47,7 @@ class MarketUserController extends Controller
         $this->authorize('update', $market);
 
         $market->update($request->all());
-        $market = Market::with('category:id,name')->findOrFail($id);
-
-        $market->category_name = $market->category->name;
-        unset($market->category);
-
+        $market = Market::findOrFail($id);
         return response()->json(['message' => 'User has been updated successfully', 'user' => $market], 200);
     }
 
@@ -73,15 +63,11 @@ class MarketUserController extends Controller
         $category = $request->query('category');
 
         if ($category)
-            $markets = Market::with('category:id,name')->where('market_category_id', $category)->orderBy('first_name', 'asc')->get();
+            $markets = Market::where('market_category_id', $category)->orderBy('first_name', 'asc')->get();
         else {
-            $markets = Market::with('category:id,name')->get();
+            $markets = Market::get();
         }
 
-        $markets->each(function ($item) {
-            $item->category_name = $item->category->name;
-            unset($item->category);
-        });
         return response()->json(['Market users' => $markets]);
     }
     /**
@@ -89,9 +75,9 @@ class MarketUserController extends Controller
      * @param string $id
      * @return JsonResponse
      */
-    public function activateMarketUser(String $id)
+    public function activateUser(String $id)
     {
-        $market = Market::with('category:id,name')->findOrFail($id);
+        $market = Market::findOrFail($id);
         $this->authorize('update', $market);
 
 
@@ -100,9 +86,6 @@ class MarketUserController extends Controller
                 return response()->json(['message' => 'User is alredy Activated']);
             $market->status = 'نشط';
             $market->save();
-
-            $market->category_name = $market->category->name;
-            unset($market->category);
 
             return response()->json(['message' => 'User has been activated successfully', 'user' => $market], 200);
         } catch (\Exception $e) {
@@ -115,9 +98,9 @@ class MarketUserController extends Controller
      * @param string $id
      * @return JsonResponse
      */
-    public function banMarketUser(String $id)
+    public function banUser(String $id)
     {
-        $market = Market::with('category:id,name')->findOrFail($id);
+        $market = Market::findOrFail($id);
         $this->authorize('update', $market);
 
         try {
@@ -126,8 +109,6 @@ class MarketUserController extends Controller
             $market->status = "محظور";
             $market->save();
 
-            $market->category_name = $market->category->name;
-            unset($market->category);
 
             return response()->json(['message' => 'User has been banned successfully', 'user' => $market], 200);
         } catch (\Exception $e) {

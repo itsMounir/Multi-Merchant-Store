@@ -56,7 +56,7 @@ class BillsServices
         }
 
         // update the users to recieve the notification !!!!!!!!!!!!
-        $moderator = User::role('Moderator')->get();
+        $moderator = User::role('moderator')->get();
 
         // send a notification to the moderator with the new bill.
         DB::afterCommit(function () use ($moderator,$new_bill) {
@@ -93,7 +93,7 @@ class BillsServices
             $exist = false;
             foreach ($supplier_products as $supplier_product) {
 
-                if ($product['id'] == $supplier_product['id']) {
+                if ($product['id'] == $supplier_product['id'] && $supplier_product['pivot']['is_available']) {
 
                     $price = $supplier_product['pivot']['price'];
                     $quantity = $product['quantity']; // quantity requested

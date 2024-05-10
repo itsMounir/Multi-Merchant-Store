@@ -2,10 +2,10 @@
 
 use App\Http\Controllers\Api\V1\Markets\Auth\{
     LoginController,
-    RegisterController
+    RegisterController,
+    ForgetPasswordController
 };
 use App\Enums\TokenAbility;
-use App\Http\Controllers\Api\V1\Markets\Auth\ForgetPasswordController;
 
 Route::prefix('markets/auth/')->group(function () {
     // Auth routes
@@ -28,8 +28,8 @@ Route::prefix('markets/auth/')->group(function () {
             'ability:' . TokenAbility::ISSUE_ACCESS_TOKEN->value
         ]);
 
-
     Route::post('forget-password', [ForgetPasswordController::class, 'forgetPassword']);
+    Route::post('verify-code', [ForgetPasswordController::class, 'verifyCode']);
     Route::post('reset-password', [ForgetPasswordController::class, 'resetPassword']);
 
 });

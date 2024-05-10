@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\V1\Markets\Auth;
 
+use App\Rules\EgyptPhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LoginRequest extends FormRequest
@@ -22,7 +23,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone_number' => 'required',
+            'phone_number' => ['required','exists:markets,phone_number',new EgyptPhoneNumber],
             'password' => 'required',
         ];
     }

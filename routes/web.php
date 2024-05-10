@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\api\v1\users\StatisticsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,4 +17,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('z',[StatisticsController::class,'getBillsWithAdditionalCost']);
+
