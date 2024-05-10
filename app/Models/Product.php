@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -63,7 +63,7 @@ class Product extends Model
             ->map(function ($image) {
                 $dir = explode('\\', $image->imageable_type)[2];
                 unset($image->imageable_type);
-                return asset("storage/public/$dir") . '/' . $image->url;
+                return asset("storage/$dir") . '/' . $image->url;
             });
     }
 }
