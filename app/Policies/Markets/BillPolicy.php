@@ -4,19 +4,13 @@ namespace App\Policies\Markets;
 
 use App\Models\{
     Bill,
-    Market
+    Market,
+    User
 };
 use Illuminate\Auth\Access\Response;
 
 class BillPolicy
 {
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(Market $market): bool
-    {
-        return true;
-    }
 
     /**
      * Determine whether the user can view the model.
@@ -50,19 +44,20 @@ class BillPolicy
         return ($bill->isUpdatable()) && ($market->id == $bill->market_id);
     }
 
-    // /**
-    //  * Determine whether the user can restore the model.
-    //  */
-    // public function restore(Market $market, User $model): bool
-    // {
-    //     //
-    // }
 
-    // /**
-    //  * Determine whether the user can permanently delete the model.
-    //  */
-    // public function forceDelete(Market $market, User $model): bool
-    // {
-    //     //
-    // }
+    public function webViewAny(User $user): bool
+    {
+        return $user->hasrole(['admin', 'moderator']);
+    }
+
+    public function webView(User $user): bool
+    {
+        return $user->hasrole(['admin', 'moderator']);
+    }
+
+
+    public function webUpdate(User $user, Bill $bill): bool
+    {
+        return $user->hasrole(['admin', 'moderator']);
+    }
 }

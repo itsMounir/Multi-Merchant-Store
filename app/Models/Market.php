@@ -60,13 +60,25 @@ class Market extends Authenticatable
         'password' => 'hashed',
     ];
 
-    protected $appends = ['created_from'];
+    protected $appends = ['created_from', 'city_name', 'category_name'];
 
     // created from attribute
     public function getCreatedFromAttribute()
     {
         return $this->created_at->diffForHumans();
     }
+
+    public function getCategoryAttribute()
+    {
+        return $this->category()->pluck('name')->first();
+    }
+
+
+    public function getCityAttribute()
+    {
+        return $this->city()->pluck('name')->first();
+    }
+
 
     public function isActive(): bool
     {

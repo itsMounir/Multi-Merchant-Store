@@ -90,7 +90,7 @@ class Supplier extends Authenticatable
             ->map(function ($image) {
                 $dir = explode('\\', $image->imageable_type)[2];
                 unset($image->imageable_type);
-                return asset("public/$dir") . '/' . $image->url;
+                return asset("storage/$dir") . '/' . $image->url;
             });
     }
 
