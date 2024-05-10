@@ -11,6 +11,13 @@ use Illuminate\Auth\Access\Response;
 
 class BillPolicy
 {
+    /**
+     * Determine whether the user can view any models.
+     */
+    public function viewAny(Market $market): bool
+    {
+        return true;
+    }
 
     /**
      * Determine whether the user can view the model.

@@ -73,7 +73,6 @@ class Market extends Authenticatable
         return $this->category()->pluck('name')->first();
     }
 
-
     public function getCityNameAttribute()
     {
         return $this->city()->pluck('name')->first();

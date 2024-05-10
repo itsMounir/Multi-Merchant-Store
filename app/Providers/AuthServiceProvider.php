@@ -33,7 +33,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        Bill::class => billPolicy::class,
+        Bill::class => BillPolicy::class,
 
             /** Web Policies */
         User::class => WebEmpolyeePolicy::class,
