@@ -29,10 +29,10 @@ class DatabaseSeeder extends Seeder
 
     private function rolesAndPermissions()
     {
-        $supperAdminRole = Role::query()->where('name', 'supper_admin')->first();
+        $superAdminRole = Role::query()->where('name', 'super_admin')->first();
         $adminRole = Role::query()->where('name', 'admin')->first();
 
-        $supperAdminRole->givePermissionTo([
+        $superAdminRole->givePermissionTo([
             'user-stuff',
             'bill-stuff',
             'product-stuff',
@@ -46,10 +46,10 @@ class DatabaseSeeder extends Seeder
             'city-stuff',
         ]);
 
-        $supperAdminUser = User::find(1);
+        $superAdminUser = User::find(1);
         $adminUser = User::find(2);
 
-        $supperAdminUser->assignRole($supperAdminRole);
+        $superAdminUser->assignRole($superAdminRole);
         $adminUser->assignRole($adminRole);
     }
 
@@ -121,7 +121,7 @@ class DatabaseSeeder extends Seeder
     {
 
         Role::insert([
-            ['guard_name' => 'web', 'name' => 'supper_admin', 'created_at' => now()],
+            ['guard_name' => 'web', 'name' => 'super_admin', 'created_at' => now()],
             ['guard_name' => 'web', 'name' => 'admin', 'created_at' => now()],
             ['guard_name' => 'web', 'name' => 'supervisor', 'created_at' => now()],     // الإشراف على الحسابات
             ['guard_name' => 'web', 'name' => 'moderator', 'created_at' => now()],      // الإشراف على الفواتير
@@ -178,7 +178,7 @@ class DatabaseSeeder extends Seeder
                 'first_name' => 'Owner',
                 'middle_name' => 'Owner',
                 'last_name' => 'Owner',
-                'phone_number' => '0000000000',
+                'phone_number' => '+201000000000',
                 'email' => 'Owner@gmail.com',
                 'password' => Hash::make('password')
             ],
@@ -186,7 +186,7 @@ class DatabaseSeeder extends Seeder
                 'first_name' => 'Admin',
                 'middle_name' => 'Admin',
                 'last_name' => 'Admin',
-                'phone_number' => '1111111111',
+                'phone_number' => '+201111111111',
                 'email' => 'Admin@gmail.com',
                 'password' => Hash::make('password')
             ]
@@ -196,9 +196,9 @@ class DatabaseSeeder extends Seeder
         Market::factory(10)->create();
         Supplier::factory(10)->create();
         Product::factory(20)->create();
-       // Bill::factory(10)->create();
+        // Bill::factory(10)->create();
 
-      //  BillProduct::factory(5)->create();
+        // BillProduct::factory(5)->create();
         // $this->rolesAndPermissions();
 
         $this->rolesAndPermissions();

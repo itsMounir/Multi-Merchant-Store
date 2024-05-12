@@ -28,7 +28,8 @@ class CreateAccountRequest extends FormRequest
             'last_name' => ['required', 'string'],
             'phone_number' => ['required',  new EgyptPhoneNumber],
             'password' => ['required'],
-            'email' => ['required', 'email']
+            'email' => ['required', 'email'],
+            'role' => ['required', 'not_in:super_admin']
         ];
     }
 }

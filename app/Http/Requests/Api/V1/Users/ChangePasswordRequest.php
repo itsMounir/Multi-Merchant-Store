@@ -4,7 +4,7 @@ namespace App\Http\Requests\Api\V1\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CityRequest extends FormRequest
+class ChangePasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,10 +21,8 @@ class CityRequest extends FormRequest
      */
     public function rules(): array
     {
-        $city = $this->route('id');
         return [
-            'name' => ['required', 'unique:cities,name,' . $city . ',id', 'string',],
-            'parent_id' => ['nullable']
+            'password' => ['required', 'confirmed','min:6'],
         ];
     }
 }
