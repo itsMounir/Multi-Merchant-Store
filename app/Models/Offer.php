@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Offer extends Model
 {
@@ -21,16 +20,6 @@ class Offer extends Model
         'created_at',
         'updated_at',
     ];
-
-    /**
-     * Get the user's first name.
-     */
-    protected function image(): Attribute
-    {
-        return Attribute::make(
-            get: fn(string $value) => asset("public/Offers/$value"),
-        );
-    }
 
     public function supplier()
     {

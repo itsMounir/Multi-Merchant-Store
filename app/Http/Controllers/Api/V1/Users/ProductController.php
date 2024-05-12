@@ -129,7 +129,7 @@ class ProductController extends Controller
                 $request_image = $request->file('image');
                 $image_name = $this->setImagesName([$request_image])[0];
                 $product->image()->create(['url' => $image_name]);
-                $this->saveImages([$request_image], [$image_name], 'Product');
+                $this->saveImages([$request_image], [$image_name], 'public/Product');
             }
             $id = $product->id;
             $product = Product::with('category:id,name')->findOrFail($id);
