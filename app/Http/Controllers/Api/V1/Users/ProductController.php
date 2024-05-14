@@ -7,7 +7,6 @@ use App\Http\Requests\Api\V1\Users\ProductRequest;
 use App\Http\Requests\Api\V1\Users\ProductUpdaterequest;
 use App\Traits\Images;
 use App\Models\Product;
-use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -140,6 +139,7 @@ class ProductController extends Controller
             return response()->json(['message' => 'something gose wrong', 'error' => $th->getMessage()], $th->getCode() ?: 500);
         }
     }
+
     /**
      * To update a product
      * @param ProductUpdaterequest $request
@@ -158,8 +158,8 @@ class ProductController extends Controller
                 $request_image = $request->file('image');
 
                 $old_image = $product->image()->first();
-                if ($old_image && Storage::exists('products' . '/' . $old_image->url)) {
-                    Storage::delete('products' . '/' . $old_image->url);
+                if ($old_image && Storage::exists('public/Product/' . $old_image->url)) {
+                    Storage::delete('public/Product/' . $old_image->url);
                 }
 
                 $image_name = $this->setImagesName([$request_image])[0];
@@ -167,7 +167,7 @@ class ProductController extends Controller
                     ['imageable_id' => $product->id],
                     ['url' => $image_name]
                 );
-                $this->saveImages([$request_image], [$image_name], 'products');
+                $this->saveImages([$request_image], [$image_name], 'public/Product');
             }
             DB::commit();
             return response()->json($product, 200);
@@ -203,18 +203,5 @@ class ProductController extends Controller
 
         $product->restore();
         return response()->json(['message' => 'Product restored ', 'product' => $product], 200);
-    }
-    /**
-     * To delete a category
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function destroyCategory($id)
-    {
-        $category = ProductCategory::findOrFail($id);
-        $this->authorize('delete', $category);
-
-        $category->delete();
-        return response()->json(null, 204);
     }
 }
