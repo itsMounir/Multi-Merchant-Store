@@ -34,7 +34,7 @@ class SupplierUserController extends Controller
      */
     public function userWithBills($id)
     {
-        $user = Supplier::with(['category:id,type', 'bills.products'])->findOrFail($id);
+        $user = Supplier::with(['bills.market'])->findOrFail($id);
         $this->authorize('view', $user);
 
         $user->category_name = $user->category->type;
@@ -88,7 +88,7 @@ class SupplierUserController extends Controller
      * @param string $id
      * @return JsonResponse
      */
-    public function activateSupplierUser($id)
+    public function activate($id)
     {
         $user = Supplier::with('category:id,type', 'city:id,name', 'distributionLocations')->findOrFail($id);
         $this->authorize('update', $user);
@@ -113,16 +113,16 @@ class SupplierUserController extends Controller
      * @param string $id
      * @return JsonResponse
      */
-    public function banSupplierUser($id)
+    public function ban($id)
     {
         $user = Supplier::with('category:id,type', 'city:id,name', 'distributionLocations')->findOrFail($id);
         $this->authorize('update', $user);
+
         try {
-            if (!$user)
-                return response()->json(['message' => 'User not found'], 404);
             if ($user->status == 'محظور')
                 return response()->json(['message' => 'User is alredy Banned...'], 200);
             $user->status = 'محظور';
+            $user->tokens()->delete();
             $user->save();
 
             $user->category_name = $user->category->type;

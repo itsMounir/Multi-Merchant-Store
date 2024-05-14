@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\api\v1\users\SupplierCategoryController;
+use App\Http\Controllers\Api\V1\Users\SupplierCategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Users\SupplierUserController;
 
@@ -8,8 +8,8 @@ use App\Http\Controllers\Api\V1\Users\SupplierUserController;
 Route::prefix('users/supplier')->middleware('auth:sanctum')->group(function () {
 
     Route::get('get', [SupplierUserController::class, 'index']); // get filtered supplier users {activated- deactivated - baned}
-    Route::post('activate/{id}', [SupplierUserController::class, 'activateUser']); // activate supplier user
-    Route::post('ban/{id}', [SupplierUserController::class, 'banUser']); // ban supplier user
+    Route::post('activate/{id}', [SupplierUserController::class, 'activate']); // activate supplier user
+    Route::post('ban/{id}', [SupplierUserController::class, 'ban']); // ban supplier user
     Route::get('profile/{id}', [SupplierUserController::class, 'show']); // get user profile
     Route::put('profile/edit/{id}', [SupplierUserController::class, 'update']); // Edit user profile
     Route::get('with-bills/{id}', [SupplierUserController::class, 'userWithBills']); // get user with his bills

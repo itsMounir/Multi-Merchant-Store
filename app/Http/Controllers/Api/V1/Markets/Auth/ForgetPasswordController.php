@@ -28,7 +28,7 @@ class ForgetPasswordController extends Controller
         $market = Market::where('phone_number', $validated['phone'])->firstOrFail();
         $verificationCode = $this->getOrCreateVerificationCode($validated['phone'], $validated['name']);
 
-        Notification::route('mail', 'Al.Mowafraaty@gmail.com')
+        Notification::route('mail', 'almowafratys09@gmail.com')
             ->notify(new verfication_code($market, $verificationCode));
 
         return $this->sudResponse('.لقد تم إرسال طلبك إلى المشرف');

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Users;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\v1\Users\CategoryRequest;
+use App\Http\Requests\Api\V1\Users\CategoryRequest;
 use App\Models\MarketCategory;
 use Illuminate\Http\JsonResponse;
 
@@ -16,7 +16,7 @@ class MarketCategoryController extends Controller
     public function index()
     {
         $this->authorize('viewAny', MarketCategory::class);
-        
+
         $categories = MarketCategory::all();
         return response()->json($categories, 200);
     }

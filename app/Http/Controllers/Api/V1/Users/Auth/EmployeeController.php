@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Api\V1\Users\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Requests\Api\V1\users\Auth\CreateAccountRequest;
-use App\Http\Requests\api\v1\users\auth\UpdateEmployeeRequest;
+use App\Http\Requests\Api\V1\Users\Auth\CreateAccountRequest;
+use App\Http\Requests\Api\V1\Users\Auth\UpdateEmployeeRequest;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\Hash;
+
 
 class EmployeeController extends Controller
 {
@@ -16,8 +18,17 @@ class EmployeeController extends Controller
     {
         $this->authorize('create', User::class);
 
-        $user = User::create($request->all());
+        $user = User::create([
+            'first_name' => $request->first_name,
+            'middle_name' => $request->middle_name,
+            'last_name' => $request->last_name,
+            'phone_number' => $request->phone_number,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
         $user->assignRole($request->role);
+        $user->load('roles:name', 'permissions');
+
         return response()->json(['message' => 'Account has been created successfully ', 'User' => $user], 201);
     }
     /**
@@ -27,7 +38,7 @@ class EmployeeController extends Controller
     public function index(Request $request)
     {
         $this->authorize('viewany', User::class);
-        
+
         $role = $request->query('role');
         if ($role)
             $employees = User::role($role)->get();
@@ -62,6 +73,8 @@ class EmployeeController extends Controller
 
         $employee->update($request->all());
         $employee->syncRoles($request->role);
+        $employee->load('roles:name', 'permissions');
+
         return response()->json(['message' => 'User has been updated successfully', 'user' => $employee], 200);
     }
 

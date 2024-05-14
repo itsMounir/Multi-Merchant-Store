@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Api\V1\Users;
 
+use App\Filters\Markets\ProductsFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Users\ProductRequest;
 use App\Http\Requests\Api\V1\Users\ProductUpdaterequest;
+use App\Traits\Images;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
-use App\Traits\Images;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -32,6 +34,17 @@ class ProductController extends Controller
             $products = Product::with('category:id,name')->get();
         }
         return response()->json($products, 200);
+    }
+
+    /**
+     * Search by name
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function search(Request $request): JsonResponse
+    {
+        $products = Product::where('name', 'like', '%' . $request->query('name') . '%')->get();
+        return response()->json([$products], 200);
     }
     /**
      * To get trashed products
@@ -101,8 +114,8 @@ class ProductController extends Controller
                 $request_image = $request->file('image');
 
                 $old_image = $product->image()->first();
-                if ($old_image && Storage::exists('products' . '/' . $old_image->url)) {
-                    Storage::delete('products' . '/' . $old_image->url);
+                if ($old_image && Storage::exists('public/Product' . $old_image->url)) {
+                    Storage::delete('public/Product' . $old_image->url);
                 }
 
                 $image_name = $this->setImagesName([$request_image])[0];
@@ -110,13 +123,13 @@ class ProductController extends Controller
                     ['imageable_id' => $product->id],
                     ['url' => $image_name]
                 );
-                $this->saveImages([$request_image], [$image_name], 'products');
+                $this->saveImages([$request_image], [$image_name], 'public/Product');
             }
             DB::commit();
             return response()->json($product, 200);
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 500);
+            return response()->json(['message' => $e->getMessage()],  500);
         }
     }
 

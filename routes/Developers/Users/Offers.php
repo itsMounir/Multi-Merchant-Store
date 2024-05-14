@@ -3,7 +3,6 @@
 use App\Http\Controllers\Api\V1\Users\{
     OfferController,
 };
-use App\Models\Offer;
 use Illuminate\Support\Facades\Route;
 
 

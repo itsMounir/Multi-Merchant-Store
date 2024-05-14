@@ -39,6 +39,7 @@ class BillsController extends Controller
         $results = [];
 
         $bills = $billsFilters->applyFilters(Auth::user()->bills()->getQuery())->get();
+
         foreach ($bills as $bill) {
             $productIds = $bill->products->pluck('id');
 
@@ -47,7 +48,7 @@ class BillsController extends Controller
                 'supplier.products' => function ($query) use ($productIds) {
                     return $query->whereIn('products.id', $productIds)->orderBy('products.id');
                 }
-            ])->where('id', $bill->id)->get();
+            ])->where('id', $bill->id)->first();
 
             $results[] = $bill;
         }
