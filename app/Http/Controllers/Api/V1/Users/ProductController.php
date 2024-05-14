@@ -2,22 +2,61 @@
 
 namespace App\Http\Controllers\Api\V1\Users;
 
-use App\Filters\Markets\ProductsFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Users\ProductRequest;
 use App\Http\Requests\Api\V1\Users\ProductUpdaterequest;
 use App\Traits\Images;
 use App\Models\Product;
-use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductController extends Controller
 {
     use Images;
 
+    /*
+    public function filterOrSearch(Request $request): JsonResponse
+    {
+        try {
+            $category = $request->query('category');
+            $name = $request->query('name');
+    
+            $query = Product::with('category:id,name');
+    
+            if ($category) {
+                $query->where('product_category_id', $category);
+            }
+    
+            if ($name) {
+                $query->where('name', 'like', '%' . $name . '%');
+            }
+    
+            // Paginate the query results
+            $perPage = $request->query('per_page', 10); // Number of items per page, default is 10
+            $page = $request->query('page', 1); // Current page, default is 1
+    
+            $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+    
+            // Optionally, you can format the paginator to include additional information if needed
+            $formattedPaginator = [
+                'total' => $paginator->total(),
+                'per_page' => $paginator->perPage(),
+                'current_page' => $paginator->currentPage(),
+                'last_page' => $paginator->lastPage(),
+                'next_page_url' => $paginator->nextPageUrl(),
+                'prev_page_url' => $paginator->previousPageUrl(),
+                'data' => $paginator->items(),
+            ];
+    
+            return response()->json($formattedPaginator, 200);
+        } catch (\Exception $e) {
+            return response()->json([$e->getMessage()], $e->getCode() ?: 200);
+        }
+    }
+*/
     /**
      * To get all products indexed by category
      * @param Request $request
@@ -43,8 +82,12 @@ class ProductController extends Controller
      */
     public function search(Request $request): JsonResponse
     {
-        $products = Product::where('name', 'like', '%' . $request->query('name') . '%')->get();
-        return response()->json([$products], 200);
+        try {
+            $products = Product::where('name', 'like', '%' . $request->query('name') . '%')->get();
+            return response()->json([$products], 200);
+        } catch (\Exception $e) {
+            return response()->json([$e->getMessage()], $e->getCode() ?: 200);
+        }
     }
     /**
      * To get trashed products
@@ -85,7 +128,7 @@ class ProductController extends Controller
                 $request_image = $request->file('image');
                 $image_name = $this->setImagesName([$request_image])[0];
                 $product->image()->create(['url' => $image_name]);
-                $this->saveImages([$request_image], [$image_name], 'Product');
+                $this->saveImages([$request_image], [$image_name], 'public/Product');
             }
             $id = $product->id;
             $product = Product::with('category:id,name')->findOrFail($id);
@@ -96,6 +139,7 @@ class ProductController extends Controller
             return response()->json(['message' => 'something gose wrong', 'error' => $th->getMessage()], $th->getCode() ?: 500);
         }
     }
+
     /**
      * To update a product
      * @param ProductUpdaterequest $request
@@ -114,8 +158,8 @@ class ProductController extends Controller
                 $request_image = $request->file('image');
 
                 $old_image = $product->image()->first();
-                if ($old_image && Storage::exists('products' . '/' . $old_image->url)) {
-                    Storage::delete('products' . '/' . $old_image->url);
+                if ($old_image && Storage::exists('public/Product/' . $old_image->url)) {
+                    Storage::delete('public/Product/' . $old_image->url);
                 }
 
                 $image_name = $this->setImagesName([$request_image])[0];
@@ -123,7 +167,7 @@ class ProductController extends Controller
                     ['imageable_id' => $product->id],
                     ['url' => $image_name]
                 );
-                $this->saveImages([$request_image], [$image_name], 'products');
+                $this->saveImages([$request_image], [$image_name], 'public/Product');
             }
             DB::commit();
             return response()->json($product, 200);
@@ -159,18 +203,5 @@ class ProductController extends Controller
 
         $product->restore();
         return response()->json(['message' => 'Product restored ', 'product' => $product], 200);
-    }
-    /**
-     * To delete a category
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function destroyCategory($id)
-    {
-        $category = ProductCategory::findOrFail($id);
-        $this->authorize('delete', $category);
-
-        $category->delete();
-        return response()->json(null, 204);
     }
 }
