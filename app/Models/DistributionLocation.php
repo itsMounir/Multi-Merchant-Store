@@ -25,7 +25,7 @@ class DistributionLocation extends Model
     protected $dates = ['created_at'];
 
     protected $appends = ['city_name'];
-    
+
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);

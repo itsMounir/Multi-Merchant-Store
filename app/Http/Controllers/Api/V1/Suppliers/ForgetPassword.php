@@ -36,7 +36,7 @@ use createVerificationCode,Responses;
         $supplier = Supplier::where('phone_number', $validated['phone_number'])->firstOrFail();
         $verificationCode = $this->getOrCreateVerificationCode($validated['phone_number'], $validated['name']);
 
-        Notification::route('mail', 'Al.Mowafraaty@gmail.com')
+        Notification::route('mail', 'almowafratys09@gmail.com')
                     ->notify(new verfication_code($supplier, $verificationCode));
 
         return $this->sudResponse('.لقد تم إرسال طلبك إلى المشرف');

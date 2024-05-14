@@ -18,6 +18,7 @@ class ProductSupplier extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'supplier_id',
         'product_id',
         'price',

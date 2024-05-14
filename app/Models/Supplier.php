@@ -65,24 +65,6 @@ class Supplier extends Authenticatable
         'password' => 'hashed',
     ];
 
-   // protected $appends = ['city_name'];
-
-
-   /* public function getCityNameAttribute()
-   {
-       // تحميل العلاقة إذا لم تكن محملة بالفعل
-       if (!$this->relationLoaded('city')) {
-           $this->load('city');
-       }
-       // إرجاع اسم المدينة أو قيمة افتراضية إذا لم يكن هناك مدينة
-       return $this->city ? $this->city->name : null;
-   }*/
-
-
-
-
-
-
     /**
      * Scope a query to only include same-site suppliers.
      */
@@ -141,6 +123,7 @@ class Supplier extends Authenticatable
     {
         return $this->belongsToMany(Product::class, 'product_supplier')
             ->withPivot(
+                'id',
                 'price',
                 'has_offer',
                 'offer_price',

@@ -4,14 +4,14 @@ namespace App\Http\Controllers\Api\V1\Suppliers\Auth;
 
 use App\Enums\TokenAbility;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\Auth\LoginRequest;
+use App\Http\Requests\Api\V1\Suppliers\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    public function create(Request $request) {
+    public function create(LoginSupplier $request) {
         $credentials = $request->only('phone_number', 'password');
 
         if (! Auth::guard('supplier')->attempt($credentials)) {
