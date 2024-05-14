@@ -34,7 +34,7 @@ class SupplierUserController extends Controller
      */
     public function userWithBills($id)
     {
-        $user = Supplier::with(['category:id,type', 'bills.products'])->findOrFail($id);
+        $user = Supplier::with(['bills.market'])->findOrFail($id);
         $this->authorize('view', $user);
 
         $user->category_name = $user->category->type;

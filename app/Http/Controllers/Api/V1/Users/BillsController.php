@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1\Users;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bill;
-
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 
 class BillsController extends Controller
@@ -86,11 +86,17 @@ class BillsController extends Controller
      */
     public function show(String $id)
     {
-        $bill = Bill::with(['products' => function ($query) {
-            $query->withTrashed();
-        }, 'market.category', 'supplier.category'])->findOrFail($id);
-
-        $this->authorize('webView', $bill);
+        $bill = Bill::with(['market', 'supplier'])->findOrFail($id);
+        $supplier = Supplier::findOrFail($bill->supplier_id);
+        $productIds = $bill->products->pluck('id');
+        $bill->load([
+            'products' => function ($query) use ($productIds, $supplier) {
+                $query->whereIn('products.id', $productIds)
+                    ->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
+                    ->where('product_supplier.supplier_id', $supplier->id)
+                    ->select('products.*', 'product_supplier.price as price');
+            }
+        ]);
 
         return response()->json(['bill' => $bill]);
     }

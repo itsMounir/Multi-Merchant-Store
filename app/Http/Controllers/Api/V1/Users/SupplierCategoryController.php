@@ -46,7 +46,7 @@ class SupplierCategoryController extends Controller
     {
         $category = SupplierCategory::findOrFail($id);
         $this->authorize('update', $category);
-        $category->update($request->all());
+        $category->update(['type'=>$request->name]);
         return response()->json($category, 200);
     }
 

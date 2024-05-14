@@ -36,10 +36,8 @@ class ProductSupplier extends Model
         'created_at' => 'date:Y-m-d',
     ];*/
 
-     public function bills() : BelongsToMany {
-         return $this->belongsToMany(Bill::class);
-     }
-
-
-
+    public function bills(): BelongsToMany
+    {
+        return $this->belongsToMany(Bill::class);
+    }
 }
