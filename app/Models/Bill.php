@@ -31,23 +31,16 @@ class Bill extends Model
         'delivery_duration',
     ];
 
-    protected $appends = ['created_from', 'payment_method', 'additional_price', 'waffarnalak'];
+    protected $appends = ['created_from', 'payment_method', 'additional_price', 'waffarnalak', 'updatable'];
 
-
-    protected $dates = ['created_at','updated_at'];
-    protected $casts = [
-        'created_at' => 'date:Y-m-d',
-        'updated_at' => 'date:Y-m-d',
-    ];
-
-    protected $hidden=[
+    protected $hidden = [
         'deleted_at'
     ];
 
     // created from attribute
     public function getCreatedFromAttribute()
     {
-        return $this->created_at->diffForHumans();
+        return Carbon::parse($this->created_at)->diffForHumans();
     }
     public function getAdditionalPriceAttribute()
     {
@@ -57,7 +50,6 @@ class Bill extends Model
             return $this->total_price;
         }
     }
-
 
     public function getWaffarnalakAttribute()
     {
@@ -97,8 +89,12 @@ class Bill extends Model
 
     protected function getpaymentMethodAttribute()
     {
-
         return $this->paymentMethod()->pluck('name')->first();
+    }
+
+    public function getUpdatableAttribute()
+    {
+        return $this->isUpdatable();
     }
 
 
@@ -126,11 +122,11 @@ class Bill extends Model
         return $this->belongsTo(Market::class);
     }
 
-    public function scopeNewStatusCount($query,$supplier_id)
+    public function scopeNewStatusCount($query, $supplier_id)
     {
         return $query->where('status', 'جديد')
-        ->where('supplier_id',$supplier_id)
-        ->count();
+            ->where('supplier_id', $supplier_id)
+            ->count();
     }
 
     public function scopeStatus($query, $status = null)

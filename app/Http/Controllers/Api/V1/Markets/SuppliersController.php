@@ -7,6 +7,7 @@ use App\Filters\Markets\ProductsFilters;
 use App\Filters\Markets\SuppliersFilters;
 use App\Http\Controllers\Controller;
 use App\Models\Offer;
+use App\Models\ProductCategory;
 use App\Models\Supplier;
 use App\Models\SupplierCategory;
 use Illuminate\Http\JsonResponse;
@@ -51,8 +52,10 @@ class SuppliersController extends Controller
     {
         throw_if($supplier->status != 'نشط', new InActiveAccountException($supplier->store_name));
         $products = $productsFilters->applyFilters($supplier->products()->getQuery())->get();
+        $categories = ProductCategory::get(['id','name']);
         return response()->json([
             'supplier' => $supplier,
+            'product_categories' => $categories,
             'products' => $products,
         ]);
     }
