@@ -31,7 +31,6 @@ class MarketProfileRequest extends FormRequest
             'phone_number' => ['string', 'unique:suppliers,phone_number,' . $user . ',id', 'required'],
             'market_category_id' => ['required'],
             'city' => ['string', 'required'],
-            'street' => ['string', 'required'],
             'store_name' => ['string', 'unique:markets,store_name,' . $user . ',id', 'required'],
         ];
     }

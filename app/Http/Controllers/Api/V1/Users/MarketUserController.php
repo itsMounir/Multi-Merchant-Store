@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Users;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Users\MarketProfileRequest;
+use App\Models\City;
 use App\Models\Market;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -45,9 +46,14 @@ class MarketUserController extends Controller
     {
         $market = Market::findOrFail($id);
         $this->authorize('update', $market);
-
-        $market->update($request->all());
-        $market = Market::findOrFail($id);
+        $city = City::where('name', $request->city)->firstOrFail();
+        $market->update([
+            'first_name' => $request->first_name,
+            'middle_name' => $request->middle_name,
+            'last_name' => $request->last_name,
+            'phone_number' => $request->phone_number,
+            'city_id' => $city->id,
+        ]);
         return response()->json(['message' => 'User has been updated successfully', 'user' => $market], 200);
     }
 

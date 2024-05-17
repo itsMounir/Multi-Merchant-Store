@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductController extends Controller
 {
@@ -68,9 +67,9 @@ class ProductController extends Controller
 
         $category = $request->query('category');
         if ($category)
-            $products = Product::with('category:id,name')->where('product_category_id', $category)->get();
+            $products = Product::with('category:id,name')->where('product_category_id', $category)->paginate(2, ['*'], 'p');
         else {
-            $products = Product::with('category:id,name')->get();
+            $products = Product::with('category:id,name')->paginate(2, ['*'], 'p');
         }
         return response()->json($products, 200);
     }

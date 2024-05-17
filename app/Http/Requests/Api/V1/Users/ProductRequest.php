@@ -27,6 +27,7 @@ class ProductRequest extends FormRequest
             'size' => ['required', 'numeric'],
             'size_of' => ['required', 'string'],
             'product_category_id' => ['required', 'numeric'],
+            'image' => ['required', 'file']
         ];
     }
 }
