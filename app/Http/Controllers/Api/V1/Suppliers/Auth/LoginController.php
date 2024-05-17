@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1\Suppliers\Auth;
 
 use App\Enums\TokenAbility;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\Suppliers\LoginRequest;
+use App\Http\Requests\Api\V1\Suppliers\LoginSupplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
