@@ -27,7 +27,7 @@ class CreateAccountRequest extends FormRequest
             'middle_name' => ['required', 'string'],
             'last_name' => ['required', 'string'],
             'phone_number' => ['required',  new EgyptPhoneNumber],
-            'password' => ['required'],
+            'password' => ['required','min:6'],
             'email' => ['required', 'email'],
             'role' => ['required', 'not_in:super_admin']
         ];
