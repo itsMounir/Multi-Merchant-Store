@@ -53,7 +53,7 @@ class SupplierContoller extends Controller
 
     public function categories_supplier(){
         $category = SupplierCategory::get();
-        $cities = City::with('childrens')->get();
+        $cities = City::get();
         $data = [
             'categories' => $category,
             'cities' => $cities
