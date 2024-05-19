@@ -53,13 +53,14 @@ class SupplierContoller extends Controller
 
     public function categories_supplier(){
         $category = SupplierCategory::get();
-        $cities = City::get();
+        $cities = City::with('childrens.childrens')->whereNull('parent_id')->get(); 
         $data = [
             'categories' => $category,
             'cities' => $cities
         ];
         return $this->indexOrShowResponse('Body', $data);
     }
+
 
     public function Personal_Data(){
         $supplier = Auth::user();

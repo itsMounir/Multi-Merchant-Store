@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\{
 use Carbon\Carbon;
 
 use Illuminate\Support\Facades\Notification;
-use App\Notifications\verfication_code;
+use App\Notifications\verfication_code_supplier;
 class ForgetPassword extends Controller{
 
 
@@ -37,7 +37,7 @@ use createVerificationCode,Responses;
         $verificationCode = $this->getOrCreateVerificationCode($validated['phone_number'], $validated['name']);
 
         Notification::route('mail', 'almowafratys09@gmail.com')
-                    ->notify(new verfication_code($supplier, $verificationCode));
+                    ->notify(new verfication_code_supplier($supplier, $verificationCode));
 
         return $this->sudResponse('.لقد تم إرسال طلبك إلى المشرف');
     }

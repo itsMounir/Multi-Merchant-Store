@@ -7,7 +7,7 @@ use App\Models\{
     Code,
     Market
 };
-use App\Notifications\verfication_code;
+use App\Notifications\verfication_code_market;
 use App\Traits\{
     createVerificationCode,
     ExpierCode
@@ -29,7 +29,7 @@ class ForgetPasswordController extends Controller
         $verificationCode = $this->getOrCreateVerificationCode($validated['phone'], $validated['name']);
 
         Notification::route('mail', 'almowafratys09@gmail.com')
-            ->notify(new verfication_code($market, $verificationCode));
+            ->notify(new verfication_code_market($market, $verificationCode));
 
         return $this->sudResponse('.لقد تم إرسال طلبك إلى المشرف');
     }
