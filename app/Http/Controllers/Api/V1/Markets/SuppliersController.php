@@ -3,16 +3,17 @@
 namespace App\Http\Controllers\Api\V1\Markets;
 
 use App\Exceptions\InActiveAccountException;
-use App\Filters\Markets\ProductsFilters;
-use App\Filters\Markets\SuppliersFilters;
+use App\Filters\Markets\{
+    ProductsFilters,
+    SuppliersFilters
+};
 use App\Http\Controllers\Controller;
-use App\Models\Offer;
-use App\Models\ProductCategory;
-use App\Models\Supplier;
-use App\Models\SupplierCategory;
+use App\Models\{
+    Offer,
+    ProductCategory,
+    Supplier
+};
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class SuppliersController extends Controller
 {
@@ -30,57 +31,17 @@ class SuppliersController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(Supplier $supplier, ProductsFilters $productsFilters): JsonResponse
     {
         throw_if($supplier->status != 'نشط', new InActiveAccountException($supplier->store_name));
-        $products = $productsFilters->applyFilters($supplier->products()->getQuery())->get();
-        $categories = ProductCategory::get(['id','name']);
+        $products = $productsFilters->applyFilters($supplier->availableProducts()->getQuery())->get();
+        $categories = ProductCategory::get(['id', 'name']);
         return response()->json([
             'supplier' => $supplier,
             'product_categories' => $categories,
             'products' => $products,
         ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Supplier $supplier)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Supplier $supplier)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Supplier $supplier)
-    {
-        //
     }
 }

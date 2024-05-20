@@ -39,7 +39,7 @@ class BillsController extends Controller
     {
         $results = [];
 
-        $bills = $billsFilters->applyFilters(Auth::user()->bills()->getQuery())->where('created_at','>=',Carbon::now()->subMonths(2))->get();
+        $bills = $billsFilters->applyFilters(Auth::user()->bills()->getQuery())->where('created_at', '>=', Carbon::now()->subMonths(2))->get();
 
         foreach ($bills as $bill) {
             $productIds = $bill->products->pluck('id');
@@ -74,12 +74,15 @@ class BillsController extends Controller
         return DB::transaction(function () use ($request) {
             $market = Auth::user();
             $bills = $request->bills;
+            $discount_messages = [];
 
             foreach ($bills as $bill) {
-                $this->billsServices->process($bill, $market);
+                $discount_messages[] = $this->billsServices->process($bill, $market);
             }
-
-            return $this->sudResponse('.تم إنشاء الفواتير بنجاح', 201);
+            return response()->json([
+                'message' =>'.تم إنشاء الفواتير بنجاح',
+                'discount_messages' => $discount_messages,
+            ], 201);
         });
     }
 
