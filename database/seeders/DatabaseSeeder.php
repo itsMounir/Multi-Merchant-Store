@@ -146,7 +146,6 @@ class DatabaseSeeder extends Seeder
         SupplierCategory::insert([
             ['type' => 'مورد', 'created_at' => now()],
             ['type' => 'شركات', 'created_at' => now()],
-            ['type' => 'توريدات', 'created_at' => now()]
         ]);
 
         MarketCategory::insert([

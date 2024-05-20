@@ -64,7 +64,7 @@ class MarketsController extends Controller
     {
         $market->update([
             'first_name' => $request->first_name ?? $market->first_name,
-            'middle_name' => $request->_middle_name ?? $market->middle_name,
+            'middle_name' => $request->middle_name ?? $market->middle_name,
             'last_name' => $request->last_name ?? $market->last_name,
         ]);
         return $this->sudResponse('.تم تحديث الاسم بنجاح');

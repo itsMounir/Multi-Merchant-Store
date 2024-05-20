@@ -81,7 +81,7 @@ class Supplier extends Authenticatable
             ->get(['imageable_type', 'url'])
             ->map(function ($image) {
                 $dir = explode('\\', $image->imageable_type)[2];
-                unset($image->imageable_type);
+                unset ($image->imageable_type);
                 return asset("storage/$dir") . '/' . $image->url;
             });
     }
@@ -104,11 +104,12 @@ class Supplier extends Authenticatable
         return $this->morphOne(Image::class, 'imageable');
     }
 
-    public function city() : BelongsTo {
+    public function city(): BelongsTo
+    {
         return $this->belongsTo(City::class);
     }
 
-    public function distributionLocations() : HasMany
+    public function distributionLocations(): HasMany
     {
         return $this->hasMany(DistributionLocation::class);
     }
@@ -131,6 +132,22 @@ class Supplier extends Authenticatable
                 'max_selling_quantity',
                 'is_available'
             );
+    }
+
+    public function availableProducts(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'product_supplier')
+            ->withPivot(
+                'price',
+                'has_offer',
+                'offer_price',
+                'max_offer_quantity',
+                'offer_expires_at',
+                'max_selling_quantity',
+                'is_available'
+            )
+            ->where('is_available', true);
+
     }
 
     public function productSuppliers(): HasMany
@@ -176,8 +193,8 @@ class Supplier extends Authenticatable
     public function getMarketsToNotify()
     {
         return Market::where('city_id', $this->city_id)
-                     ->orWhereIn('city_id', $this->distributionLocations->pluck('to_city_id'))
-                     ->get()
-                     ->unique('id');
+            ->orWhereIn('city_id', $this->distributionLocations->pluck('to_city_id'))
+            ->get()
+            ->unique('id');
     }
 }
