@@ -16,6 +16,7 @@ class Offer extends Model
     ];
 
     protected $dates = ['created_at'];
+    protected $appends = ['supplier_name'];
 
     protected $hidden = [
         'created_at',
@@ -28,7 +29,7 @@ class Offer extends Model
     protected function image(): Attribute
     {
         return Attribute::make(
-            get: fn(string $value) => asset("public/Offers/$value"),
+            get: fn(string $value) => asset("storage/$value"),
         );
     }
 
@@ -36,4 +37,11 @@ class Offer extends Model
     {
         return $this->belongsTo(Supplier::class, 'supplier_id');
     }
+
+    public function getSupplierNameAttribute()
+    {
+        return $this->supplier()->pluck('store_name')->first();
+    }
+
+
 }
