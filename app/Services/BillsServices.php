@@ -37,14 +37,27 @@ class BillsServices
         $supplier_discount = $this->supplierDiscount($supplier, $total_price);
         $total_price -= $supplier_discount;
 
-        $new_bill = Bill::create([
-            'total_price' => $total_price,
-            'payment_method_id' => $bill['payment_method_id'],
-            'supplier_id' => $supplier->id,
-            'market_id' => $market->id,
-            'has_additional_cost' => !Auth::user()->is_subscriped,
-            'market_note' => $bill['market_note'],
-        ]);
+        if (!is_null($bill['market_note'])) {
+            $new_bill = Bill::create([
+                'total_price' => $total_price,
+                'payment_method_id' => $bill['payment_method_id'],
+                'supplier_id' => $supplier->id,
+                'market_id' => $market->id,
+                'has_additional_cost' => !Auth::user()->is_subscriped,
+                'market_note' => $bill['market_note'],
+            ]);
+
+        } else {
+            $new_bill = Bill::create([
+                'total_price' => $total_price,
+                'payment_method_id' => $bill['payment_method_id'],
+                'supplier_id' => $supplier->id,
+                'market_id' => $market->id,
+                'has_additional_cost' => !Auth::user()->is_subscriped,
+            ]);
+
+        }
+
 
         foreach ($bill['products'] as $product) {
             $new_bill->products()->syncWithoutDetaching([
