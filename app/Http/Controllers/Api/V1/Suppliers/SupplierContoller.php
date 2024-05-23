@@ -47,13 +47,12 @@ class SupplierContoller extends Controller
         }
         $data=Product::get();
         return $this->indexOrShowResponse('products',$data);
-
-
     }
+
 
     public function categories_supplier(){
         $category = SupplierCategory::get();
-        $cities = City::with('childrens.childrens')->whereNull('parent_id')->get(); 
+        $cities = City::with('childrens.childrens')->whereNull('parent_id')->get();
         $data = [
             'categories' => $category,
             'cities' => $cities
@@ -82,9 +81,16 @@ class SupplierContoller extends Controller
     }
 
 
+    public function search(Request $request){
+
+        return $this->indexOrShowResponse('body',$product=Product::where('name', 'like', '%' . $request->search . '%')->get());
+    }
+
+
     public function edit_name(UpdateName $request){
 
         $supplier=Auth::user();
+
         $supplier->update($request->all());
         return $this->sudResponse('تم تعديل الاسم بنجاح');
 

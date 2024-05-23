@@ -29,6 +29,13 @@ class ProductSuppliersController extends Controller
     }
 
 
+    public function search(Request $request){
+        $supplier=Auth::user();
+        $product = ProductSupplier::search_Product($supplier->id, $request->search,$request->is_avaliable);
+        return $this->indexOrShowResponse('body',$product);
+
+    }
+
 
 
     public function store(StoreProductRequest $request){
@@ -62,28 +69,6 @@ class ProductSuppliersController extends Controller
             return $this->sudResponse('!حدث خطأ ما ');
         }
 }
-
-
-
-   /* public function update(UpdatePriceRequest $request, $product_id)
-    {
-        $supplier = Auth::user();
-        $productSupplier = $this->findProductSupplier($supplier->id, $product_id);
-        $productSupplier->update(['price' => $request->price]);
-        return $this->sudResponse('تم تعديل السعر');
-    }
-
-
-
-
-
-    private function findProductSupplier($supplierId, $productId)
-    {
-
-        return ProductSupplier::where('supplier_id', $supplierId)
-                              ->where('id', $productId)
-                              ->first();
-    }*/
 
     /**
      * Remove the specified resource from storage.
