@@ -26,12 +26,15 @@ class Offer extends Model
     /**
      * Get the user's first name.
      */
+
+
     protected function image(): Attribute
     {
         return Attribute::make(
             get: fn(string $value) => asset("storage/$value"),
         );
     }
+
 
     public function supplier()
     {

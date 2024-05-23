@@ -29,6 +29,13 @@ class ProductSuppliersController extends Controller
     }
 
 
+    public function search(Request $request){
+        $supplier=Auth::user();
+        $product = ProductSupplier::search_Product($supplier->id, $request->search,$request->is_avaliable);
+        return $this->indexOrShowResponse('body',$product);
+
+    }
+
 
 
     public function store(StoreProductRequest $request){
@@ -63,28 +70,6 @@ class ProductSuppliersController extends Controller
         }
 }
 
-
-
-   /* public function update(UpdatePriceRequest $request, $product_id)
-    {
-        $supplier = Auth::user();
-        $productSupplier = $this->findProductSupplier($supplier->id, $product_id);
-        $productSupplier->update(['price' => $request->price]);
-        return $this->sudResponse('تم تعديل السعر');
-    }
-
-
-
-
-
-    private function findProductSupplier($supplierId, $productId)
-    {
-
-        return ProductSupplier::where('supplier_id', $supplierId)
-                              ->where('id', $productId)
-                              ->first();
-    }*/
-
     /**
      * Remove the specified resource from storage.
      */
@@ -102,11 +87,12 @@ class ProductSuppliersController extends Controller
     public function is_available(Request $request, $product_id)
     {
         $supplier = Auth::user();
+
         $request->validate([
             'is_available' => 'required',
         ]);
-        $product = $supplier->productSuppliers()->find($product_id)
-        ->first();
+        $product = $supplier->productSuppliers()->find($product_id);
+
         //return $product;
             $product->update([
                 'is_available' => $request->is_available,
@@ -131,8 +117,9 @@ class ProductSuppliersController extends Controller
     public function offer(AddOfferRequest $request, $product_id)
     {
         $supplier = Auth::user();
-        $productPivot = $supplier->productSuppliers()->find($product_id)->first();
+        $productPivot = $supplier->productSuppliers()->find($product_id);
         $productPivot->update( $request->all());
+        $productPivot->save();
         return $this->sudResponse('تم اضافة عرض لهذا المنتج ');
     }
 
@@ -146,6 +133,7 @@ class ProductSuppliersController extends Controller
 
         $updateData = $request->only(['price', 'offer_price', 'max_offer_quantity', 'offer_expires_at']);
         $productSupplier->update($updateData);
+
 
         return $this->sudResponse('تم تعديل المنتج بنجاح');
     }

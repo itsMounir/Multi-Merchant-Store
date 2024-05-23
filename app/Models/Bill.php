@@ -81,7 +81,9 @@ class Bill extends Model
     protected function getpaymentMethodAttribute()
     {
         return $this->paymentMethod()->pluck('name')->first();
+
     }
+
 
     public function getUpdatableAttribute()
     {

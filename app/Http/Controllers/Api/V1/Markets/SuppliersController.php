@@ -8,11 +8,14 @@ use App\Filters\Markets\{
     SuppliersFilters
 };
 use App\Http\Controllers\Controller;
+
+
 use App\Models\{
     Offer,
     ProductCategory,
     Supplier
 };
+
 use Illuminate\Http\JsonResponse;
 
 class SuppliersController extends Controller
@@ -36,8 +39,11 @@ class SuppliersController extends Controller
     public function show(Supplier $supplier, ProductsFilters $productsFilters): JsonResponse
     {
         throw_if($supplier->status != 'نشط', new InActiveAccountException($supplier->store_name));
+
+
         $products = $productsFilters->applyFilters($supplier->availableProducts()->getQuery())->get();
         $categories = ProductCategory::get(['id', 'name']);
+
         return response()->json([
             'supplier' => $supplier,
             'product_categories' => $categories,

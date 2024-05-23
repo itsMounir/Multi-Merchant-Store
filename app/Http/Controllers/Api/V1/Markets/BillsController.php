@@ -39,7 +39,9 @@ class BillsController extends Controller
     {
         $results = [];
 
+
         $bills = $billsFilters->applyFilters(Auth::user()->bills()->getQuery())->where('created_at', '>=', Carbon::now()->subMonths(2))->latest()->get();
+
 
         foreach ($bills as $bill) {
             $productIds = $bill->products->pluck('id');
@@ -49,7 +51,9 @@ class BillsController extends Controller
                 'supplier.products' => function ($query) use ($productIds) {
                     return $query->whereIn('products.id', $productIds)->orderBy('products.id');
                 }
+
             ])->where('id', $bill->id)->first()->append('total_price_after_discount');
+
 
             $results[] = $bill;
         }

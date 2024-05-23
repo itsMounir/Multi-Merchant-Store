@@ -47,13 +47,12 @@ class SupplierContoller extends Controller
         }
         $data=Product::get();
         return $this->indexOrShowResponse('products',$data);
-
-
     }
+
 
     public function categories_supplier(){
         $category = SupplierCategory::get();
-        $cities = City::with('childrens')->get();
+        $cities = City::with('childrens.childrens')->whereNull('parent_id')->get();
         $data = [
             'categories' => $category,
             'cities' => $cities
@@ -61,17 +60,37 @@ class SupplierContoller extends Controller
         return $this->indexOrShowResponse('Body', $data);
     }
 
+
     public function Personal_Data(){
         $supplier = Auth::user();
-        $supplier->load('city', 'supplierCategory', 'distributionLocations');
+        $supplier->load('city','supplierCategory');
         $supplierImages = $supplier->getImagesAttribute();
         $supplier->image = $supplierImages;
-        return $this->indexOrShowResponse('body', $supplier);
+        $cities = City::all();
+        $deliveryLocations = $supplier->distributionLocations->pluck('to_city_id')->toArray();
+        foreach ($cities as $city) {
+            $city->delivery_available = in_array($city->id, $deliveryLocations);
+        }
+        unset($supplier->distributionLocations);
+        $data = [
+            'supplier' => $supplier,
+            'distribution_locations' => $cities
+        ];
+
+        return $this->indexOrShowResponse('body', $data);
     }
+
+
+    public function search(Request $request){
+
+        return $this->indexOrShowResponse('body',$product=Product::where('name', 'like', '%' . $request->search . '%')->get());
+    }
+
 
     public function edit_name(UpdateName $request){
 
         $supplier=Auth::user();
+
         $supplier->update($request->all());
         return $this->sudResponse('تم تعديل الاسم بنجاح');
 
