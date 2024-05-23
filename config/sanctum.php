@@ -53,7 +53,7 @@ return [
     */
 
     'expiration' => null,    // default laravel expiration set as null
-    'ac_expiration' => 60,              // One hour
+    'ac_expiration' => 60 * 24,      // One day
     'rt_expiration' => 7 * 24 * 60,  // 7 Days
 
     /*

@@ -18,12 +18,13 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+
         $schedule->command('subscriptions:check')->daily();
         $schedule->command('goals:delete-expired')->daily();
         $schedule->command('offers:expire')->daily();
 
 
-    }
+
 
     /**
      * Register the commands for the application.

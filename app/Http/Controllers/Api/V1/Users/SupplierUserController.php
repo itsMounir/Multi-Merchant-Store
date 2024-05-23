@@ -118,6 +118,8 @@ class SupplierUserController extends Controller
         $user = Supplier::with('category:id,type', 'city:id,name', 'distributionLocations')->findOrFail($id);
         $this->authorize('update', $user);
 
+
+
         try {
             if ($user->status == 'محظور')
                 return response()->json(['message' => 'User is alredy Banned...'], 200);

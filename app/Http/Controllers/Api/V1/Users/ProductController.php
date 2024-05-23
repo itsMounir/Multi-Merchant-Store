@@ -37,7 +37,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Search by name
+
      * @param Request $request
      * @return JsonResponse
      */
