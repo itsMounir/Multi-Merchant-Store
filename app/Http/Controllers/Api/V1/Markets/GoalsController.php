@@ -13,7 +13,7 @@ class GoalsController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $goals = Auth::user()->goals()->get();
+        $goals = Auth::user()->goals()->latest()->get();
         return $this->indexOrShowResponse('goals', $goals);
     }
 }

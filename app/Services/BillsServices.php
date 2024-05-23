@@ -35,11 +35,11 @@ class BillsServices
         $this->checkSupplierRequirements($supplier, $bill, $total_price);
 
         $supplier_discount = $this->supplierDiscount($supplier, $total_price);
-        $total_price -= $supplier_discount;
 
         if (!is_null($bill['market_note'])) {
             $new_bill = Bill::create([
                 'total_price' => $total_price,
+                'goal_discount' => $supplier_discount,
                 'payment_method_id' => $bill['payment_method_id'],
                 'supplier_id' => $supplier->id,
                 'market_id' => $market->id,
@@ -50,6 +50,7 @@ class BillsServices
         } else {
             $new_bill = Bill::create([
                 'total_price' => $total_price,
+                'goal_discount' => $supplier_discount,
                 'payment_method_id' => $bill['payment_method_id'],
                 'supplier_id' => $supplier->id,
                 'market_id' => $market->id,
