@@ -52,6 +52,7 @@ class ProductSupplier extends Model
                                   ->where('products.name', 'like', '%' . $productName . '%')
                                   ->select('product_supplier.id as ID', 'product_supplier.*', 'products.*')
                                   ->get();
+                                  
 
          $productSuppliers->each(function ($productSupplier) {
              $product = Product::find($productSupplier->product_id);
