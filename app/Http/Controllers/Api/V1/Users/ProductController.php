@@ -7,6 +7,7 @@ use App\Http\Requests\Api\V1\Users\ProductRequest;
 use App\Http\Requests\Api\V1\Users\ProductUpdaterequest;
 use App\Traits\Images;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -16,48 +17,33 @@ class ProductController extends Controller
 {
     use Images;
 
-    /*
-    public function filterOrSearch(Request $request): JsonResponse
+
+    public function filterAndSearch(Request $request): JsonResponse
     {
         try {
             $category = $request->query('category');
             $name = $request->query('name');
-    
+
             $query = Product::with('category:id,name');
-    
+
             if ($category) {
-                $query->where('product_category_id', $category);
+                $category = ProductCategory::where('id', $category)->firstOrFail();
+                $query->where('product_category_id', $category->id);
             }
-    
+
             if ($name) {
                 $query->where('name', 'like', '%' . $name . '%');
             }
-    
-            // Paginate the query results
-            $perPage = $request->query('per_page', 10); // Number of items per page, default is 10
-            $page = $request->query('page', 1); // Current page, default is 1
-    
-            $paginator = $query->paginate($perPage, ['*'], 'page', $page);
-    
-            // Optionally, you can format the paginator to include additional information if needed
-            $formattedPaginator = [
-                'total' => $paginator->total(),
-                'per_page' => $paginator->perPage(),
-                'current_page' => $paginator->currentPage(),
-                'last_page' => $paginator->lastPage(),
-                'next_page_url' => $paginator->nextPageUrl(),
-                'prev_page_url' => $paginator->previousPageUrl(),
-                'data' => $paginator->items(),
-            ];
-    
-            return response()->json($formattedPaginator, 200);
+            $paginator = $query->paginate(20, ['*'], 'p');
+
+            return response()->json($paginator, 200);
         } catch (\Exception $e) {
             return response()->json([$e->getMessage()], $e->getCode() ?: 200);
         }
     }
-*/
+
     /**
-     * To get all products indexed by category
+     * List collection of Products indexed by category
      * @param Request $request
      * @return JsonResponse
      */
@@ -67,25 +53,25 @@ class ProductController extends Controller
 
         $category = $request->query('category');
         if ($category)
-            $products = Product::with('category:id,name')->where('product_category_id', $category)->paginate(2, ['*'], 'p');
+            $products = Product::where('product_category_id', $category)->paginate(2, ['*'], 'p');
         else {
-            $products = Product::with('category:id,name')->paginate(2, ['*'], 'p');
+            $products = Product::paginate(2, ['*'], 'p');
         }
         return response()->json($products, 200);
     }
 
     /**
-
+     * Display list of products that match the inserted name 
      * @param Request $request
      * @return JsonResponse
      */
-    public function search(Request $request): JsonResponse
+    public function search(Request $request)
     {
         try {
             $products = Product::where('name', 'like', '%' . $request->query('name') . '%')->get();
-            return response()->json([$products], 200);
+            return response()->json($products, 200);
         } catch (\Exception $e) {
-            return response()->json([$e->getMessage()], $e->getCode() ?: 200);
+            return response()->json($e->getMessage(), $e->getCode() ?: 200);
         }
     }
     /**

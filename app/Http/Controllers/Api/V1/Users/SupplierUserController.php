@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api\V1\Users;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Users\SupplierProfileRequest;
+use App\Models\City;
 use App\Models\Supplier;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -61,26 +63,51 @@ class SupplierUserController extends Controller
     }
 
     /**
-     * GET SUPPLIER USERS BASED ON category
+     * Display listing of suppliers (filtered on category and status) 
      * @param Request $request
      * @return JsonResponse
      */
-    public function index(Request  $request)
+    public function index(Request $request)
     {
-
         $this->authorize('viewAny', Supplier::class);
 
         $category = $request->query('category');
+        $status = $request->query('status');
+
+        $query = Supplier::query()->with('distributionLocations');
+
         if ($category) {
-            $suppliers = Supplier::query()->with('category:id,type', 'city:id,name', 'distributionLocations')->where('supplier_category_id', $category)->orderBy('first_name', 'asc')->get();
-        } else {
-            $suppliers = Supplier::with('category:id,type', 'city:id,name')->get();
+            $query->where('supplier_category_id', $category);
         }
+        if (!is_null($status)) {
+            $query->where('status', $status);
+        }
+
+        $suppliers = $query->orderBy('first_name', 'asc')->paginate(20, ['*'], 'p');
+
         foreach ($suppliers as $supplier) {
             $supplier->category_name = $supplier->category->type;
             $supplier->city_name = $supplier->city->name;
         }
+
         return response()->json(['supplier users' => $suppliers]);
+    }
+
+    /**
+     * Display list of Supplier that match the inserted name
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function search(Request $request)
+    {
+        try {
+            $name = $request->query('name');
+
+            $supplier = Supplier::where('name', 'like', '%' . $name . '%')->orderBy('first_name', 'asc')->get();
+            return response()->json($supplier, 200);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), $e->getCode() ?: 500);
+        }
     }
 
     /**
@@ -117,8 +144,6 @@ class SupplierUserController extends Controller
     {
         $user = Supplier::with('category:id,type', 'city:id,name', 'distributionLocations')->findOrFail($id);
         $this->authorize('update', $user);
-
-
 
         try {
             if ($user->status == 'محظور')

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\V1\Users;
 
 use App\Models\Supplier;
+use App\Rules\EgyptPhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SupplierProfileRequest extends FormRequest
@@ -28,7 +29,7 @@ class SupplierProfileRequest extends FormRequest
             'first_name' => ['string', 'required'],
             'middle_name' => ['string', 'required'],
             'last_name' => ['string', 'required'],
-            'phone_number' => ['string', 'unique:suppliers,phone_number,' . $user . ',id', 'required'],
+            'phone_number' => ['string', 'unique:suppliers,phone_number,' . $user . ',id', 'required',new EgyptPhoneNumber],
             'store_name' => ['string', 'unique:suppliers,store_name,' . $user . ',id', 'required'],
             'supplier_category_id' => ['required'],
             'delivery_duration'=>['nullable'],
