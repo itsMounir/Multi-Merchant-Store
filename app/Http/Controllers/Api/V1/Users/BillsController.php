@@ -100,4 +100,22 @@ class BillsController extends Controller
 
         return response()->json(['bill' => $bill]);
     }
+
+
+    /**
+     * Display list of bills that the supplier or the market in touch are match the inserted name
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function search(Request $request)
+    {
+        try {
+            $name = $request->query('name');
+            // should get names of supplier and markets form the bills 
+            $supplier = Bill::where('supplier_name', 'like', '%' . $name . '%')->orWhere('market_name', 'like', '%' . $name . '%')->get();
+            return response()->json($supplier, 200);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), $e->getCode() ?: 500);
+        }
+    }
 }

@@ -43,7 +43,7 @@ class ProductController extends Controller
     }
 
     /**
-     * To get all products indexed by category
+     * List collection of Products indexed by category
      * @param Request $request
      * @return JsonResponse
      */
@@ -53,25 +53,25 @@ class ProductController extends Controller
 
         $category = $request->query('category');
         if ($category)
-            $products = Product::with('category:id,name')->where('product_category_id', $category)->paginate(2, ['*'], 'p');
+            $products = Product::where('product_category_id', $category)->paginate(2, ['*'], 'p');
         else {
-            $products = Product::with('category:id,name')->paginate(2, ['*'], 'p');
+            $products = Product::paginate(2, ['*'], 'p');
         }
         return response()->json($products, 200);
     }
 
     /**
-     * Search by name 
+     * Display list of products that match the inserted name 
      * @param Request $request
      * @return JsonResponse
      */
-    public function search(Request $request): JsonResponse
+    public function search(Request $request)
     {
         try {
             $products = Product::where('name', 'like', '%' . $request->query('name') . '%')->get();
-            return response()->json([$products], 200);
+            return response()->json($products, 200);
         } catch (\Exception $e) {
-            return response()->json([$e->getMessage()], $e->getCode() ?: 200);
+            return response()->json($e->getMessage(), $e->getCode() ?: 200);
         }
     }
     /**

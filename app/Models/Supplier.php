@@ -138,7 +138,6 @@ class Supplier extends Authenticatable
         return $this->hasMany(ProductSupplier::class);
     }
 
-
     public function supplierCategory(): BelongsTo
     {
         return $this->belongsTo(SupplierCategory::class);

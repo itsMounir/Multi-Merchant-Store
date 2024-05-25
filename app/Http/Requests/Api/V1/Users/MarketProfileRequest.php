@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\V1\Users;
 
 use App\Models\Market;
+use App\Rules\EgyptPhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 
 class MarketProfileRequest extends FormRequest
@@ -23,14 +24,14 @@ class MarketProfileRequest extends FormRequest
     public function rules(): array
     {
         $user = $this->route('id');
-        
+
         return [
             'first_name' => ['string', 'required'],
             'middle_name' => ['string', 'required'],
             'last_name' => ['string', 'required'],
-            'phone_number' => ['string', 'unique:suppliers,phone_number,' . $user . ',id', 'required'],
+            'phone_number' => ['string', 'unique:suppliers,phone_number,' . $user . ',id', 'required', new EgyptPhoneNumber],
             'market_category_id' => ['required'],
-            'city' => ['string', 'required'],
+            'city_id' => ['required'],
             'store_name' => ['string', 'unique:markets,store_name,' . $user . ',id', 'required'],
         ];
     }

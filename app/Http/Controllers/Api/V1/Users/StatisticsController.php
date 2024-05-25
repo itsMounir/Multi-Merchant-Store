@@ -51,7 +51,7 @@ class StatisticsController extends Controller
             'total price without additional cost' => $total_cost,
             'total additional cost ' => $total_profit,
             '60% of the total' => $_60_percetn_of_total_profit,
-            '405 of the total' => $_40_percent_of_total_profit,
+            '40% of the total' => $_40_percent_of_total_profit,
         ]], 200);
     }
 

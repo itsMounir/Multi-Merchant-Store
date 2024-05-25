@@ -27,6 +27,17 @@ class OfferController extends Controller
     }
 
     /**
+     * Show specific offer
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function show(string $id)
+    {
+        $offer = Offer::findOrFail($id);
+        $offer->image = asset("storage/$offer->image");
+        return response()->json($offer, 200);
+    }
+    /**
      * To create a new resource.
      * @param OfferRequest $request
      * @return JsonResponse

@@ -46,36 +46,53 @@ class MarketUserController extends Controller
     {
         $market = Market::findOrFail($id);
         $this->authorize('update', $market);
-        $city = City::where('name', $request->city)->firstOrFail();
-        $market->update([
-            'first_name' => $request->first_name,
-            'middle_name' => $request->middle_name,
-            'last_name' => $request->last_name,
-            'phone_number' => $request->phone_number,
-            'city_id' => $city->id,
-        ]);
+        $market->update($request->all());
         return response()->json(['message' => 'User has been updated successfully', 'user' => $market], 200);
     }
 
+
     /**
-     * GET MARKET USERS BASED ON CATEGORY
+     * Display listing of markets (filtered on category and status)
      * @param Request $request
      * @return JsonResponse
      */
-    public function index(Request  $request)
+    public function index(Request $request)
     {
         $this->authorize('viewAny', Market::class);
 
         $category = $request->query('category');
+        $status = $request->query('status');
 
-        if ($category)
-            $markets = Market::where('market_category_id', $category)->orderBy('first_name', 'asc')->get();
-        else {
-            $markets = Market::get();
+        $query = Market::query();
+
+        if ($category) {
+            $query->where('market_category_id', $category);
         }
+        if (!is_null($status)) {
+            $query->where('status', $status);
+        }
+        $markets = $query->orderBy('first_name', 'asc')->paginate(20, ['*'], 'p');
 
-        return response()->json(['Market users' => $markets]);
+        return response()->json(['supplier users' => $markets]);
     }
+
+    /**
+     * Display list of market that match the inserted name
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function search(Request $request)
+    {
+        try {
+            $name = $request->query('name');
+
+            $supplier = Market::where('name', 'like', '%' . $name . '%')->orderBy('first_name', 'asc')->get();
+            return response()->json($supplier, 200);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), $e->getCode() ?: 500);
+        }
+    }
+
     /**
      * TO ACTIVATE MARKET USER
      * @param string $id
