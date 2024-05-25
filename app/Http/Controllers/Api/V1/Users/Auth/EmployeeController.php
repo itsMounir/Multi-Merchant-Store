@@ -9,8 +9,9 @@ use App\Http\Requests\Api\V1\Users\Auth\CreateAccountRequest;
 use App\Http\Requests\Api\V1\Users\Auth\UpdateEmployeeRequest;
 use App\Http\Requests\Api\V1\Users\ChangePasswordRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\Hash;
+
 
 class EmployeeController extends Controller
 {
@@ -29,6 +30,7 @@ class EmployeeController extends Controller
         ]);
         $user->assignRole($request->role);
         $user->load('roles:name', 'permissions');
+
         return response()->json(['message' => 'Account has been created successfully ', 'User' => $user], 201);
     }
     /**
@@ -81,6 +83,7 @@ class EmployeeController extends Controller
         ]);
         $employee->syncRoles($request->role);
         $employee->load('roles:name', 'permissions');
+
         return response()->json(['message' => 'User has been updated successfully', 'user' => $employee], 200);
     }
 

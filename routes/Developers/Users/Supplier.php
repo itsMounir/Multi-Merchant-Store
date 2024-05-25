@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\api\v1\users\SupplierCategoryController;
+use App\Http\Controllers\Api\V1\Users\SupplierCategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Users\SupplierUserController;
 

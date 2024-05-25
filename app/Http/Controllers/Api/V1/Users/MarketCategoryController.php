@@ -16,7 +16,7 @@ class MarketCategoryController extends Controller
     public function index()
     {
         $this->authorize('viewAny', MarketCategory::class);
-        
+
         $categories = MarketCategory::all();
         return response()->json($categories, 200);
     }

@@ -14,6 +14,7 @@ Route::prefix('users/auth/')->group(function () {
     Route::post('logout', [AuthController::class, 'destroy'])->middleware(['auth:sanctum', 'type.user']);
     Route::get('profile', [AuthController::class, 'profile'])->middleware(['auth:sanctum', 'type.user']);
 });
+
 Route::prefix('users/employee')->middleware('auth:sanctum')->group(function () {
 
     Route::post('create', [EmployeeController::class, 'create']);

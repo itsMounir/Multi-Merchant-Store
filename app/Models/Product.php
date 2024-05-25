@@ -49,6 +49,7 @@ class Product extends Model
     {
         return $this->belongsToMany(Supplier::class, 'product_supplier')
             ->withPivot(
+                'id',
                 'price',
                 'has_offer',
                 'offer_price',

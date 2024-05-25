@@ -10,15 +10,19 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\CheckSubscriptionStatus::class,
         Commands\DeleteExpiredGoals::class,
+        Commands\ExpireOffers::class,
     ];
+
     /**
      * Define the application's command schedule.
      */
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+
         $schedule->command('subscriptions:check')->daily();
         $schedule->command('goals:delete-expired')->daily();
+        $schedule->command('offers:expire')->daily();
     }
 
     /**

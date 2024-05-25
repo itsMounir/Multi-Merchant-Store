@@ -77,6 +77,7 @@ class OfferController extends Controller
             DB::commit();
 
             $offer->image = asset("storage/$path");
+            $offer->image = asset("storage/$path");
             return response()->json($offer, 200);
         } catch (\Exception $e) {
             DB::rollback();

@@ -124,6 +124,9 @@ class BillController extends Controller
     public function reject(Request $request,$billId){
         $supplier=Auth::user();
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
+        if(!$bill){
+            return $this->sudResponse('غير موجود');
+        }
         $validatedData = $request->validate([
             'rejection_reason' => 'required',
             ]);
@@ -158,6 +161,9 @@ class BillController extends Controller
     public function recive(Request $request,$billId){
         $supplier=Auth::user();
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
+        if(!$bill){
+            return $this->sudResponse('غير موجود');
+        }
         $validatedData = $request->validate([
             'recieved_price' => 'required',
             ]);
@@ -173,6 +179,9 @@ class BillController extends Controller
     public function Refused(Request $request,$billId){
         $supplier=Auth::user();
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
+        if(!$bill){
+            return $this->sudResponse('غير موجود');
+        }
         $validatedData = $request->validate([
             'rejection_reason' => 'required',
             ]);

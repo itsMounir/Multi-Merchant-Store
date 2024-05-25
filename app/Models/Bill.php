@@ -29,25 +29,19 @@ class Bill extends Model
         'rejection_reason',
         'has_additional_cost',
         'delivery_duration',
+        'goal_discount',
     ];
 
-    protected $appends = ['created_from', 'payment_method', 'additional_price', 'waffarnalak'];
+    protected $appends = ['created_from', 'payment_method', 'additional_price', 'waffarnalak', 'updatable'];
 
-
-    protected $dates = ['created_at','updated_at'];
-    protected $casts = [
-        'created_at' => 'date:Y-m-d',
-        'updated_at' => 'date:Y-m-d',
-    ];
-
-    protected $hidden=[
+    protected $hidden = [
         'deleted_at'
     ];
 
     // created from attribute
     public function getCreatedFromAttribute()
     {
-        return $this->created_at->diffForHumans();
+        return Carbon::parse($this->created_at)->diffForHumans();
     }
     public function getAdditionalPriceAttribute()
     {
@@ -58,48 +52,49 @@ class Bill extends Model
         }
     }
 
-
     public function getWaffarnalakAttribute()
     {
-        $total_price = 0.0;
         $total_discounted_price = 0.0;
         $waffarnalak = 0.0;
         $bill = static::find($this->id);
         $supplier_products = $bill->supplier->products->toArray();
         foreach ($bill->products as $product) {
-            $exist = false;
             foreach ($supplier_products as $supplier_product) {
                 if ($product['id'] == $supplier_product['id']) {
 
                     $price = $supplier_product['pivot']['price'];
                     $quantity = $product['pivot']['quantity'];
                     if ($supplier_product['pivot']['has_offer']) {
-                        // calculate the total price of products taken in the offer
-                        $total_price = min(
-                            $supplier_product['pivot']['max_offer_quantity'],
-                            $quantity
-                        )
-                            * $price;
-
                         $total_discounted_price = min(
                             $supplier_product['pivot']['max_offer_quantity'],
                             $quantity
                         )
-                            * $supplier_product['pivot']['offer_price'];
-
+                            * ($price - $supplier_product['pivot']['offer_price']);
                     }
                 }
             }
         }
-        $waffarnalak = $total_price - $total_discounted_price;
+        $waffarnalak = $total_discounted_price + $bill['goal_discount'];
         return $waffarnalak;
     }
 
     protected function getpaymentMethodAttribute()
     {
-
         return $this->paymentMethod()->pluck('name')->first();
+
     }
+
+
+    public function getUpdatableAttribute()
+    {
+        return $this->isUpdatable();
+    }
+
+    public function getTotalPriceAfterDiscountAttribute()
+    {
+        return ($this->total_price - $this->goal_discount);
+    }
+
 
 
     public function products(): BelongsToMany
@@ -126,11 +121,11 @@ class Bill extends Model
         return $this->belongsTo(Market::class);
     }
 
-    public function scopeNewStatusCount($query,$supplier_id)
+    public function scopeNewStatusCount($query, $supplier_id)
     {
         return $query->where('status', 'جديد')
-        ->where('supplier_id',$supplier_id)
-        ->count();
+            ->where('supplier_id', $supplier_id)
+            ->count();
     }
 
     public function scopeStatus($query, $status = null)
@@ -140,6 +135,11 @@ class Bill extends Model
         }
 
         return $query;
+    }
+
+    public function scopeOrderByInvoiceIdDesc($query)
+    {
+        return $query->orderBy('id', 'desc');
     }
 
     public function isUpdatable()

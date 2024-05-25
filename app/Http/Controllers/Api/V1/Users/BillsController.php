@@ -50,7 +50,7 @@ class BillsController extends Controller
         return response()->json(['messgae' => 'Bill canceled', 'bill' => $bill], 200);
     }
     /**
-     * To show new bills 
+     * To show new bills
      * @return JsonResponse
      */
     public function newBills()
@@ -61,7 +61,7 @@ class BillsController extends Controller
     }
 
     /**
-     * To show old bills 
+     * To show old bills
      * @param Request $cost
      * @return JsonResponse
      */
@@ -86,7 +86,7 @@ class BillsController extends Controller
      */
     public function show(String $id)
     {
-        $bill = Bill::with(['market', 'supplier'])->findOrFail($id);
+       $bill = Bill::with(['market', 'supplier'])->findOrFail($id);
         $supplier = Supplier::findOrFail($bill->supplier_id);
         $productIds = $bill->products->pluck('id');
         $bill->load([
