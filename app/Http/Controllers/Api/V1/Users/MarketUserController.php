@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\V1\Users;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Users\MarketProfileRequest;
-use App\Models\City;
 use App\Models\Market;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
