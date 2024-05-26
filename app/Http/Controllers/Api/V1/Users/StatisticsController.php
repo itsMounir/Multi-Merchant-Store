@@ -13,7 +13,7 @@ class StatisticsController extends Controller
 {
 
     public function getPublicStatistics(Request $request){
-        
+
 
     }
 

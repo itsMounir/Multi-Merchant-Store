@@ -11,7 +11,7 @@ class CityController extends Controller
 {
 
     /**
-     * TO get all cities 
+     * TO get all cities
      * @return JsonResponse
      */
     public function index()

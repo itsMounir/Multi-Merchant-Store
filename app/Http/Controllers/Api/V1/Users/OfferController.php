@@ -19,8 +19,11 @@ class OfferController extends Controller
      */
     public function index()
     {
-        $Offers = Offer::all();
-        return response()->json($Offers, 200);
+        $offers = Offer::all();
+        foreach ($offers as $offer) {
+            $offer->image = asset("storage/$offer->image");
+        }
+        return response()->json($offers, 200);
     }
 
     /**
@@ -29,12 +32,14 @@ class OfferController extends Controller
      * @return JsonResponse
      */
     public function create(OfferRequest $request)
-    {          
-        $path = $request->file('image')->store('offers', 'public');
+    {
+        $path = $request->file('image')->store('Offer', 'public');
         $Offer = Offer::create([
             'supplier_id' => $request->supplier_id,
             'image' => $path,
         ]);
+
+        $Offer->image = asset("storage/$path");
         return response()->json($Offer, 201);
     }
 
@@ -56,10 +61,10 @@ class OfferController extends Controller
                 if (Storage::exists('public/' . $old_image)) {
                     Storage::delete('public/' . $old_image);
                 } else {
-                    throw new \Exception("Old image not found", 1);
+                    throw new \Exception("Old image not found");
                 }
 
-                $path = $request->file('image')->store('offers', 'public');
+                $path = $request->file('image')->store('Offer', 'public');
             } else {
                 $path = $offer->image;
             }
@@ -70,7 +75,7 @@ class OfferController extends Controller
             ]);
 
             DB::commit();
-
+            $offer->image = asset("storage/$path");
             return response()->json($offer, 200);
         } catch (\Exception $e) {
             DB::rollback();
@@ -88,14 +93,13 @@ class OfferController extends Controller
     {
         DB::beginTransaction();
         try {
-
             $offer = Offer::findOrFail($id);
             $old_image = $offer->image;
 
             if (Storage::exists('public/' . $old_image)) {
                 Storage::delete('public/' . $old_image);
             } else {
-                throw new \Exception("Old image not found", 1);
+                throw new \Exception("Old image not found");
             }
 
             $offer->delete();

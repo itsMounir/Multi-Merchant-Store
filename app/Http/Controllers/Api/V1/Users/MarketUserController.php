@@ -29,7 +29,7 @@ class MarketUserController extends Controller
      */
     public function userWithBills(String $id)
     {
-        $market = Market::with('bills.products')->findOrFail($id);
+        $market = Market::with(['bills.supplier'])->findOrFail($id);
         $this->authorize('view', $market);
 
         return response()->json(['user' => $market]);

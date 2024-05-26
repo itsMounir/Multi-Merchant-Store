@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Product extends Model
 {
     use HasFactory;
-    // use SoftDeletes;
+    use SoftDeletes;
     /**
      * The attributes that are mass assignable.
      *
@@ -49,6 +49,7 @@ class Product extends Model
     {
         return $this->belongsToMany(Supplier::class, 'product_supplier')
             ->withPivot(
+                'id',
                 'price',
                 'has_offer',
                 'offer_price',

@@ -34,16 +34,31 @@ class BillsServices
 
         $this->checkSupplierRequirements($supplier, $bill, $total_price);
 
-        $total_price -= $this->supplierDiscount($supplier, $total_price);
+        $supplier_discount = $this->supplierDiscount($supplier, $total_price);
 
-        $new_bill = Bill::create([
-            'total_price' => $total_price,
-            'payment_method_id' => $bill['payment_method_id'],
-            'supplier_id' => $supplier->id,
-            'market_id' => $market->id,
-            'has_additional_cost' => !Auth::user()->is_subscriped,
-            'market_note' => $bill['market_note'],
-        ]);
+        if (!is_null($bill['market_note'])) {
+            $new_bill = Bill::create([
+                'total_price' => $total_price,
+                'goal_discount' => $supplier_discount,
+                'payment_method_id' => $bill['payment_method_id'],
+                'supplier_id' => $supplier->id,
+                'market_id' => $market->id,
+                'has_additional_cost' => !Auth::user()->is_subscriped,
+                'market_note' => $bill['market_note'],
+            ]);
+
+        } else {
+            $new_bill = Bill::create([
+                'total_price' => $total_price,
+                'goal_discount' => $supplier_discount,
+                'payment_method_id' => $bill['payment_method_id'],
+                'supplier_id' => $supplier->id,
+                'market_id' => $market->id,
+                'has_additional_cost' => !Auth::user()->is_subscriped,
+            ]);
+
+        }
+
 
         foreach ($bill['products'] as $product) {
             $new_bill->products()->syncWithoutDetaching([
@@ -59,16 +74,20 @@ class BillsServices
         $moderator = User::role('moderator')->get();
 
         // send a notification to the moderator with the new bill.
-        DB::afterCommit(function () use ($moderator,$new_bill) {
+        DB::afterCommit(function () use ($moderator, $new_bill) {
             Notification::send($moderator, new NewBillRequested($new_bill->id));
         });
-
+        if ($supplier_discount != 0) {
+            return 'لقد استفدت من الخصم لدى : ' . $supplier->store_name;
+        } else {
+            return '';
+        }
     }
 
     public function checkSupplierRequirements($supplier, $bill, $total_price)
     {
         if ($total_price < $supplier->min_bill_price) {
-            throw new IncorrectBillException('.' . 'الرجاء استكمال السعر الأدنى : ' . $supplier->min_bill_price .' , للطلب لدى ' . $supplier->store_name );
+            throw new IncorrectBillException('.' . 'الرجاء استكمال السعر الأدنى : ' . $supplier->min_bill_price . ' , للطلب لدى ' . $supplier->store_name);
         }
 
         $products_count = 0;
@@ -77,7 +96,7 @@ class BillsServices
         }
 
         if ($products_count < $supplier->min_selling_quantity) {
-            throw new IncorrectBillException('.' . 'الرجاء استكمال العدد الأدنى للمنتجات : ' . $supplier->min_selling_quantity .' , للطلب لدى ' . $supplier->store_name );
+            throw new IncorrectBillException('.' . 'الرجاء استكمال العدد الأدنى للمنتجات : ' . $supplier->min_selling_quantity . ' , للطلب لدى ' . $supplier->store_name);
         }
 
     }
@@ -98,7 +117,7 @@ class BillsServices
                     $price = $supplier_product['pivot']['price'];
                     $quantity = $product['quantity']; // quantity requested
                     if ($quantity > $supplier_product['pivot']['max_selling_quantity']) {
-                        throw new IncorrectBillException('.' . 'لقد تخطيت العدد الأقصى للطلب : ' . $supplier_product['pivot']['max_selling_quantity'] .' لدى ' . $supplier->store_name);
+                        throw new IncorrectBillException('.' . 'لقد تخطيت العدد الأقصى للطلب : ' . $supplier_product['pivot']['max_selling_quantity'] . ' لدى ' . $supplier->store_name);
                     }
 
                     if ($supplier_product['pivot']['has_offer']) {
@@ -145,12 +164,13 @@ class BillsServices
     }
 
 
-    public function marketDiscount($market,$total_price){
-        $supplier=Auth::user();
-        if($supplier->goals()->count()>0){
+    public function marketDiscount($market, $total_price)
+    {
+        $supplier = Auth::user();
+        if ($supplier->goals()->count() > 0) {
             $goals = $supplier->goals()->orderByDesc('min_bill_price')->get();
             foreach ($goals as $goal) {
-                if($total_price>=$goal->min_bill_price){
+                if ($total_price >= $goal->min_bill_price) {
                     $market->goals()->attach($goal);
                     return $goal->discount_price;
                 }
