@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Users\CityController;
+use App\Http\Controllers\Api\V1\Users\ProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,9 +14,3 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-
