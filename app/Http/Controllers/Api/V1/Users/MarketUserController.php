@@ -11,46 +11,6 @@ use Illuminate\Http\Request;
 class MarketUserController extends Controller
 {
     /**
-     * Display User Profile.
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function show(String $id)
-    {
-        $market = Market::findOrFail($id);
-        $this->authorize('view', $market);
-
-        return response()->json(['user' => $market], 200);
-    }
-    /**
-     * To get user info with his outcoming Bills
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function userWithBills(String $id)
-    {
-        $market = Market::with(['bills.supplier'])->findOrFail($id);
-        $this->authorize('view', $market);
-
-        return response()->json(['user' => $market]);
-    }
-
-    /**
-     * To change supplier profile
-     * @param MarketProfileRequest $request
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function update(MarketProfileRequest $request, String $id)
-    {
-        $market = Market::findOrFail($id);
-        $this->authorize('update', $market);
-        $market->update($request->all());
-        return response()->json(['message' => 'User has been updated successfully', 'user' => $market], 200);
-    }
-
-
-    /**
      * Display listing of markets (filtered on category and status)
      * @param Request $request
      * @return JsonResponse
@@ -72,7 +32,32 @@ class MarketUserController extends Controller
         }
         $markets = $query->orderBy('first_name', 'asc')->paginate(20, ['*'], 'p');
 
-        return response()->json(['supplier users' => $markets]);
+        return response()->json(['market users' => $markets]);
+    }
+
+    /**
+     * Display User info.
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function show(String $id)
+    {
+        $market = Market::findOrFail($id);
+        $this->authorize('view', $market);
+
+        return response()->json(['user' => $market], 200);
+    }
+    /**
+     * Display user info with his outcoming Bills
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function userWithBills(String $id)
+    {
+        $market = Market::with(['bills.supplier'])->findOrFail($id);
+        $this->authorize('view', $market);
+
+        return response()->json(['user' => $market]);
     }
 
     /**
@@ -84,8 +69,7 @@ class MarketUserController extends Controller
     {
         try {
             $name = $request->query('name');
-
-            $supplier = Market::where('name', 'like', '%' . $name . '%')->orderBy('first_name', 'asc')->get();
+            $supplier = Market::where('store_name', 'like', '%' . $name . '%')->orderBy('first_name', 'asc')->get();
             return response()->json($supplier, 200);
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), $e->getCode() ?: 500);
@@ -93,7 +77,22 @@ class MarketUserController extends Controller
     }
 
     /**
-     * TO ACTIVATE MARKET USER
+     * update supplier info
+     * @param MarketProfileRequest $request
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function update(MarketProfileRequest $request, String $id)
+    {
+        $market = Market::findOrFail($id);
+        $this->authorize('update', $market);
+        $market->update($request->all());
+        return response()->json(['message' => 'User has been updated successfully', 'user' => $market], 200);
+    }
+    
+
+    /**
+     * Activate market account
      * @param string $id
      * @return JsonResponse
      */
@@ -116,7 +115,7 @@ class MarketUserController extends Controller
     }
 
     /**
-     * TO BAN MARKET USER
+     * Ban market account
      * @param string $id
      * @return JsonResponse
      */

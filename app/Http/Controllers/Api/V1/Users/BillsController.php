@@ -86,7 +86,7 @@ class BillsController extends Controller
      */
     public function show(String $id)
     {
-       $bill = Bill::with(['market', 'supplier'])->findOrFail($id);
+        $bill = Bill::with(['market', 'supplier'])->findOrFail($id);
         $supplier = Supplier::findOrFail($bill->supplier_id);
         $productIds = $bill->products->pluck('id');
         $bill->load([
@@ -111,11 +111,13 @@ class BillsController extends Controller
     {
         try {
             $name = $request->query('name');
-            // should get names of supplier and markets form the bills 
-            $supplier = Bill::where('supplier_name', 'like', '%' . $name . '%')->orWhere('market_name', 'like', '%' . $name . '%')->get();
-            return response()->json($supplier, 200);
+            if (!$name) {
+                return response()->json(['error' => 'Store name is required'], 400);
+            }
+            $bills = Bill::getBySupplierStoreName($name);
+            return response()->json($bills, 200);
         } catch (\Exception $e) {
-            return response()->json($e->getMessage(), $e->getCode() ?: 500);
+            return response()->json($e->getMessage(), 500);
         }
     }
 }

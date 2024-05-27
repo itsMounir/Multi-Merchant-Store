@@ -103,7 +103,7 @@ class SupplierUserController extends Controller
         try {
             $name = $request->query('name');
 
-            $supplier = Supplier::where('name', 'like', '%' . $name . '%')->orderBy('first_name', 'asc')->get();
+            $supplier = Supplier::where('store_name', 'like', '%' . $name . '%')->orderBy('first_name', 'asc')->get();
             return response()->json($supplier, 200);
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), $e->getCode() ?: 500);

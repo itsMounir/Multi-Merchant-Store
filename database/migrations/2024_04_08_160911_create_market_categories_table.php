@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('market_categories', function (Blueprint $table) {
             $table->id();
+            $table->integer('position');
             $table->string('name');
             $table->timestamps();
         });

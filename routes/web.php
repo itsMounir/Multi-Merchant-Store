@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Users\CityController;
 use App\Http\Controllers\Api\V1\Users\ProductController;
 use Illuminate\Support\Facades\Route;
 

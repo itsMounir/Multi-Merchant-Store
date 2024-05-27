@@ -81,7 +81,6 @@ class Bill extends Model
     protected function getpaymentMethodAttribute()
     {
         return $this->paymentMethod()->pluck('name')->first();
-
     }
 
 
@@ -153,5 +152,15 @@ class Bill extends Model
         return $current_time->lt($expiration_time);
     }
 
-
+    /**
+     *  Scope to filter bills by supplier store name
+     */
+    public static function getBySupplierStoreName($name)
+    {
+        return self::with('supplier', 'market')->whereHas('supplier', function ($query) use ($name) {
+            $query->where('store_name', 'like', '%' . $name . '%');
+        })->orWhereHas('market', function ($query) use ($name) {
+            $query->where('store_name', 'like', '%' . $name . '%');
+        })->get();
+    }
 }
