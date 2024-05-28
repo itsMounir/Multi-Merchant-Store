@@ -29,7 +29,7 @@ class BillController extends Controller
     {
         $supplier = Auth::user();
         $billsQuery = $supplier->bills()->with(['products.category','market.city', 'supplier'])
-                          ->status($request->status);
+                          ->status($request->status)->orderByInvoiceIdDesc();
         $bills = $billsQuery->get();
         $Count = $bills->count();
         $newBillsCount = Bill::newStatusCount($supplier->id);
