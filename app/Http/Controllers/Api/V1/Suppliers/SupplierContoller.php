@@ -40,16 +40,21 @@ class SupplierContoller extends Controller
 {
 
     use Responses;
-    public function index(){
-        $supplier=Auth::user();
-        if(!$supplier){
-            return $this->sudResponse('Unauthorized',401);
+    public function index(Request $request){
+        $supplier = Auth::user();
+        if (!$supplier) {
+            return $this->sudResponse('Unauthorized', 401);
         }
-        $data=Product::get();
-        return $this->indexOrShowResponse('products',$data);
+        if ($request->has('search') && $request->search != '') {
 
+            $data = Product::where('name', 'like', '%' . $request->search . '%')->get();
+        } else {
 
+            $data = Product::get();
+        }
+        return $this->indexOrShowResponse('products', $data);
     }
+
 
        public function categories_supplier(){
         $category = SupplierCategory::get();
@@ -79,10 +84,10 @@ class SupplierContoller extends Controller
         return $this->indexOrShowResponse('body', $data);
     }
 
-        public function search(Request $request){
+     /*   public function search(Request $request){
 
         return $this->indexOrShowResponse('body',$product=Product::where('name', 'like', '%' . $request->search . '%')->get());
-    }
+    }*/
 
 
     public function edit_name(UpdateName $request){
