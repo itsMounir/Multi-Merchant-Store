@@ -6,13 +6,15 @@ use App\Http\Controllers\Api\V1\Suppliers\{
     BillController,
     ReportController,
     ForgetPassword,
-    ResetPassword
+    ResetPassword,
+    PdfController
 };
 
     Route::get('categories',[SupplierContoller::class,'categories_supplier']);
     Route::post('forget/password',[ForgetPassword::class,'forgetPassword']);
     Route::post('verifyCode',[ResetPassword::class,'verifyCode']);
     Route::post('reset/password',[ResetPassword::class,'resetPassword']);
+
 
 
 Route::middleware(['auth:sanctum', 'type.supplier','active'])->group(function () {
@@ -47,7 +49,7 @@ Route::middleware(['auth:sanctum', 'type.supplier','active'])->group(function ()
 
     Route::get('search-products-supplier',[ProductSuppliersController::class,'search']);
 
-
+    Route::get('generate-pdf/{id}',[PdfController::class,'generate_pdf']);
 
 /**============================================================================================================ */
 
@@ -66,6 +68,7 @@ Route::middleware(['auth:sanctum', 'type.supplier','active'])->group(function ()
     /**============================================================================================================ */
 
     Route::get('reports',[ReportController::class,'reports']);
+
 
 
 
