@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Markets\UpdateMarketRequest;
 use App\Models\Market;
 use App\Models\User;
+use App\Notifications\RenewSubscription;
 use App\Notifications\UpdateMarketDataNotification;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
@@ -67,18 +68,31 @@ class MarketsController extends Controller
             'middle_name' => $request->middle_name ?? $market->middle_name,
             'last_name' => $request->last_name ?? $market->last_name,
         ]);
-        return $this->sudResponse('.تم تحديث الاسم بنجاح');
+        return response()->json([
+            'message' => '.تم تحديث الاسم بنجاح',
+            'market' => $market,
+        ]);
     }
 
-    /**
-     * send a request to the admin for updating market credentials.
-     */
-    public function sendUpdateRequest(UpdateMarketRequest $request, Market $market)
+    // /**
+    //  * send a request to the admin for updating market credentials.
+    //  */
+    // public function sendUpdateRequest(UpdateMarketRequest $request, Market $market)
+    // {
+    //     $admins = User::role('admin')->get();
+    //     Notification::send($admins, new UpdateMarketDataNotification($request->validated()));
+    //     return response()->json([
+    //         'message' => '.تم ارسال الطلب بنجاح',
+    //     ]);
+    // }
+
+    public function sendRenewSubscriptionRequest()
     {
-        $admins = User::role('admin')->get();
-        Notification::send($admins, new UpdateMarketDataNotification($request->validated()));
+        $market = Auth::user();
+        $supervisors = User::role('supervisor')->get();
+        Notification::send($supervisors, new RenewSubscription($market));
         return response()->json([
-            'message' => '.تم ارسال الطلب بنجاح',
+            'message' => '.تم ارسال الطلب بنجاح'
         ]);
     }
 
