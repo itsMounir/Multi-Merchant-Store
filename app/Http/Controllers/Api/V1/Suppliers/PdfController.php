@@ -8,7 +8,8 @@ use App\Models\{
 
     Bill,
     Supplier,
-    Market
+    Market,
+    Notification
 };
 
 
@@ -46,7 +47,7 @@ class PdfController extends Controller
 
 
         $html = view('Bills',compact('bill'))->toArabicHTML();
-        $pdf=new Dompdf();
+        $pdf=new PDF();
 
         $pdf->loadHtml($html);
         $pdf->render();
@@ -62,5 +63,7 @@ class PdfController extends Controller
         );
 
     }
+
+
 
 }

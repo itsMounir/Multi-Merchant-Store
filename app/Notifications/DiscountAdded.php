@@ -6,9 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Notifications\Messages\BroadcastMessage;
-class DiscountAdded extends Notification implements ShouldBroadcast, ShouldQueue
+class DiscountAdded extends Notification
 {
     use Queueable;
 
@@ -21,23 +19,23 @@ class DiscountAdded extends Notification implements ShouldBroadcast, ShouldQueue
      //   $this->discounts = $discounts;
     }
 
-    public function broadcastOn(): array
+
+    public function databaseType(object $notifiable): string
     {
-        return [
-            new PrivateChannel('supplier-channel'),
-        ];
+        return 'discount';
     }
+
+
 
     public function via($notifiable)
     {
-        return ['broadcast'];
+        return ['database'];
     }
 
-    public function toBroadcast($notifiable)
+    public function toArray($notifiable)
     {
-        return new BroadcastMessage([
-            'title' => 'خصم جديد',
-            'body' => "{$this->supplier->first_name} {$this->supplier->last_name} قام بإضافة خصم جديد."
-        ]);
+        return [
+            'message' => "{$this->supplier->first_name} {$this->supplier->last_name} قام بإضافة خصم جديد."
+        ];
     }
 }

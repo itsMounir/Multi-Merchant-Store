@@ -97,6 +97,7 @@ class BillController extends Controller
             $bill->update([
                 'total_price' => $total_price,
                 'status' => 'قيد التحضير',
+                'updated_at'=> Carbon::now(),
                 'delivery_duration' => $delivery_duration ?: $bill->delivery_duration,
             ]);
 
