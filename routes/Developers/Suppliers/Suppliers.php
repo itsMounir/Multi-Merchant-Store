@@ -52,7 +52,7 @@ Route::middleware(['auth:sanctum', 'type.supplier','active'])->group(function ()
 
     Route::get('generate-pdf/{id}',[PdfController::class,'generate_pdf']);
 
-    Route::get('notification',[PdfController::class,'index']);
+    Route::get('notification',[NotificationController::class,'index']);
 /**============================================================================================================ */
 
     Route::apiResource('bills',BillController::class);

@@ -16,7 +16,7 @@ class SendPreparingBillNotification extends Command
     public function handle()
     {
         $suppliers = Supplier::has('bills', '>', 0)->get();
-        $twoDaysAgo = now()->subDays(3);
+        $twoDaysAgo = now()->subSecond(3);
         foreach ($suppliers as $supplier) {
             $newInvoicesCount = $supplier->bills()->where('status', 'قيد التحضير')->where('updated_at','<',$twoDaysAgo)->count();
             if ($newInvoicesCount > 0) {

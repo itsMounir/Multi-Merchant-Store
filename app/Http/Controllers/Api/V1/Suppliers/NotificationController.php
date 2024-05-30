@@ -29,7 +29,7 @@ class NotificationController extends Controller
         $notifications = $supplier->getNotifications();
         $supplier->unreadNotifications->markAsRead();
 
-        return $this->indexOrShowResponse($notifications);
+        return $this->indexOrShowResponse('body',$notifications);
     }
 
 }
