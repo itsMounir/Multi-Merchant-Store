@@ -75,6 +75,8 @@ class CityController extends Controller
     }
     /**
      * reorder cities position
+     * @param Request $request
+     * @return JsonResponse
      */
     public function reorder(Request $request)
     {

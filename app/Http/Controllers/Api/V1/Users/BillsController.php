@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Users;
 use App\Http\Controllers\Controller;
 use App\Models\Bill;
 use App\Models\Supplier;
+use App\Services\MobileNotificationServices;
 use Illuminate\Http\Request;
 
 class BillsController extends Controller
@@ -17,17 +18,34 @@ class BillsController extends Controller
      */
     public function acceptBill(String $id)
     {
-        $bill = Bill::with(['products' => function ($query) {
-            $query->withTrashed()->with('category');
-        }, 'market.category', 'supplier.category'])->findOrFail($id);
+        try {
+            $bill = Bill::with(['products' => function ($query) {
+                $query->withTrashed()->with('category');
+            }, 'market.category', 'supplier.category'])->findOrFail($id);
 
-        $this->authorize('webUpdate', $bill);
+            $this->authorize('webUpdate', $bill);
 
-        if ($bill->status != 'انتظار')
-            return response()->json(['message' => 'you can`t accept this bill... it is alredy accepted or canceled'], 422);
-        $bill->status = "جديد";
-        $bill->save();
-        return response()->json(['messge' => 'Bill Accepted', 'bill' => $bill], 200);
+            if ($bill->status != 'انتظار')
+                return response()->json(['message' => 'you can`t accept this bill... it is alredy accepted or canceled'], 422);
+            $bill->status = "جديد";
+            $bill->save();
+            /*$notification = new MobileNotificationServices;
+            $marketDeviceToken = $bill->market->deviceToken;
+            $supplierDeviceToken = $bill->supplier->deviceToken;
+
+            $marketNotiTitle = "الموفراتي";
+            $marketNotiBody = "تم قبول فاتورتك";
+
+            $supplierNotiTitle = "الموفراتي";
+            $supplierNotiBody = "لديك فاتورة جديدة";
+
+            $notification->sendNotification($marketDeviceToken, $title, $body);
+            $notification->sendNotification($supplierDeviceToken, $title, $body);*/
+
+            return response()->json(['messge' => 'Bill Accepted', 'bill' => $bill], 200);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), 500);
+        }
     }
 
     /**

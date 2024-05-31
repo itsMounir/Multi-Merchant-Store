@@ -17,7 +17,6 @@ class ProductController extends Controller
 {
     use Images;
 
-
     /**
      * Display list of products that match the inserted name 
      * @param Request $request
@@ -60,7 +59,7 @@ class ProductController extends Controller
         if ($category)
             $products = Product::where('product_category_id', $category)->paginate(2, ['*'], 'p');
         else {
-            $products = Product::paginate(2, ['*'], 'p');
+            $products = Product::all()->paginate(2, ['*'], 'p');
         }
         return response()->json($products, 200);
     }

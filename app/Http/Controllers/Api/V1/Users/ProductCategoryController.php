@@ -63,6 +63,8 @@ class ProductCategoryController extends Controller
 
     /**
      * reorder the catigries positions
+     * @param Request $request
+     * @return JsonResponse 
      */
     public function reorder(Request $request)
     {

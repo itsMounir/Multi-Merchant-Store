@@ -58,7 +58,10 @@ class RegisterController extends Controller
             DB::afterCommit(function () use ($supervisor, $market) {
                 Notification::send($supervisor, new NewAccount($market, 'market'));
             });
-
+            /*
+            $notification = new MobileNotificationServices;
+            $notification->subscribeToTopic($market->deviceToken,'market');
+            */
             return response()->json([
                 'message' => '.تم إنشاء الحساب بنجاح، يرجى انتظار تأكيده من الادمن',
                 'access_token' => $accessToken->plainTextToken,

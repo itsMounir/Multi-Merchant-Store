@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use Kreait\Firebase\Factory;
-use Illuminate\Http\Request;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
 use Illuminate\Support\Facades\Log;
@@ -36,11 +35,8 @@ class MobileNotificationServices
     }
 
 
-    public function subscribeToTopic(Request $request)
+    public function subscribeToTopic($deviceToken, $topic)
     {
-        $deviceToken = $request->input('device_token');
-        $topic = $request->input('topic');
-
         try {
             $this->messaging->subscribeToTopic($topic, $deviceToken);
             return response()->json(['success' => true, 'message' => 'Subscribed to topic successfully!'], 200);
