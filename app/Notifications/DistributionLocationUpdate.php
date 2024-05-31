@@ -17,7 +17,12 @@ class DistributionLocationUpdate extends Notification implements ShouldBroadcast
 
     public function via($notifiable)
     {
-        return ['database', 'broadcast'];
+        return ['database'];
+    }
+
+    public function databaseType(object $notifiable): string
+    {
+        return 'update-Distribution-Location';
     }
 
     public function toDatabase($notifiable)
@@ -28,17 +33,5 @@ class DistributionLocationUpdate extends Notification implements ShouldBroadcast
         ];
     }
 
-    public function broadcastOn()
-    {
-        return new PrivateChannel('supervisor-channel');
-    }
 
-    public function toBroadcast($notifiable)
-    {
-        return new BroadcastMessage([
-            'title'=>'تعديل مناطق توزيع ',
-            'body' => "{$this->supplier->first_name} {$this->supplier->last_name}  يرغب في تعديل مناطق التوزيع الخاصة به.",
-
-        ]);
-    }
 }

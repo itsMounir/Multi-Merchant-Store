@@ -20,22 +20,21 @@ class RejectedNotification extends Notification implements ShouldBroadcast, Shou
 
     }
 
-    public function broadcastOn(): array
+    public function databaseType(object $notifiable): string
     {
-        return [
-            new PrivateChannel('supplier-channel'),
-        ];
+        return 'regection-bill';
     }
+
+
 
     public function via(object $notifiable): array
     {
-        return ['broadcast'];
+        return ['database'];
     }
 
-    public function toBroadcast($notifiable)
+    public function toDatabase($notifiable)
     {
         return new BroadcastMessage([
-            'title' => 'فاتورة مرفوضة',
             'message' => "تم رفض فاتورتك من قبل المورد: {$this->supplier->store_name}",
         ]);
     }

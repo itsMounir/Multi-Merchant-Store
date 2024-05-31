@@ -11,6 +11,8 @@ class Kernel extends ConsoleKernel
         Commands\CheckSubscriptionStatus::class,
         Commands\DeleteExpiredGoals::class,
         Commands\ExpireOffers::class,
+        Commands\SendNewBillNotification::class,
+        Commands\SendPreparingBillNotification::class,
     ];
 
     /**
@@ -23,6 +25,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('subscriptions:check')->daily();
         $schedule->command('goals:delete-expired')->daily();
         $schedule->command('offers:expire')->daily();
+        $schedule->command('NewBill:send-notification')->everyMinute();
+        $schedule->command('preparing:send-notification')->everyMinute();
     }
 
     /**
