@@ -23,11 +23,6 @@ class Offer extends Model
         'updated_at',
     ];
 
-    /**
-     * Get the user's first name.
-     */
-
-
     protected function image(): Attribute
     {
         return Attribute::make(

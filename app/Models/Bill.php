@@ -65,7 +65,7 @@ class Bill extends Model
                     $price = $supplier_product['pivot']['price'];
                     $quantity = $product['pivot']['quantity'];
                     if ($supplier_product['pivot']['has_offer']) {
-                        $total_discounted_price = min(
+                        $total_discounted_price += min(
                             $supplier_product['pivot']['max_offer_quantity'],
                             $quantity
                         )

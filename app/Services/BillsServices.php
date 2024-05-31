@@ -122,7 +122,7 @@ class BillsServices
 
                     if ($supplier_product['pivot']['has_offer']) {
                         // calculate the total price of products taken in the offer
-                        $total_price = min(
+                        $total_price += min(
                             $supplier_product['pivot']['max_offer_quantity'],
                             $quantity
                         )
