@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\V1\Users;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Users\OfferRequest;
 use App\Models\Offer;
+use App\Models\Supplier;
+use App\Services\MobileNotificationServices;
 use App\Traits\Images;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -44,14 +46,22 @@ class OfferController extends Controller
      */
     public function create(OfferRequest $request)
     {
-        $path = $request->file('image')->store('Offer', 'public');
-        $Offer = Offer::create([
-            'supplier_id' => $request->supplier_id,
-            'image' => $path,
-        ]);
-
-        $Offer->image = asset("storage/$path");
-        return response()->json($Offer, 201);
+        try {
+            $supplier = Supplier::findOrFail($request->supplire_id);
+            $path = $request->file('image')->store('Offer', 'public');
+            $Offer = Offer::create([
+                'supplier_id' => $supplier->id,
+                'image' => $path,
+            ]);
+            /*$notification = new MobileNotificationServices;
+            $title = "عرض جديد";
+            $body = 'المورد' . $supplier->store_name . 'قام بإضافة عرض جديد';
+            $notification->sendNotificationToTopic('market', $title, $body);*/
+            $Offer->image = asset("storage/$path");
+            return response()->json($Offer, 201);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), 500);
+        }
     }
 
     /**

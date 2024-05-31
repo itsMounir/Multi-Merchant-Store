@@ -17,7 +17,11 @@ class ProductController extends Controller
 {
     use Images;
 
-
+    /**
+     * Display list of products that match the inserted name 
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function filterAndSearch(Request $request): JsonResponse
     {
         try {
@@ -55,25 +59,11 @@ class ProductController extends Controller
         if ($category)
             $products = Product::where('product_category_id', $category)->paginate(2, ['*'], 'p');
         else {
-            $products = Product::paginate(2, ['*'], 'p');
+            $products = Product::all()->paginate(2, ['*'], 'p');
         }
         return response()->json($products, 200);
     }
 
-    /**
-     * Display list of products that match the inserted name 
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function search(Request $request)
-    {
-        try {
-            $products = Product::where('name', 'like', '%' . $request->query('name') . '%')->get();
-            return response()->json($products, 200);
-        } catch (\Exception $e) {
-            return response()->json($e->getMessage(), $e->getCode() ?: 200);
-        }
-    }
     /**
      * To get trashed products
      * @return JsoneResponse

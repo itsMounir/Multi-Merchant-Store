@@ -19,6 +19,8 @@ Route::prefix('users/products/')->middleware('auth:sanctum')->group(function () 
     Route::get('category/{id}', [ProductCategoryController::class, 'show']); // get category by ID
     Route::post('category', [ProductCategoryController::class, 'store']);  // create category
     Route::put('category/{id}', [ProductCategoryController::class, 'update']);  // update category
+    Route::post('category/reorder', [ProductCategoryController::class, 'reorder']); // reorder the categories
+    Route::post('category/position/{id}', [ProductCategoryController::class, 'updatePosition']); // reorder the categories
     Route::delete('category/{id}', [ProductCategoryController::class, 'destroy']);  // delete category
 
 });

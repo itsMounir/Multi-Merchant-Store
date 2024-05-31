@@ -26,6 +26,7 @@ class User extends Authenticatable
         'phone_number',
         'password',
         'email',
+        'deviceToken',
     ];
 
     protected $dates = ['created_at'];
@@ -38,6 +39,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'notification_token',
     ];
 
     /**
