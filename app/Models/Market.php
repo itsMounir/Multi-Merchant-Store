@@ -29,6 +29,7 @@ class Market extends Authenticatable
         'phone_number',
         'password',
         'city_id',
+        'location_details',
         'market_category_id',
         'representator_code',
         'is_subscribed',

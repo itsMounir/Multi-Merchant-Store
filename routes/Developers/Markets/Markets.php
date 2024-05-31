@@ -36,6 +36,6 @@ Route::prefix('markets/')->middleware([
     Route::get('goals', GoalsController::class);
 
     // Route for show market profile and update it.
+    Route::get('renew-subscription', [MarketsController::class, 'sendRenewSubscriptionRequest']);
     Route::apiResource('markets', MarketsController::class)->only(['show', 'update']);
-    Route::post('markets/{market}/send-update-request',[MarketsController::class,'sendUpdateRequest']);
 });

@@ -29,6 +29,7 @@ class RegisterRequest extends FormRequest
             'phone_number' => ['required','unique:markets,phone_number',new EgyptPhoneNumber],
             'password' => ['required','confirmed'],
             'city_id' => ['required','exists:cities,id'],
+            'location_details' => ['string'],
             'market_category_id' => ['required','exists:market_categories,id'],
             'store_name' => ['required'],
         ];
