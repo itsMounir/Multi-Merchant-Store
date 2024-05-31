@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('supplier_categories', function (Blueprint $table) {
-            $table->id();
-            $table->integer('position');
-            $table->string('type')->unique();
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->float('deviceToken');
         });
     }
 
@@ -24,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('supplier_categories');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('deviceToken');
+        });
     }
 };

@@ -11,7 +11,32 @@ use Illuminate\Http\Request;
 class MarketUserController extends Controller
 {
     /**
-     * Display User Profile.
+     * Display listing of markets (filtered on category and status)
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function index(Request $request)
+    {
+        $this->authorize('viewAny', Market::class);
+
+        $category = $request->query('category');
+        $status = $request->query('status');
+
+        $query = Market::query();
+
+        if ($category) {
+            $query->where('market_category_id', $category);
+        }
+        if (!is_null($status)) {
+            $query->where('status', $status);
+        }
+        $markets = $query->orderBy('first_name', 'asc')->paginate(20, ['*'], 'p');
+
+        return response()->json(['market users' => $markets]);
+    }
+
+    /**
+     * Display User info.
      * @param string $id
      * @return JsonResponse
      */
@@ -23,7 +48,7 @@ class MarketUserController extends Controller
         return response()->json(['user' => $market], 200);
     }
     /**
-     * To get user info with his outcoming Bills
+     * Display user info with his outcoming Bills
      * @param string $id
      * @return JsonResponse
      */
@@ -36,7 +61,23 @@ class MarketUserController extends Controller
     }
 
     /**
-     * To change supplier profile
+     * Display list of market that match the inserted name
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function search(Request $request)
+    {
+        try {
+            $name = $request->query('name');
+            $supplier = Market::where('store_name', 'like', '%' . $name . '%')->orderBy('first_name', 'asc')->get();
+            return response()->json($supplier, 200);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), $e->getCode() ?: 500);
+        }
+    }
+
+    /**
+     * update supplier info
      * @param MarketProfileRequest $request
      * @param string $id
      * @return JsonResponse
@@ -45,33 +86,13 @@ class MarketUserController extends Controller
     {
         $market = Market::findOrFail($id);
         $this->authorize('update', $market);
-
         $market->update($request->all());
-        $market = Market::findOrFail($id);
         return response()->json(['message' => 'User has been updated successfully', 'user' => $market], 200);
     }
+    
 
     /**
-     * GET MARKET USERS BASED ON CATEGORY
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function index(Request  $request)
-    {
-        $this->authorize('viewAny', Market::class);
-
-        $category = $request->query('category');
-
-        if ($category)
-            $markets = Market::where('market_category_id', $category)->orderBy('first_name', 'asc')->get();
-        else {
-            $markets = Market::get();
-        }
-
-        return response()->json(['Market users' => $markets]);
-    }
-    /**
-     * TO ACTIVATE MARKET USER
+     * Activate market account
      * @param string $id
      * @return JsonResponse
      */
@@ -94,7 +115,7 @@ class MarketUserController extends Controller
     }
 
     /**
-     * TO BAN MARKET USER
+     * Ban market account
      * @param string $id
      * @return JsonResponse
      */

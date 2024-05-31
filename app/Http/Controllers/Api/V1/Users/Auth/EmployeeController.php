@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\Api\V1\Users\Auth\CreateAccountRequest;
 use App\Http\Requests\Api\V1\Users\Auth\UpdateEmployeeRequest;
+use App\Http\Requests\Api\V1\Users\ChangePasswordRequest;
+use Illuminate\Http\JsonResponse;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Support\Facades\Hash;
 
@@ -71,7 +73,14 @@ class EmployeeController extends Controller
         $employee = User::with('roles')->findOrFail($id);
         $this->authorize('update', $employee);
 
-        $employee->update($request->all());
+        $employee->update([
+            'first_name' => $request->first_name,
+            'middle_name' => $request->middle_name,
+            'last_name' => $request->last_name,
+            'phone_number' => $request->phone_number,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
         $employee->syncRoles($request->role);
         $employee->load('roles:name', 'permissions');
 
@@ -88,7 +97,24 @@ class EmployeeController extends Controller
         $employee = User::findOrFail($id);
         $this->authorize('delete', $employee);
 
+        $employee->tokens()->delete();
         $employee->delete();
+        
         return response()->json(['message' => 'User has been deleted successfully'], 204);
+    }
+
+    /**
+     * Change Employee password
+     * @param ChangePasswordRequest $request
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function changePassword(ChangePasswordRequest $request, String $id)
+    {
+        $employee = User::findOrFail($id);
+        $this->authorize('update', $employee);
+        $employee->password =  Hash::make($request->password);
+        $employee->save();
+        return response()->json(['message' => 'password changed']);
     }
 }

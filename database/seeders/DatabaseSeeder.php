@@ -29,10 +29,13 @@ class DatabaseSeeder extends Seeder
 
     private function rolesAndPermissions()
     {
-        $supperAdminRole = Role::query()->where('name', 'supper_admin')->first();
+        $superAdminRole = Role::query()->where('name', 'super_admin')->first();
         $adminRole = Role::query()->where('name', 'admin')->first();
+        $supervisorRole = Role::query()->where('name', 'supervisor')->first();
+        $moderatorRole = Role::query()->where('name', 'moderator')->first();
+        $dataEntryRole = Role::query()->where('name', 'data_entry')->first();
 
-        $supperAdminRole->givePermissionTo([
+        $superAdminRole->givePermissionTo([
             'user-stuff',
             'bill-stuff',
             'product-stuff',
@@ -46,11 +49,17 @@ class DatabaseSeeder extends Seeder
             'city-stuff',
         ]);
 
-        $supperAdminUser = User::find(1);
+        $superAdminUser = User::find(1);
         $adminUser = User::find(2);
+        $supervisor = User::find(3);
+        $moderator = User::find(4);
+        $data_entry = User::find(5);
 
-        $supperAdminUser->assignRole($supperAdminRole);
+        $superAdminUser->assignRole($superAdminRole);
         $adminUser->assignRole($adminRole);
+        $supervisor->assignRole($supervisorRole);
+        $moderator->assignRole($moderatorRole);
+        $data_entry->assignRole($dataEntryRole);
     }
 
     private function cities()
@@ -120,8 +129,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-        Role::insert([
-            ['guard_name' => 'web', 'name' => 'supper_admin', 'created_at' => now()],
+          Role::insert([
+            ['guard_name' => 'web', 'name' => 'super_admin', 'created_at' => now()],
             ['guard_name' => 'web', 'name' => 'admin', 'created_at' => now()],
             ['guard_name' => 'web', 'name' => 'supervisor', 'created_at' => now()],     // الإشراف على الحسابات
             ['guard_name' => 'web', 'name' => 'moderator', 'created_at' => now()],      // الإشراف على الفواتير
@@ -177,7 +186,7 @@ class DatabaseSeeder extends Seeder
                 'first_name' => 'Owner',
                 'middle_name' => 'Owner',
                 'last_name' => 'Owner',
-                'phone_number' => '0000000000',
+                'phone_number' => '+201000000000',
                 'email' => 'Owner@gmail.com',
                 'password' => Hash::make('password')
             ],
@@ -185,21 +194,43 @@ class DatabaseSeeder extends Seeder
                 'first_name' => 'Admin',
                 'middle_name' => 'Admin',
                 'last_name' => 'Admin',
-                'phone_number' => '1111111111',
+                'phone_number' => '+201111111111',
                 'email' => 'Admin@gmail.com',
                 'password' => Hash::make('password')
-            ]
+            ],
+            [
+                'first_name' => 'SS',
+                'middle_name' => 'SS',
+                'last_name' => 'SS',
+                'phone_number' => '+201222222222',
+                'email' => 'ss@gmail.com',
+                'password' => Hash::make('password'),
+            ],
+            [
+                'first_name' => 'MM',
+                'middle_name' => 'MM',
+                'last_name' => 'MM',
+                'phone_number' => '+201333333333',
+                'email' => 'mm@gmail.com',
+                'password' => Hash::make('password'),
+            ],
+            [
+                'first_name' => 'DD',
+                'middle_name' => 'DD',
+                'last_name' => 'DD',
+                'phone_number' => '+201444444444',
+                'email' => 'dd@gmail.com',
+                'password' => Hash::make('password'),
+            ],
         ]);
         // User::factory(10)->create();
         $this->cities();
         Market::factory(10)->create();
         Supplier::factory(10)->create();
         Product::factory(20)->create();
-       Bill::factory(10)->create();
+        // Bill::factory(10)->create();
+        // BillProduct::factory(5)->create();
+          $this->rolesAndPermissions();
 
-       BillProduct::factory(5)->create();
-        $this->rolesAndPermissions();
-
-        $this->rolesAndPermissions();
     }
 }

@@ -11,6 +11,7 @@ class City extends Model
     use HasFactory;
 
     protected $fillable = [
+        'position',
         'name',
         'parent_id'
     ];
@@ -25,20 +26,23 @@ class City extends Model
         return $this->belongsTo(City::class, 'parent_id');
     }
 
-    public function childrens() {
-        return $this->hasMany(City::class,'parent_id');
+    public function childrens()
+    {
+        return $this->hasMany(City::class, 'parent_id');
     }
 
-    public function distributionLocationsTo() : HasMany
+    public function distributionLocationsTo(): HasMany
     {
         return $this->hasMany(DistributionLocation::class, 'to_city_id');
     }
 
-    public function markets() : HasMany {
+    public function markets(): HasMany
+    {
         return $this->hasMany(Market::class);
     }
 
-    public function suppliers() : HasMany {
+    public function suppliers(): HasMany
+    {
         return $this->hasMany(Supplier::class);
     }
 }
