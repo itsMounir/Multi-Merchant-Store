@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\V1\Users\auth;
 
+use App\Rules\EgyptPhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateEmployeeRequest extends FormRequest
@@ -26,8 +27,10 @@ class UpdateEmployeeRequest extends FormRequest
             'first_name' => ['required', 'string'],
             'middle_name' => ['required', 'string'],
             'last_name' => ['required', 'string'],
-            'phone_number' => ['required', 'unique:users,phone_number,' . $user . ',id', 'digits:11'],
-            'email' => ['required', 'unique:users,email,' . $user . ',id', 'email']
+            'phone_number' => ['required', 'unique:users,phone_number,' . $user . ',id', new EgyptPhoneNumber],
+            'email' => ['required', 'unique:users,email,' . $user . ',id', 'email'],
+            'role' => ['required', 'not_in:super_admin']
+
         ];
     }
 }
