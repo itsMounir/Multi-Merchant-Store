@@ -69,11 +69,6 @@ class Handler extends ExceptionHandler
 
 
 
-        if ($e instanceof QueryException) {
-            return response()->json([
-                'message' => 'unknown query exception',
-            ]);
-        }
 
 
 

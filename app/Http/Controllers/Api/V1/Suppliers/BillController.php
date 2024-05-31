@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Api\V1\Suppliers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Notifications\BillPreparingMarket;
 use App\Models\{
 
     Bill,
     Supplier,
     Market
 };
+use Carbon\Carbon;
+
 use App\Http\Requests\Api\V1\Markets\{
     StoreBillRequest,
     UpdateBillRequest
@@ -82,6 +85,7 @@ class BillController extends Controller
     public function update(UpdateBillRequest $request, Bill $bill)
     {
 
+
         return DB::transaction(function () use ($request, $bill) {
             if ($bill->status != 'جديد') {
 
@@ -111,7 +115,8 @@ class BillController extends Controller
                     ],
                 ]);
             }
-
+            $market = Market::find($bill->market_id);
+            $market->notify(new BillPreparingMarket($bill, $supplier));
             $bill->save();
 
             return $this->sudResponse('تم تحديث الفاتورة بنجاح');
