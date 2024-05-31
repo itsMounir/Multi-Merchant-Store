@@ -10,6 +10,7 @@ class SupplierCategory extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'position',
         'type',
     ];
 
@@ -19,8 +20,8 @@ class SupplierCategory extends Model
         'created_at' => 'date:Y-m-d',
     ];*/
 
-    public function suppliers() : HasMany {
+    public function suppliers(): HasMany
+    {
         return $this->hasMany(Supplier::class);
     }
-
 }

@@ -29,12 +29,6 @@ class ProductSuppliersController extends Controller
     }
 
 
-    public function search(Request $request){
-        $supplier=Auth::user();
-        $product = ProductSupplier::search_Product($supplier->id, $request->search,$request->is_avaliable);
-        return $this->indexOrShowResponse('body',$product);
-
-    }
 
 
 
@@ -70,6 +64,28 @@ class ProductSuppliersController extends Controller
         }
 }
 
+
+
+   /* public function update(UpdatePriceRequest $request, $product_id)
+    {
+        $supplier = Auth::user();
+        $productSupplier = $this->findProductSupplier($supplier->id, $product_id);
+        $productSupplier->update(['price' => $request->price]);
+        return $this->sudResponse('تم تعديل السعر');
+    }
+
+
+
+
+
+    private function findProductSupplier($supplierId, $productId)
+    {
+
+        return ProductSupplier::where('supplier_id', $supplierId)
+                              ->where('id', $productId)
+                              ->first();
+    }*/
+
     /**
      * Remove the specified resource from storage.
      */
@@ -103,14 +119,29 @@ class ProductSuppliersController extends Controller
 
     }
 
-
-    public function get_product_available_or_Not_available($id){
+    /*public function search(Request $request){
         $supplier=Auth::user();
-        $product=$supplier->products()
-        ->where('is_available',$id)
-        ->get();
+        $product = ProductSupplier::search_Product($supplier->id, $request->search,$request->is_avaliable);
         return $this->indexOrShowResponse('body',$product);
+
+    }*/
+
+
+    public function get_product_available_or_Not_available(Request $request, $id){
+        $supplier = Auth::user();
+
+
+        if ($request->has('search')&&$request->search!='') {
+
+            $product = ProductSupplier::search_Product($supplier->id,$request->search,$id);
+        } else {
+
+            $product = $supplier->products()->where('is_available', $id)->get();
+        }
+
+        return $this->indexOrShowResponse('body', $product);
     }
+
 
 
 

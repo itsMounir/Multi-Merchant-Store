@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Api\V1\Suppliers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Notifications\BillPreparingMarket;
 use App\Models\{
 
     Bill,
     Supplier,
     Market
 };
+use Carbon\Carbon;
+
 use App\Http\Requests\Api\V1\Markets\{
     StoreBillRequest,
     UpdateBillRequest
@@ -29,7 +32,7 @@ class BillController extends Controller
     {
         $supplier = Auth::user();
         $billsQuery = $supplier->bills()->with(['products.category','market.city', 'supplier'])
-                          ->status($request->status);
+                          ->status($request->status)->orderByInvoiceIdDesc();
         $bills = $billsQuery->get();
         $Count = $bills->count();
         $newBillsCount = Bill::newStatusCount($supplier->id);
@@ -82,6 +85,7 @@ class BillController extends Controller
     public function update(UpdateBillRequest $request, Bill $bill)
     {
 
+
         return DB::transaction(function () use ($request, $bill) {
             if ($bill->status != 'جديد') {
 
@@ -97,6 +101,7 @@ class BillController extends Controller
             $bill->update([
                 'total_price' => $total_price,
                 'status' => 'قيد التحضير',
+                'updated_at'=> Carbon::now(),
                 'delivery_duration' => $delivery_duration ?: $bill->delivery_duration,
             ]);
 
@@ -110,7 +115,8 @@ class BillController extends Controller
                     ],
                 ]);
             }
-
+            $market = Market::find($bill->market_id);
+            $market->notify(new BillPreparingMarket($bill, $supplier));
             $bill->save();
 
             return $this->sudResponse('تم تحديث الفاتورة بنجاح');
