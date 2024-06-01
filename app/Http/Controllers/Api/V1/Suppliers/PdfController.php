@@ -47,7 +47,7 @@ class PdfController extends Controller
 
 
         $html = view('Bills',compact('bill'))->toArabicHTML();
-        $pdf=new PDF();
+        $pdf=new Dompdf();
 
         $pdf->loadHtml($html);
         $pdf->render();

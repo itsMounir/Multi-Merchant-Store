@@ -7,14 +7,15 @@ use App\Models\Bill;
 use App\Models\Supplier;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\PendingBillNotification;
-
+use App\Services\MobileNotificationServices;
 class SendPreparingBillNotification extends Command
 {
     protected $signature = 'preparing:send-notification';
     protected $description = 'Notify suppliers about bills that are pending for more than two days.';
-
     public function handle()
     {
+        $notification= new MobileNotificationServices;
+
         $suppliers = Supplier::has('bills', '>', 0)->get();
         $twoDaysAgo = now()->subDays(3);
         foreach ($suppliers as $supplier) {
@@ -22,6 +23,8 @@ class SendPreparingBillNotification extends Command
             if ($newInvoicesCount > 0) {
 
                  $supplier->notify(new PendingBillNotification($newInvoicesCount));
+                 $notification->sendNotification($supplier->deviceToken,"فواتير غير مستلمة","لديك {$newInvoicesCount}فواتير غير مستلمة.");
+
             }
         }
 

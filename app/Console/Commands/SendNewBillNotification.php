@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Models\{
 Supplier
 };
+use App\Services\MobileNotificationServices;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\NewBillNotification;
 class SendNewBillNotification extends Command
@@ -29,13 +30,15 @@ class SendNewBillNotification extends Command
      */
     public function handle()
     {
+        $notification= new MobileNotificationServices;
         $suppliers = Supplier::has('bills', '>', 0)->get();
 
         foreach ($suppliers as $supplier) {
             $newInvoicesCount = $supplier->bills()->where('status', 'جديد')->count();
             if ($newInvoicesCount > 0) {
-              
+
                  $supplier->notify(new NewBillNotification($newInvoicesCount));
+                 $notification->sendNotification($supplier->deviceToken,"فاتورة جديدة","لديك {$newInvoicesCount}فواتير جديدة.");
             }
         }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Suppliers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Traits\Responses;
+use App\Services\MobileNotificationServices;
 use App\Models\{
     Supplier,
     Product,
@@ -113,12 +114,15 @@ class SupplierContoller extends Controller
 
     public function add_Discount(AddDiscountRequest $request)
     {
+        $notification=new MobileNotificationServices;
         $supplier = Auth::user();
         foreach ($request->input('discount') as $offerData) {
             $createdDiscount = $supplier->goals()->create($offerData);
         }
         $marketsToNotify = $supplier->getMarketsToNotify();
         Notification::send($marketsToNotify, new DiscountAdded($supplier));
+        foreach ($marketsToNotify as $market) {
+            $notification->sendNotification($market->deviceToken,"خصم جديد","تم اضافة خصم من قبل ". $supplier->store_name . ".")
         return $this->sudResponse('تم اضافة خصم بنجاح');
     }
 

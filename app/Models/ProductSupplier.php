@@ -81,7 +81,7 @@ class ProductSupplier extends Model
              ];
          });
 
-         return [ $response->toArray()];
+         return  $response->toArray();
      }
 
 
