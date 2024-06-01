@@ -35,6 +35,7 @@ class Market extends Authenticatable
         'is_subscribed',
         'store_name',
         'subscription_expires_at',
+        'deviceToken',
     ];
 
     protected $guard = 'market';

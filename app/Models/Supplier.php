@@ -39,6 +39,7 @@ class Supplier extends Authenticatable
         'min_selling_quantity',
         'delivery_duration',
         'city_id',
+        'deviceToken',
     ];
 
     protected $dates = ['created_at'];
