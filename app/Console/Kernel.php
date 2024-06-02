@@ -13,6 +13,7 @@ class Kernel extends ConsoleKernel
         Commands\ExpireOffers::class,
         Commands\SendNewBillNotification::class,
         Commands\SendPreparingBillNotification::class,
+        Commands\Read::class,
     ];
 
     /**
@@ -22,11 +23,12 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
-        $schedule->command('subscriptions:check')->daily();
+       $schedule->command('subscriptions:check')->daily();
         $schedule->command('goals:delete-expired')->daily();
         $schedule->command('offers:expire')->daily();
         $schedule->command('NewBill:send-notification')->everyMinute();
         $schedule->command('preparing:send-notification')->everyMinute();
+        $schedule->command('read:notifictation')->everyMinute();
     }
 
     /**
