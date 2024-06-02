@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7fe74f490d5beb14ae06c76e4b7c78d2",
+    "content-hash": "4234f43c8c3a8c929371c394ed5611e2",
     "packages": [
         {
             "name": "ab-alselwi/laravel-arabic-html",
@@ -3655,6 +3655,7 @@
             "time": "2023-08-25T10:54:48+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "myclabs/deep-copy",
             "version": "1.11.1",
             "source": {
@@ -3714,6 +3715,8 @@
             "time": "2023-03-08T13:26:56+00:00"
         },
         {
+=======
+>>>>>>> develop
             "name": "nesbot/carbon",
             "version": "2.72.3",
             "source": {
@@ -5367,6 +5370,7 @@
             "time": "2024-02-15T16:41:13+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "setasign/fpdi",
             "version": "v2.6.0",
             "source": {
@@ -5439,6 +5443,8 @@
             "time": "2023-12-11T16:03:32+00:00"
         },
         {
+=======
+>>>>>>> develop
             "name": "spatie/laravel-permission",
             "version": "6.7.0",
             "source": {
@@ -8670,6 +8676,68 @@
                 "source": "https://github.com/mockery/mockery"
             },
             "time": "2024-05-16T03:13:13+00:00"
+<<<<<<< HEAD
+=======
+        },
+        {
+            "name": "myclabs/deep-copy",
+            "version": "1.11.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/myclabs/DeepCopy.git",
+                "reference": "7284c22080590fb39f2ffa3e9057f10a4ddd0e0c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/7284c22080590fb39f2ffa3e9057f10a4ddd0e0c",
+                "reference": "7284c22080590fb39f2ffa3e9057f10a4ddd0e0c",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1 || ^8.0"
+            },
+            "conflict": {
+                "doctrine/collections": "<1.6.8",
+                "doctrine/common": "<2.13.3 || >=3,<3.2.2"
+            },
+            "require-dev": {
+                "doctrine/collections": "^1.6.8",
+                "doctrine/common": "^2.13.3 || ^3.2.2",
+                "phpunit/phpunit": "^7.5.20 || ^8.5.23 || ^9.5.13"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/DeepCopy/deep_copy.php"
+                ],
+                "psr-4": {
+                    "DeepCopy\\": "src/DeepCopy/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Create deep copies (clones) of your objects",
+            "keywords": [
+                "clone",
+                "copy",
+                "duplicate",
+                "object",
+                "object graph"
+            ],
+            "support": {
+                "issues": "https://github.com/myclabs/DeepCopy/issues",
+                "source": "https://github.com/myclabs/DeepCopy/tree/1.11.1"
+            },
+            "funding": [
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/myclabs/deep-copy",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2023-03-08T13:26:56+00:00"
+>>>>>>> develop
         },
         {
             "name": "nunomaduro/collision",

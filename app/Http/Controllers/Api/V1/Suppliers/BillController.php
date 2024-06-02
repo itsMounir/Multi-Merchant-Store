@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\{
 use App\Notifications\RejectedNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Services\BillsServices;
+use App\Services\MobileNotificationServices;
 class BillController extends Controller
 {
     use Responses;
@@ -117,6 +118,8 @@ class BillController extends Controller
             }
             $market = Market::find($bill->market_id);
             $market->notify(new BillPreparingMarket($bill, $supplier));
+            $notification=new  MobileNotificationServices;
+            $notification->sendNotification($market->deviceToken,"تحديث الفاتورة","أصبحت فاتورتك قيد التحضير من عند  " . $supplier->store_name . ".");
             $bill->save();
 
             return $this->sudResponse('تم تحديث الفاتورة بنجاح');
@@ -128,6 +131,7 @@ class BillController extends Controller
 
 
     public function reject(Request $request,$billId){
+        $notification=new MobileNotificationServices;
         $supplier=Auth::user();
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
         if(!$bill){
@@ -144,6 +148,7 @@ class BillController extends Controller
         $market = Market::find($bill->market_id);
         if ($market) {
              Notification::send($market, new RejectedNotification($supplier));
+             $notification->sendNotification($market->deviceToken,"رفض فاتورة","تم رفض فاتورتك من عند ". $supplier->store_name . ".");
         }
         return $this->sudResponse('تم بنجاح');
     }
