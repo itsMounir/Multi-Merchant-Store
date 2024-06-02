@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -38,16 +38,10 @@ class Bill extends Model
         'deleted_at'
     ];
 
-    public function getCreatedAtAttribute()
+    public function getCreatedAtAttribute($value)
     {
-        return Carbon::parse($this->created_at)->format('d/m/Y');
+        return Carbon::parse($value)->format('d/m/Y');
     }
-
-    // created from attribute
-    // public function getCreatedFromAttribute()
-    // {
-    //     return Carbon::parse($this->created_at)->diffForHumans();
-    // }
     public function getAdditionalPriceAttribute()
     {
         if ($this->has_additional_cost) {
