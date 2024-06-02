@@ -32,22 +32,22 @@ class Bill extends Model
         'goal_discount',
     ];
 
-    protected $appends = ['created_at_formatted', 'created_from', 'payment_method', 'additional_price', 'waffarnalak', 'updatable'];
+    protected $appends = ['payment_method', 'additional_price', 'waffarnalak', 'updatable'];
 
     protected $hidden = [
         'deleted_at'
     ];
 
-    public function getCreatedAtFormattedAttribute()
+    public function getCreatedAtAttribute()
     {
         return Carbon::parse($this->created_at)->format('d/m/Y');
     }
 
     // created from attribute
-    public function getCreatedFromAttribute()
-    {
-        return Carbon::parse($this->created_at)->diffForHumans();
-    }
+    // public function getCreatedFromAttribute()
+    // {
+    //     return Carbon::parse($this->created_at)->diffForHumans();
+    // }
     public function getAdditionalPriceAttribute()
     {
         if ($this->has_additional_cost) {
