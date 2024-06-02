@@ -39,6 +39,7 @@ class Supplier extends Authenticatable
         'min_selling_quantity',
         'delivery_duration',
         'city_id',
+        'deviceToken',
     ];
 
     protected $dates = ['created_at'];
@@ -156,7 +157,6 @@ class Supplier extends Authenticatable
         return $this->hasMany(ProductSupplier::class);
     }
 
-
     public function supplierCategory(): BelongsTo
     {
         return $this->belongsTo(SupplierCategory::class);
@@ -198,4 +198,19 @@ class Supplier extends Authenticatable
             ->get()
             ->unique('id');
     }
+
+    /**
+ * Get the recent notifications for the supplier.
+ *
+ * @param int $count Number of notifications to retrieve
+ */
+public function getNotifications()
+{
+
+    $notifications = $this->notifications()->whereIn('type', ['new-bill', 'preparing-bill'])->whereNull('read_at')->get();
+
+    return $notifications->values();
+
+}
+
 }

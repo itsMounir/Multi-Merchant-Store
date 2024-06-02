@@ -32,17 +32,22 @@ class Bill extends Model
         'goal_discount',
     ];
 
-    protected $appends = ['created_from', 'payment_method', 'additional_price', 'waffarnalak', 'updatable'];
+    protected $appends = ['payment_method', 'additional_price', 'waffarnalak', 'updatable'];
 
     protected $hidden = [
         'deleted_at'
     ];
 
-    // created from attribute
-    public function getCreatedFromAttribute()
+    public function getCreatedAtAttribute()
     {
-        return Carbon::parse($this->created_at)->diffForHumans();
+        return Carbon::parse($this->created_at)->format('d/m/Y');
     }
+
+    // created from attribute
+    // public function getCreatedFromAttribute()
+    // {
+    //     return Carbon::parse($this->created_at)->diffForHumans();
+    // }
     public function getAdditionalPriceAttribute()
     {
         if ($this->has_additional_cost) {
@@ -65,7 +70,7 @@ class Bill extends Model
                     $price = $supplier_product['pivot']['price'];
                     $quantity = $product['pivot']['quantity'];
                     if ($supplier_product['pivot']['has_offer']) {
-                        $total_discounted_price = min(
+                        $total_discounted_price += min(
                             $supplier_product['pivot']['max_offer_quantity'],
                             $quantity
                         )
@@ -81,9 +86,7 @@ class Bill extends Model
     protected function getpaymentMethodAttribute()
     {
         return $this->paymentMethod()->pluck('name')->first();
-
     }
-
 
     public function getUpdatableAttribute()
     {
@@ -153,5 +156,16 @@ class Bill extends Model
         return $current_time->lt($expiration_time);
     }
 
+    /**
+     *  Scope to filter bills by supplier store name
+     */
+    public static function getBySupplierStoreName($name)
+    {
+        return self::with('supplier', 'market')->whereHas('supplier', function ($query) use ($name) {
+            $query->where('store_name', 'like', '%' . $name . '%');
+        })->orWhereHas('market', function ($query) use ($name) {
+            $query->where('store_name', 'like', '%' . $name . '%');
+        })->get();
+    }
 
 }

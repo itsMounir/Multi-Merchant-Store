@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Offer extends Model
 {
@@ -22,11 +22,6 @@ class Offer extends Model
         'created_at',
         'updated_at',
     ];
-
-    /**
-     * Get the user's first name.
-     */
-
 
     protected function image(): Attribute
     {

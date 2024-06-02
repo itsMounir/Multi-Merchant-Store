@@ -12,18 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('markets', function (Blueprint $table) {
-            $table->string('location_details')->default('')->after('city_id');
+            $table->string('deviceToken')->default('');
         });
     }
 
-    /*;
-     *;
+    /**
      * Reverse the migrations.
      */
     public function down(): void
     {
         Schema::table('markets', function (Blueprint $table) {
-            $table->dropColumn('location_details');
+            $table->dropColumn('deviceToken');
         });
     }
 };

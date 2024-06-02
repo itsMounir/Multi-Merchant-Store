@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('cities', function (Blueprint $table) {
             $table->id();
+            $table->integer('position');
             $table->string('name')->unique();
             $table->foreignId('parent_id')
                 ->nullable()

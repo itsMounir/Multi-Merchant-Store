@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Suppliers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Traits\Responses;
+use App\Services\MobileNotificationServices;
 use App\Models\{
     Supplier,
     Product,
@@ -40,17 +41,23 @@ class SupplierContoller extends Controller
 {
 
     use Responses;
-    public function index(){
-        $supplier=Auth::user();
-        if(!$supplier){
-            return $this->sudResponse('Unauthorized',401);
+    public function index(Request $request){
+        $supplier = Auth::user();
+        if (!$supplier) {
+            return $this->sudResponse('Unauthorized', 401);
         }
-        $data=Product::get();
-        return $this->indexOrShowResponse('products',$data);
+        if ($request->has('search') && $request->search != '') {
+
+            $data = Product::where('name', 'like', '%' . $request->search . '%')->get();
+        } else {
+
+            $data = Product::get();
+        }
+        return $this->indexOrShowResponse('products', $data);
     }
 
 
-    public function categories_supplier(){
+       public function categories_supplier(){
         $category = SupplierCategory::get();
         $cities = City::with('childrens.childrens')->whereNull('parent_id')->get();
         $data = [
@@ -59,9 +66,7 @@ class SupplierContoller extends Controller
         ];
         return $this->indexOrShowResponse('Body', $data);
     }
-
-
-    public function Personal_Data(){
+ public function Personal_Data(){
         $supplier = Auth::user();
         $supplier->load('city','supplierCategory');
         $supplierImages = $supplier->getImagesAttribute();
@@ -80,17 +85,15 @@ class SupplierContoller extends Controller
         return $this->indexOrShowResponse('body', $data);
     }
 
-
-    public function search(Request $request){
+     /*   public function search(Request $request){
 
         return $this->indexOrShowResponse('body',$product=Product::where('name', 'like', '%' . $request->search . '%')->get());
-    }
+    }*/
 
 
     public function edit_name(UpdateName $request){
 
         $supplier=Auth::user();
-
         $supplier->update($request->all());
         return $this->sudResponse('تم تعديل الاسم بنجاح');
 
@@ -111,14 +114,21 @@ class SupplierContoller extends Controller
 
     public function add_Discount(AddDiscountRequest $request)
     {
+        $notification=new MobileNotificationServices;
         $supplier = Auth::user();
         foreach ($request->input('discount') as $offerData) {
             $createdDiscount = $supplier->goals()->create($offerData);
         }
         $marketsToNotify = $supplier->getMarketsToNotify();
         Notification::send($marketsToNotify, new DiscountAdded($supplier));
+        foreach ($marketsToNotify as $market) {
+
+            $notification->sendNotification($market->deviceToken,"خصم جديد","تم اضافة خصم من قبل ". $supplier->store_name . ".");
+        }
         return $this->sudResponse('تم اضافة خصم بنجاح');
     }
+
+
 
 
 

@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Api\V1\Users;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bill;
-
+use App\Models\Supplier;
+use App\Services\MobileNotificationServices;
 use Illuminate\Http\Request;
 
 class BillsController extends Controller
@@ -17,17 +18,34 @@ class BillsController extends Controller
      */
     public function acceptBill(String $id)
     {
-        $bill = Bill::with(['products' => function ($query) {
-            $query->withTrashed()->with('category');
-        }, 'market.category', 'supplier.category'])->findOrFail($id);
+        try {
+            $bill = Bill::with(['products' => function ($query) {
+                $query->withTrashed()->with('category');
+            }, 'market.category', 'supplier.category'])->findOrFail($id);
 
-        $this->authorize('webUpdate', $bill);
+            $this->authorize('webUpdate', $bill);
 
-        if ($bill->status != 'انتظار')
-            return response()->json(['message' => 'you can`t accept this bill... it is alredy accepted or canceled'], 422);
-        $bill->status = "جديد";
-        $bill->save();
-        return response()->json(['messge' => 'Bill Accepted', 'bill' => $bill], 200);
+            if ($bill->status != 'انتظار')
+                return response()->json(['message' => 'you can`t accept this bill... it is alredy accepted or canceled'], 422);
+            $bill->status = "جديد";
+            $bill->save();
+            /*$notification = new MobileNotificationServices;
+            $marketDeviceToken = $bill->market->deviceToken;
+            $supplierDeviceToken = $bill->supplier->deviceToken;
+
+            $marketNotiTitle = "الموفراتي";
+            $marketNotiBody = "تم قبول فاتورتك";
+
+            $supplierNotiTitle = "الموفراتي";
+            $supplierNotiBody = "لديك فاتورة جديدة";
+
+            $notification->sendNotification($marketDeviceToken, $title, $body);
+            $notification->sendNotification($supplierDeviceToken, $title, $body);*/
+
+            return response()->json(['messge' => 'Bill Accepted', 'bill' => $bill], 200);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), 500);
+        }
     }
 
     /**
@@ -86,7 +104,7 @@ class BillsController extends Controller
      */
     public function show(String $id)
     {
-       $bill = Bill::with(['market', 'supplier'])->findOrFail($id);
+        $bill = Bill::with(['market', 'supplier'])->findOrFail($id);
         $supplier = Supplier::findOrFail($bill->supplier_id);
         $productIds = $bill->products->pluck('id');
         $bill->load([
@@ -99,5 +117,25 @@ class BillsController extends Controller
         ]);
 
         return response()->json(['bill' => $bill]);
+    }
+
+
+    /**
+     * Display list of bills that the supplier or the market in touch are match the inserted name
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function search(Request $request)
+    {
+        try {
+            $name = $request->query('name');
+            if (!$name) {
+                return response()->json(['error' => 'Store name is required'], 400);
+            }
+            $bills = Bill::getBySupplierStoreName($name);
+            return response()->json($bills, 200);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), 500);
+        }
     }
 }

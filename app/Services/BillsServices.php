@@ -74,8 +74,14 @@ class BillsServices
         $moderator = User::role('moderator')->get();
 
         // send a notification to the moderator with the new bill.
-        DB::afterCommit(function () use ($moderator, $new_bill) {
+        DB::afterCommit(function () use ($moderator, $new_bill, $supplier, $market) {
             Notification::send($moderator, new NewBillRequested($new_bill->id));
+
+
+            // $notification = new MobileNotificationServices();
+            // $message = 'you have a new bill requested from ' . $market->store_name;
+            // $notification->sendNotification($supplier->device_token, 'new bill', $message);
+
         });
         if ($supplier_discount != 0) {
             return 'لقد استفدت من الخصم لدى : ' . $supplier->store_name;
@@ -122,7 +128,7 @@ class BillsServices
 
                     if ($supplier_product['pivot']['has_offer']) {
                         // calculate the total price of products taken in the offer
-                        $total_price = min(
+                        $total_price += min(
                             $supplier_product['pivot']['max_offer_quantity'],
                             $quantity
                         )

@@ -40,7 +40,10 @@ class BillsController extends Controller
         $results = [];
 
 
-        $bills = $billsFilters->applyFilters(Auth::user()->bills()->getQuery())->where('created_at', '>=', Carbon::now()->subMonths(2))->latest()->get();
+        $bills = $billsFilters->applyFilters(Auth::user()->bills()->getQuery())
+            ->where('created_at', '>=', Carbon::now()->subMonths(2))
+            ->latest()
+            ->get();
 
 
         foreach ($bills as $bill) {

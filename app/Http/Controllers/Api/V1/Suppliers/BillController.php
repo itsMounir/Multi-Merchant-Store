@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Api\V1\Suppliers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Notifications\BillPreparingMarket;
 use App\Models\{
 
     Bill,
     Supplier,
     Market
 };
+use Carbon\Carbon;
+
 use App\Http\Requests\Api\V1\Markets\{
     StoreBillRequest,
     UpdateBillRequest
@@ -22,6 +25,7 @@ use Illuminate\Support\Facades\{
 use App\Notifications\RejectedNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Services\BillsServices;
+use App\Services\MobileNotificationServices;
 class BillController extends Controller
 {
     use Responses;
@@ -29,7 +33,7 @@ class BillController extends Controller
     {
         $supplier = Auth::user();
         $billsQuery = $supplier->bills()->with(['products.category','market.city', 'supplier'])
-                          ->status($request->status);
+                          ->status($request->status)->orderByInvoiceIdDesc();
         $bills = $billsQuery->get();
         $Count = $bills->count();
         $newBillsCount = Bill::newStatusCount($supplier->id);
@@ -82,6 +86,7 @@ class BillController extends Controller
     public function update(UpdateBillRequest $request, Bill $bill)
     {
 
+
         return DB::transaction(function () use ($request, $bill) {
             if ($bill->status != 'جديد') {
 
@@ -97,6 +102,7 @@ class BillController extends Controller
             $bill->update([
                 'total_price' => $total_price,
                 'status' => 'قيد التحضير',
+                'updated_at'=> Carbon::now(),
                 'delivery_duration' => $delivery_duration ?: $bill->delivery_duration,
             ]);
 
@@ -110,7 +116,10 @@ class BillController extends Controller
                     ],
                 ]);
             }
-
+            $market = Market::find($bill->market_id);
+            $market->notify(new BillPreparingMarket($bill, $supplier));
+            $notification=new  MobileNotificationServices;
+            $notification->sendNotification($market->deviceToken,"تحديث الفاتورة","أصبحت فاتورتك قيد التحضير من عند  " . $supplier->store_name . ".");
             $bill->save();
 
             return $this->sudResponse('تم تحديث الفاتورة بنجاح');
@@ -122,6 +131,7 @@ class BillController extends Controller
 
 
     public function reject(Request $request,$billId){
+        $notification=new MobileNotificationServices;
         $supplier=Auth::user();
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
         if(!$bill){
@@ -138,6 +148,7 @@ class BillController extends Controller
         $market = Market::find($bill->market_id);
         if ($market) {
              Notification::send($market, new RejectedNotification($supplier));
+             $notification->sendNotification($market->deviceToken,"رفض فاتورة","تم رفض فاتورتك من عند ". $supplier->store_name . ".");
         }
         return $this->sudResponse('تم بنجاح');
     }

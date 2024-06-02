@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1\Users;
 
-use App\Filters\Markets\ProductsFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Users\ProductRequest;
 use App\Http\Requests\Api\V1\Users\ProductUpdaterequest;
@@ -19,7 +18,36 @@ class ProductController extends Controller
     use Images;
 
     /**
-     * To get all products indexed by category
+     * Display list of products that match the inserted name 
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function filterAndSearch(Request $request): JsonResponse
+    {
+        try {
+            $category = $request->query('category');
+            $name = $request->query('name');
+
+            $query = Product::with('category:id,name');
+
+            if ($category) {
+                $category = ProductCategory::where('id', $category)->firstOrFail();
+                $query->where('product_category_id', $category->id);
+            }
+
+            if ($name) {
+                $query->where('name', 'like', '%' . $name . '%');
+            }
+            $paginator = $query->paginate(20, ['*'], 'p');
+
+            return response()->json($paginator, 200);
+        } catch (\Exception $e) {
+            return response()->json([$e->getMessage()], $e->getCode() ?: 200);
+        }
+    }
+
+    /**
+     * List collection of Products indexed by category
      * @param Request $request
      * @return JsonResponse
      */
@@ -29,23 +57,13 @@ class ProductController extends Controller
 
         $category = $request->query('category');
         if ($category)
-            $products = Product::with('category:id,name')->where('product_category_id', $category)->get();
+            $products = Product::where('product_category_id', $category)->paginate(2, ['*'], 'p');
         else {
-            $products = Product::with('category:id,name')->get();
+            $products = Product::all()->paginate(2, ['*'], 'p');
         }
         return response()->json($products, 200);
     }
 
-    /**
-
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function search(Request $request): JsonResponse
-    {
-        $products = Product::where('name', 'like', '%' . $request->query('name') . '%')->get();
-        return response()->json([$products], 200);
-    }
     /**
      * To get trashed products
      * @return JsoneResponse
@@ -96,6 +114,7 @@ class ProductController extends Controller
             return response()->json(['message' => 'something gose wrong', 'error' => $th->getMessage()], $th->getCode() ?: 500);
         }
     }
+
     /**
      * To update a product
      * @param ProductUpdaterequest $request
@@ -159,18 +178,5 @@ class ProductController extends Controller
 
         $product->restore();
         return response()->json(['message' => 'Product restored ', 'product' => $product], 200);
-    }
-    /**
-     * To delete a category
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function destroyCategory($id)
-    {
-        $category = ProductCategory::findOrFail($id);
-        $this->authorize('delete', $category);
-
-        $category->delete();
-        return response()->json(null, 204);
     }
 }

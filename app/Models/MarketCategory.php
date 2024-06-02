@@ -16,6 +16,7 @@ class MarketCategory extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'position',
         'name',
     ];
 

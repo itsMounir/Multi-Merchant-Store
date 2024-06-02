@@ -1,11 +1,11 @@
 <?php
 
 namespace App\Http\Controllers\Api\V1\Suppliers\Auth;
+
 use App\Enums\TokenAbility;
 use App\Models\{
     Supplier,
     DistributionLocation
-
 };
 use App\Http\Requests\Api\V1\Suppliers\{
     RegisterSupplier
@@ -21,11 +21,13 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
+use App\Services\MobileNotificationServices;
 
 class RegisterController extends Controller
 {
     use Images;
-    public function create(RegisterSupplier $request) {
+    public function create(RegisterSupplier $request)
+    {
         return DB::transaction(function () use ($request) {
             $supplier = Supplier::create($request->all());
             $toCityIds = $request->input('to_sites');
@@ -45,14 +47,14 @@ class RegisterController extends Controller
                 $this->saveImages([$request_image], [$image_name], 'public/Supplier');
             }
 
-            $supervisor =User::role('supervisor')->get();
-            DB::afterCommit(function () use($supervisor,$supplier) {
-                Notification::send($supervisor,new NewAccount($supplier,'supplier'));
+            $supervisor = User::role('supervisor')->get();
+            DB::afterCommit(function () use ($supervisor, $supplier) {
+                Notification::send($supervisor, new NewAccount($supplier, 'supplier'));
             });
 
             $accessToken = $supplier->createToken(
                 'access_token',
-                [TokenAbility::ACCESS_API->value , 'role:supplier'],
+                [TokenAbility::ACCESS_API->value, 'role:supplier'],
                 Carbon::now()->addMinutes(config('sanctum.ac_expiration'))
             );
 
@@ -62,16 +64,16 @@ class RegisterController extends Controller
                 Carbon::now()->addMinutes(config('sanctum.rt_expiration'))
             );
 
+
+            //$notification = new MobileNotificationServices;
+           // $notification->subscribeToTopic($supplier->deviceToken,'supplier');
+
             return response()->json([
                 'message' => '.تم إنشاء الحساب بنجاح، يرجى انتظار التأكيد من الادمن',
                 'access_token' => $accessToken->plainTextToken,
                 'refresh_token' => $refreshToken->plainTextToken,
-                'supplier'=>$supplier,
+                'supplier' => $supplier,
             ], 200);
         });
     }
-
-
-
-
 }

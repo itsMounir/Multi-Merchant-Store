@@ -15,7 +15,7 @@ use App\Policies\Markets\BillPolicy;
 
 
 use App\Policies\Web\EmployeePolicy as WebEmpolyeePolicy;
-use App\Policies\web\ProductCategoryPolicy as WebProductCategoryPolicy;
+use App\Policies\Web\ProductCategoryPolicy as WebProductCategoryPolicy;
 use App\Policies\Web\ProductPolicy as WebProductPolicy;
 use App\Policies\Web\CityPolicy as WebCityPolicy;
 use App\Policies\Web\MarketPolicy as WebMarketPolicy;
