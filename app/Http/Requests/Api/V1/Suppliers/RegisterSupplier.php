@@ -25,7 +25,7 @@ class RegisterSupplier extends FormRequest
         return [
             'first_name' => 'required|string',
             'middle_name' => 'nullable|string',
-            'deviceToken'=>'required',
+            'deviceToken'=>'nullable',
             'last_name' => 'required|string',
             'phone_number' => ['required','string','unique:suppliers,phone_number',new EgyptPhoneNumber],
             'password' => 'required|string|min:6',
