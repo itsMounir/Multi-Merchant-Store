@@ -38,6 +38,11 @@ class Bill extends Model
         'deleted_at'
     ];
 
+    public function getCreatedAtFormattedAttribute()
+    {
+        return Carbon::parse($this->created_at)->format('d/m/Y');
+    }
+
     // created from attribute
     public function getCreatedFromAttribute()
     {
@@ -161,11 +166,6 @@ class Bill extends Model
         })->orWhereHas('market', function ($query) use ($name) {
             $query->where('store_name', 'like', '%' . $name . '%');
         })->get();
-    }
-
-    public function getCreatedAtFormattedAttribute()
-    {
-        return Carbon::parse($this->created_at)->format('d/m/Y');
     }
 
 }
