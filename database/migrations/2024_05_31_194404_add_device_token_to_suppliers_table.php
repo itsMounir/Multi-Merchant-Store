@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('suppliers', function (Blueprint $table) {
-            $table->string('deviceToken');
+            $table->string('deviceToken')->default('');
         });
     }
 

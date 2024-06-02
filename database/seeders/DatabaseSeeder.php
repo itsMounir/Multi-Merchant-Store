@@ -66,60 +66,60 @@ class DatabaseSeeder extends Seeder
     {
         /** Big Cities */
         city::insert([
-            ['name' => 'الأسكندرية', 'parent_id' => null, 'created_at' => now()],
+            ['name' => 'الأسكندرية', 'position' => 1, 'parent_id' => null, 'created_at' => now()],
 
         ]);
 
         /** Small cities*/
         City::insert([
-            ["name" => "ابوقير", "parent_id" => 1, "created_at" => now()],
-            ["name" => "الاصلاح", "parent_id" => 1, "created_at" => now()],
-            ["name" => "طوسون", "parent_id" => 1, "created_at" => now()],
-            ["name" => "المعمورة", "parent_id" => 1, "created_at" => now()],
-            ["name" => "المنتزه", "parent_id" => 1, "created_at" => now()],
-            ["name" => "المندرة", "parent_id" => 1, "created_at" => now()],
-            ["name" => "العماروة", "parent_id" => 1, "created_at" => now()],
-            ["name" => "الملاحة", "parent_id" => 1, "created_at" => now()],
-            ["name" => "العصافرة", "parent_id" => 1, "created_at" => now()],
-            ["name" => "شارع الجيش", "parent_id" => 1, "created_at" => now()],
-            ["name" => "سيدي بشر", "parent_id" => 1, "created_at" => now()],
-            ["name" => "سيدي بشر - مدينة بنك فيصل", "parent_id" => 1, "created_at" => now()],
-            ["name" => "شارع 15", "parent_id" => 1, "created_at" => now()],
-            ["name" => "دربالة", "parent_id" => 1, "created_at" => now()],
-            ["name" => "فيكتوريا", "parent_id" => 1, "created_at" => now()],
-            ["name" => "الساعة", "parent_id" => 1, "created_at" => now()],
-            ["name" => "ابو سلیمان", "parent_id" => 1, "created_at" => now()],
-            ["name" => "غبريال", "parent_id" => 1, "created_at" => now()],
-            ["name" => "اكوس", "parent_id" => 1, "created_at" => now()],
-            ["name" => "العوايد", "parent_id" => 1, "created_at" => now()],
-            ["name" => "الزوايدة", "parent_id" => 1, "created_at" => now()],
-            ["name" => "خورشید", "parent_id" => 1, "created_at" => now()],
-            ["name" => "سموحة", "parent_id" => 1, "created_at" => now()],
-            ["name" => "مطار سموحة", "parent_id" => 1, "created_at" => now()],
-            ["name" => "الظاهرية", "parent_id" => 1, "created_at" => now()],
-            ["name" => "سيدي جابر", "parent_id" => 1, "created_at" => now()],
-            ["name" => "جناكليس", "parent_id" => 1, "created_at" => now()],
-            ["name" => "رشدي", "parent_id" => 1, "created_at" => now()],
-            ["name" => "بولکلی", "parent_id" => 1, "created_at" => now()],
-            ["name" => "الإبراهيمية", "parent_id" => 1, "created_at" => now()],
-            ["name" => "سبورتننج", "parent_id" => 1, "created_at" => now()],
-            ["name" => "كليوباترا", "parent_id" => 1, "created_at" => now()],
-            ["name" => "الحضرة الجديدة", "parent_id" => 1, "created_at" => now()],
-            ["name" => "الحضرة القديمة", "parent_id" => 1, "created_at" => now()],
-            ["name" => "الشاطبي", "parent_id" => 1, "created_at" => now()],
-            ["name" => "كامب شيزار", "parent_id" => 1, "created_at" => now()],
-            ["name" => "حجر النواتيه", "parent_id" => 1, "created_at" => now()],
-            ["name" => "محطة الرمل", "parent_id" => 1, "created_at" => now()],
-            ["name" => "محطة مصر", "parent_id" => 1, "created_at" => now()],
-            ["name" => "المنشية", "parent_id" => 1, "created_at" => now()],
-            ["name" => "بحري", "parent_id" => 1, "created_at" => now()],
-            ["name" => "الانفوشي", "parent_id" => 1, "created_at" => now()],
-            ["name" => "رأس التين", "parent_id" => 1, "created_at" => now()],
-            ["name" => "الورديان", "parent_id" => 1, "created_at" => now()],
-            ["name" => "الدخيلة", "parent_id" => 1, "created_at" => now()],
-            ["name" => "البيطاش", "parent_id" => 1, "created_at" => now()],
-            ["name" => "الهانوفيل", "parent_id" => 1, "created_at" => now()],
-            ["name" => "أبو يوسف", "parent_id" => 1, "created_at" => now()]
+            ["name" => "ابوقير", "parent_id" => 1, 'position' => 1, "created_at" => now()],
+            ["name" => "الاصلاح", "parent_id" => 1, 'position' => 2, "created_at" => now()],
+            ["name" => "طوسون", "parent_id" => 1, 'position' => 3, "created_at" => now()],
+            ["name" => "المعمورة", "parent_id" => 1, 'position' => 4, "created_at" => now()],
+            ["name" => "المنتزه", "parent_id" => 1, 'position' => 5, "created_at" => now()],
+            ["name" => "المندرة", "parent_id" => 1, 'position' => 6, "created_at" => now()],
+            ["name" => "العماروة", "parent_id" => 1, 'position' => 7, "created_at" => now()],
+            ["name" => "الملاحة", "parent_id" => 1, 'position' => 8, "created_at" => now()],
+            ["name" => "العصافرة", "parent_id" => 1, 'position' => 9, "created_at" => now()],
+            ["name" => "شارع الجيش", "parent_id" => 1, 'position' => 10, "created_at" => now()],
+            ["name" => "سيدي بشر", "parent_id" => 1, 'position' => 11, "created_at" => now()],
+            ["name" => "سيدي بشر - مدينة بنك فيصل", "parent_id" => 12, 'position' => 1, "created_at" => now()],
+            ["name" => "شارع 15", "parent_id" => 1, 'position' => 13, "created_at" => now()],
+            ["name" => "دربالة", "parent_id" => 1, 'position' => 14, "created_at" => now()],
+            ["name" => "فيكتوريا", "parent_id" => 1, 'position' => 15, "created_at" => now()],
+            ["name" => "الساعة", "parent_id" => 1, 'position' => 16, "created_at" => now()],
+            ["name" => "ابو سلیمان", "parent_id" => 1, 'position' => 17, "created_at" => now()],
+            ["name" => "غبريال", "parent_id" => 1, 'position' => 18, "created_at" => now()],
+            ["name" => "اكوس", "parent_id" => 1, 'position' => 19, "created_at" => now()],
+            ["name" => "العوايد", "parent_id" => 1, 'position' => 20, "created_at" => now()],
+            ["name" => "الزوايدة", "parent_id" => 1, 'position' => 21, "created_at" => now()],
+            ["name" => "خورشید", "parent_id" => 1, 'position' => 22, "created_at" => now()],
+            ["name" => "سموحة", "parent_id" => 1, 'position' => 23, "created_at" => now()],
+            ["name" => "مطار سموحة", "parent_id" => 1, 'position' => 24, "created_at" => now()],
+            ["name" => "الظاهرية", "parent_id" => 1, 'position' => 25, "created_at" => now()],
+            ["name" => "سيدي جابر", "parent_id" => 1, 'position' => 26, "created_at" => now()],
+            ["name" => "جناكليس", "parent_id" => 1, 'position' => 27, "created_at" => now()],
+            ["name" => "رشدي", "parent_id" => 1, 'position' => 28, "created_at" => now()],
+            ["name" => "بولکلی", "parent_id" => 1, 'position' => 29, "created_at" => now()],
+            ["name" => "الإبراهيمية", "parent_id" => 1, 'position' => 30, "created_at" => now()],
+            ["name" => "سبورتننج", "parent_id" => 1, 'position' => 31, "created_at" => now()],
+            ["name" => "كليوباترا", "parent_id" => 1, 'position' => 32, "created_at" => now()],
+            ["name" => "الحضرة الجديدة", "parent_id" => 1, 'position' => 33, "created_at" => now()],
+            ["name" => "الحضرة القديمة", "parent_id" => 1, 'position' => 34, "created_at" => now()],
+            ["name" => "الشاطبي", "parent_id" => 1, 'position' => 35, "created_at" => now()],
+            ["name" => "كامب شيزار", "parent_id" => 1, 'position' => 36, "created_at" => now()],
+            ["name" => "حجر النواتيه", "parent_id" => 1, 'position' => 37, "created_at" => now()],
+            ["name" => "محطة الرمل", "parent_id" => 1, 'position' => 38, "created_at" => now()],
+            ["name" => "محطة مصر", "parent_id" => 1, 'position' => 39, "created_at" => now()],
+            ["name" => "المنشية", "parent_id" => 1, 'position' => 40, "created_at" => now()],
+            ["name" => "بحري", "parent_id" => 1, 'position' => 41, "created_at" => now()],
+            ["name" => "الانفوشي", "parent_id" => 1, 'position' => 42, "created_at" => now()],
+            ["name" => "رأس التين", "parent_id" => 1, 'position' => 43, "created_at" => now()],
+            ["name" => "الورديان", "parent_id" => 1, 'position' => 44, "created_at" => now()],
+            ["name" => "الدخيلة", "parent_id" => 1, 'position' => 45, "created_at" => now()],
+            ["name" => "البيطاش", "parent_id" => 1, 'position' => 46, "created_at" => now()],
+            ["name" => "الهانوفيل", "parent_id" => 1, 'position' => 47, "created_at" => now()],
+            ["name" => "أبو يوسف", "parent_id" => 1, 'position' => 48, "created_at" => now()]
         ]);
     }
 
@@ -129,7 +129,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-          Role::insert([
+        Role::insert([
             ['guard_name' => 'web', 'name' => 'super_admin', 'created_at' => now()],
             ['guard_name' => 'web', 'name' => 'admin', 'created_at' => now()],
             ['guard_name' => 'web', 'name' => 'supervisor', 'created_at' => now()],     // الإشراف على الحسابات
@@ -153,32 +153,32 @@ class DatabaseSeeder extends Seeder
             ['name' => 'بطاقة', 'created_at' => now()],
         ]);
         SupplierCategory::insert([
-            ['type' => 'مورد', 'created_at' => now()],
-            ['type' => 'شركات', 'created_at' => now()],
+            ['type' => 'مورد', 'position' => 1, 'created_at' => now()],
+            ['type' => 'شركات', 'position' => 2, 'created_at' => now()],
         ]);
 
         MarketCategory::insert([
-            ["name" => "ميني ماركت", "created_at" => now()],
-            ["name" => "سوبر ماركت", "created_at" => now()],
-            ["name" => "بقالة جافة", "created_at" => now()],
-            ["name" => "عطارة", "created_at" => now()],
-            ["name" => "بازار", "created_at" => now()],
-            ["name" => "محمصة", "created_at" => now()],
-            ["name" => "كشك حلويات", "created_at" => now()],
-            ["name" => "محل منظفات", "created_at" => now()],
-            ["name" => "كافيتريا", "created_at" => now()],
-            ["name" => "مطعم", "created_at" => now()],
-            ["name" => "كافيه", "created_at" => now()],
-            ["name" => "حلواني", "created_at" => now()],
-            ["name" => "فرن افرنجي", "created_at" => now()]
+            ["name" => "ميني ماركت", 'position' => 1, "created_at" => now()],
+            ["name" => "سوبر ماركت", 'position' => 2, "created_at" => now()],
+            ["name" => "بقالة جافة", 'position' => 3, "created_at" => now()],
+            ["name" => "عطارة", 'position' => 4, "created_at" => now()],
+            ["name" => "بازار", 'position' => 5, "created_at" => now()],
+            ["name" => "محمصة", 'position' => 6, "created_at" => now()],
+            ["name" => "كشك حلويات", 'position' => 7, "created_at" => now()],
+            ["name" => "محل منظفات", 'position' => 8, "created_at" => now()],
+            ["name" => "كافيتريا", 'position' => 9, "created_at" => now()],
+            ["name" => "مطعم", 'position' => 10, "created_at" => now()],
+            ["name" => "كافيه", 'position' => 11, "created_at" => now()],
+            ["name" => "حلواني", 'position' => 12, "created_at" => now()],
+            ["name" => "فرن افرنجي", 'position' => 13, "created_at" => now()]
         ]);
         ProductCategory::insert([
-            ['name' => 'type-1', 'created_at' => now()],
-            ['name' => 'type-2', 'created_at' => now()],
-            ['name' => 'type-3', 'created_at' => now()],
-            ['name' => 'type-4', 'created_at' => now()],
-            ['name' => 'type-5', 'created_at' => now()],
-            ['name' => 'type-6', 'created_at' => now()],
+            ['name' => 'type-1', 'position' => 1, 'created_at' => now()],
+            ['name' => 'type-2', 'position' => 2, 'created_at' => now()],
+            ['name' => 'type-3', 'position' => 3, 'created_at' => now()],
+            ['name' => 'type-4', 'position' => 4, 'created_at' => now()],
+            ['name' => 'type-5', 'position' => 5, 'created_at' => now()],
+            ['name' => 'type-6', 'position' => 6, 'created_at' => now()],
         ]);
 
         User::insert([
@@ -230,7 +230,7 @@ class DatabaseSeeder extends Seeder
         Product::factory(20)->create();
         // Bill::factory(10)->create();
         // BillProduct::factory(5)->create();
-          $this->rolesAndPermissions();
+        $this->rolesAndPermissions();
 
     }
 }
