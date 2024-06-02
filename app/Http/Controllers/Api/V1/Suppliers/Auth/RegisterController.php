@@ -65,9 +65,9 @@ class RegisterController extends Controller
             );
 
 
-            $notification = new MobileNotificationServices;
-            $notification->subscribeToTopic($supplier->deviceToken,'supplier');
-            
+            //$notification = new MobileNotificationServices;
+           // $notification->subscribeToTopic($supplier->deviceToken,'supplier');
+
             return response()->json([
                 'message' => '.تم إنشاء الحساب بنجاح، يرجى انتظار التأكيد من الادمن',
                 'access_token' => $accessToken->plainTextToken,
