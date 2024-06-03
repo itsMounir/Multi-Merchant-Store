@@ -24,8 +24,8 @@ class ProductRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'unique:products,name', 'max:255'],
             'discription' => ['required', 'string', 'max:255'],
-            'size' => ['required', 'numeric'],
-            'size_of' => ['required', 'string'],
+            'size' => ['numeric'],
+            'size_of' => ['string'],
             'product_category_id' => ['required', 'numeric'],
             'image' => ['required', 'file']
         ];
