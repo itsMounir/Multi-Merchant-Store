@@ -27,7 +27,7 @@ class NotificationController extends Controller
         $supplier = Auth::user();
 
         $notifications = $supplier->getNotifications();
-        $supplier->unreadNotifications->markAsRead();
+      //  $supplier->unreadNotifications->markAsRead();
 
         return $this->indexOrShowResponse('body',$notifications);
     }
