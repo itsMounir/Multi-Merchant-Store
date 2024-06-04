@@ -38,9 +38,11 @@ class Bill extends Model
         'deleted_at'
     ];
 
-    public function getCreatedAtFormattedAttribute()
+    protected $dates = ['created_at'];
+
+    public function getCreatedAtAttribute($value)
     {
-        return Carbon::parse($this->created_at)->format('d/m/Y');
+        return Carbon::parse($value)->format('Y-m-d');
     }
 
     // created from attribute
