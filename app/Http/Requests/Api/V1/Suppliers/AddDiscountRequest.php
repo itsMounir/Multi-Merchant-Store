@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Requests\Api\V1\Suppliers;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -28,5 +30,15 @@ class AddDiscountRequest extends FormRequest
             'discount.*.min_bill_price' => 'required|numeric|min:0',
             'discount.*.discount_price' => 'required|numeric|min:0|lt:discount.*.min_bill_price',
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        $errors = $validator->errors();
+        $Error = $errors->all();
+
+        throw new HttpResponseException(response()->json([
+            'message' => $Error
+        ], 422));
     }
 }
