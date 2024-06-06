@@ -37,7 +37,7 @@ class Supplier extends Authenticatable
         'delivery_duration',
         'min_bill_price',
         'min_selling_quantity',
-        'delivery_duration',
+        'location_details',
         'city_id',
         'deviceToken',
     ];

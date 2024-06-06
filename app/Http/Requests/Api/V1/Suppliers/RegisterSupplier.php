@@ -33,7 +33,7 @@ class RegisterSupplier extends FormRequest
             'supplier_category_id' => 'required|integer|exists:supplier_categories,id',
             'min_bill_price' => 'required|numeric',
             'min_selling_quantity' => 'required|integer',
-            'delivery_duration' => 'required|string',
+            'location_details' => 'required|string',
             'city_id' => 'required|integer|exists:cities,id',
             'image' => ['required','image'],
             'to_sites' => 'required|array',

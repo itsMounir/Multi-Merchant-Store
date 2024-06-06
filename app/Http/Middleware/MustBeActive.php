@@ -18,7 +18,7 @@ class MustBeActive
     {
         if (Auth::check() && !Auth::user()->isActive()) {
             return response()->json([
-                'message' => '.حسابك غير نشط قم بالتواصل مع الدعم من فضلك',
+                'message' => '.حسابك غير نشط قم بالتواصل مع الادمن من فضلك',
             ],403);
         }
 

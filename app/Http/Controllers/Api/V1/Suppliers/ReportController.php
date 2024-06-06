@@ -66,7 +66,7 @@ class ReportController extends Controller
         $responseData = [
             'paid_Bill' => $paidBillCount,
             'markets_Count' => $marketsCount,
-            'average_Bills' => $averageBillPrice,
+            'average_Bills' => is_null($averageBillPrice) ? 0 : $averageBillPrice,
             'total_Price' => $totalPrice,
             'wasted_Bill' => $wastedBillCount,
             'received_Bill' => $receivedBillCount
