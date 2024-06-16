@@ -67,11 +67,11 @@ class Handler extends ExceptionHandler
             ]);
         }
 
-        if ($e instanceof QueryException) {
+       /* if ($e instanceof QueryException) {
             return response()->json([
                 'message' => 'Unknown sql error.',
             ]);
-        }
+        }*/
 
         if ($e instanceof RouteNotFoundException) {
             return response()->json([

@@ -92,12 +92,18 @@ class BillController extends Controller
 
                 return $this->sudResponse('يمكنك تعديل فقط الفواتير التي حالتها جديد',403);
             }
-            $bill->products()->detach();
+            $supplier = Auth::user();
+
             $updated_bill = $request->all();
             $billService = new BillsServices;
-            $supplier = Auth::user();
+            $bill->products()->detach();
             $total_price = $billService->calculatePrice($updated_bill, $supplier);
             $total_price -= $billService->marketDiscount(Market::find($bill->market_id), $total_price);
+            $mario=$billService-> checkProductAvailability($updated_bill,$supplier,$bill);
+            if ($mario) {
+                return $this->sudResponse($mario, 200);
+            }
+
             $delivery_duration = $request->input('delivery_duration');
             $bill->update([
                 'total_price' => $total_price,
@@ -170,6 +176,7 @@ class BillController extends Controller
 
 
     public function recive(Request $request,$billId){
+        $notification=new MobileNotificationServices;
         $supplier=Auth::user();
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
         if(!$bill){
@@ -182,24 +189,39 @@ class BillController extends Controller
             'status'=>'تم التوصيل',
             'recieved_price'=>$request['recieved_price'],
         ]);
+        $market = Market::find($bill->market_id);
+        if ($market) {
+             $notification->sendNotification($market->deviceToken,"استلام فاتورة","تم  توصيل فاتورتك من عند ". $supplier->store_name . ".");
+        }
         return $this->sudResponse('تم بنجاح');
     }
 
 
-
-    public function Refused(Request $request,$billId){
-        $supplier=Auth::user();
+    public function Refused(Request $request, $billId){
+        $supplier = Auth::user();
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
         if(!$bill){
             return $this->sudResponse('غير موجود');
         }
         $validatedData = $request->validate([
             'rejection_reason' => 'required',
-            ]);
-        $bill->update([
-            'status'=>'رفض الاستلام',
-            'rejection_reason'=>$validatedData['rejection_reason'],
         ]);
+        foreach ($bill->products as $product) {
+            $productSupplier = $product->suppliers()->where('supplier_id', $supplier->id)->first();
+            if ($productSupplier) {
+                $productSupplier->pivot->quantity += $product->pivot->quantity;
+                if ($productSupplier->pivot->is_available == 0) {
+                    $productSupplier->pivot->is_available = 1;
+                }
+                $productSupplier->pivot->save();
+            }
+        }
+
+        $bill->update([
+            'status' => 'رفض الاستلام',
+            'rejection_reason' => $validatedData['rejection_reason'],
+        ]);
+
         return $this->sudResponse('تم بنجاح');
     }
 

@@ -9,7 +9,8 @@ use App\Exceptions\{
 };
 use App\Models\{
     Bill,
-    Supplier
+    Supplier,
+    Product
 };
 use App\Models\User;
 use App\Notifications\NewBillRequested;
@@ -193,4 +194,44 @@ class BillsServices
             }
         ])->get()->pluck('products')->toArray()[0])->pluck('id')->toArray();
     }
+
+
+
+
+
+    public function checkProductAvailability($updated_bill, $supplier,$bill)
+    {
+        $unavailableProducts = [];
+
+        foreach ($updated_bill['products'] as $item) {
+            $product = Product::find($item['id']);
+            $availableQuantity = $product->suppliers()->wherePivot('supplier_id', $supplier->id)->first()->pivot->quantity ?? 0;
+            if ($availableQuantity < $item['quantity']) {
+                $unavailableProducts[] = $product->name;
+            }
+        }
+
+        if (count($unavailableProducts) > 0) {
+            $errorProducts = implode(', ', $unavailableProducts);
+            return 'الكمية المتاحة لديك من المنتجات ' . $errorProducts . ' غير كافية';
+        }
+
+        foreach($updated_bill['products'] as $item){
+            $product = Product::find($item['id']);
+            $pivot = $product->suppliers()->wherePivot('supplier_id', $supplier->id)->first()->pivot;
+            $availableQuantity = $pivot->quantity ?? 0;
+            if($availableQuantity >= $item['quantity']){
+                $pivot->quantity = $availableQuantity - $item['quantity'];
+                if ($pivot->quantity == 0) {
+                    $pivot->is_available = 0;
+                }
+
+                $product->suppliers()->updateExistingPivot($supplier->id, $pivot->toArray());
+
+            }
+        }
+        return null;
+    }
+
 }
+

@@ -26,8 +26,8 @@ class Kernel extends ConsoleKernel
        $schedule->command('subscriptions:check')->daily();
         $schedule->command('goals:delete-expired')->daily();
         $schedule->command('offers:expire')->daily();
-        $schedule->command('NewBill:send-notification')->everyMinute();
-        $schedule->command('preparing:send-notification')->everyMinute();
+        $schedule->command('NewBill:send-notification')->daily();
+        $schedule->command('preparing:send-notification')->daily();
         $schedule->command('read:notifictation')->everyMinute();
     }
 

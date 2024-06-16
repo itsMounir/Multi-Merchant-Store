@@ -4,7 +4,8 @@ namespace App\Http\Requests\Api\V1\Suppliers;
 
 use App\Rules\EgyptPhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 class LoginSupplier extends FormRequest
 {
     /**
@@ -28,4 +29,17 @@ class LoginSupplier extends FormRequest
             'password' => 'required|string|min:6',
         ];
     }
+
+
+    protected function failedValidation(Validator $validator)
+    {
+        $errors = $validator->errors();
+        $Error = $errors->all();
+
+        throw new HttpResponseException(response()->json([
+            'message' => $Error
+        ], 422));
+    }
+
+
 }

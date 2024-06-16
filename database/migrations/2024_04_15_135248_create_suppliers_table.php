@@ -27,7 +27,7 @@ return new class extends Migration {
             $table->string('store_name');
             $table->string('phone_number')->unique();
             $table->string('password');
-            $table->float('min_bill_price');
+           // $table->float('min_bill_price');
             $table->integer('min_selling_quantity');
             $table->string('delivery_duration')->default('التوصيل خلال يومين');
 

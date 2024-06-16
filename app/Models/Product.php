@@ -51,6 +51,8 @@ class Product extends Model
             ->withPivot(
                 'id',
                 'price',
+                'quantity',
+                'is_available',
                 'has_offer',
                 'offer_price',
                 'max_offer_quantity',

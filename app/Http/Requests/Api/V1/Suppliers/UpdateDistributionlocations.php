@@ -23,7 +23,8 @@ class UpdateDistributionlocations extends FormRequest
     {
         return [
             'to_sites_id' => 'required|array',
-            'to_sites_id.*' => 'required|exists:cities,id',
+            'to_sites_id.*.id' => 'required|exists:cities,id',
+            'to_sites_id.*.min_bill_price' => 'required|numeric',
         ];
     }
 }
