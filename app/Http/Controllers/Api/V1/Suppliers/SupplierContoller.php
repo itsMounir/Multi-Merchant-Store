@@ -66,16 +66,28 @@ class SupplierContoller extends Controller
         ];
         return $this->indexOrShowResponse('Body', $data);
     }
- public function Personal_Data(){
+
+
+
+    public function Personal_Data(){
         $supplier = Auth::user();
         $supplier->load('city','supplierCategory');
         $supplierImages = $supplier->getImagesAttribute();
         $supplier->image = $supplierImages;
         $cities = City::all();
-        $deliveryLocations = $supplier->distributionLocations->pluck('to_city_id')->toArray();
+        $deliveryLocations = $supplier->distributionLocations;
+
         foreach ($cities as $city) {
-            $city->delivery_available = in_array($city->id, $deliveryLocations);
+            $city->delivery_available = false;
+            foreach ($deliveryLocations as $location) {
+                if ($location->to_city_id == $city->id) {
+                    $city->delivery_available = true;
+                    $city->min_bill_price = $location->min_bill_price;
+                    break;
+                }
+            }
         }
+
         unset($supplier->distributionLocations);
         $data = [
             'supplier' => $supplier,
@@ -84,6 +96,7 @@ class SupplierContoller extends Controller
 
         return $this->indexOrShowResponse('body', $data);
     }
+
 
      /*   public function search(Request $request){
 
@@ -102,15 +115,28 @@ class SupplierContoller extends Controller
     public function updateDistributionLocations(UpdateDistributionlocations $request)
     {
         $supplier = Auth::user();
-        $toSitesIds = $request->input('to_sites_id');
-        $toSitesNames = City::whereIn('id', $toSitesIds)->pluck('name', 'id')->toArray();
-        DB::afterCommit(function () use ($supplier, $toSitesNames) {
-            $admins =  User::role('supervisor')->get();
-            Notification::send($admins, new DistributionLocationUpdate($supplier, $toSitesNames));
+        $toSitesData = $request->input('to_sites_id');
+
+        $toSitesIds = array_column($toSitesData, 'id');
+
+        $toSites = City::whereIn('id', $toSitesIds)->get()->keyBy('id');
+
+        $toSitesNamesWithPrices = [];
+        foreach ($toSitesData as $siteData) {
+            $siteId = $siteData['id'];
+            $siteName = $toSites[$siteId]->name;
+            $minBillPrice = $siteData['min_bill_price'];
+            $toSitesNamesWithPrices[$siteName] = $minBillPrice;
+        }
+
+        DB::afterCommit(function () use ($supplier, $toSitesNamesWithPrices) {
+            $admins = User::role('supervisor')->get();
+            Notification::send($admins, new DistributionLocationUpdate($supplier, $toSitesNamesWithPrices));
         });
+
+
         return $this->sudResponse('تم إرسال طلب تعديل مناطق التوزيع إلى الأدمن للمراجعة.');
     }
-
 
     public function add_Discount(AddDiscountRequest $request)
     {

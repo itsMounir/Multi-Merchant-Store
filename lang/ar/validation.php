@@ -53,6 +53,15 @@ return [
             'distinct' => 'يجب ألا تتكرر القيم في حقل مناطق التوزيع.',
             'exists' => 'العنصر المحدد في مناطق التوزيع غير موجود في جدول المدن.',
         ],
+        'discount.*.expiring_date' => [
+            'after_or_equal' => 'يجب أن يكون تاريخ  :attribute اكبر أو يساوي :date.',
+        ],
+        'min_bill_price' => [
+            'min' => 'حقل سعر الفاتورة يجب أن يكون أكبر من صفر.',
+        ],
+        'discount_price' => [
+            'less_than_zero' => 'حقل سعر الخصم يجب أن يكون أقل من صفر.',
+        ],
     ],
 
 
@@ -70,6 +79,9 @@ return [
 
 
     'attributes' => [
+        'quantity'=>'الكمية',
+        'discount.*.expiring_date'=>'انتهاء الخصم',
+        'discount.*.starting_date'=>'تاريخ بدء الخصم',
         'discount.*.discount_price' => 'سعر الخصم',
         'discount.*.min_bill_price'=>'سعر الفاتورة',
         'discount' => 'الخصم',
@@ -87,7 +99,7 @@ return [
         'verification_code'=>'رمز التحقق',
         'store_name' => 'اسم المتجر',
         'supplier_category_id' => 'فئة المورد',
-        'min_bill_price' => 'الحد الأدنى لسعر الفاتورة',
+        'min_bill_price' => 'سعر الفاتورة',
         'min_selling_quantity' => 'الحد الأدنى لكمية البيع',
         'delivery_duration' => 'مدة التوصيل',
         'city_id' => 'المدينة',

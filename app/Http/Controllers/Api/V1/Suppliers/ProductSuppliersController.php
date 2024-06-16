@@ -33,37 +33,41 @@ class ProductSuppliersController extends Controller
 
 
     public function store(StoreProductRequest $request){
-
         DB::beginTransaction();
         try {
             $supplier = Auth::user();
             $hasOffer = filter_var($request->has_offer, FILTER_VALIDATE_BOOLEAN);
-
-            $productData = [
+            $offerPrice = $hasOffer ? $request->offer_price : 0;
+            $maxOfferQuantity = $hasOffer ? $request->max_offer_quantity : 0;
+            $offerExpiresAt = $hasOffer ? $request->offer_expires_at : '9999-1-1';
+            $productSupplier = $supplier->productSuppliers()->firstOrNew([
+                'product_id' => $request->product_id,
+            ]);
+            $productSupplier->fill([
                 'price' => $request->price,
-                'product_id' => $request->product_id,
+                'is_available'=>1,
                 'max_selling_quantity' => $request->max_selling_quantity,
-                'has_offer' => $hasOffer,
+                'quantity' => $productSupplier->quantity + $request->quantity,
+            ]);
+            if ($hasOffer) {
+                $productSupplier->fill([
+                    'has_offer' => $hasOffer,
+                    'offer_price' => $offerPrice,
+                    'max_offer_quantity' => $maxOfferQuantity,
+                    'offer_expires_at' => $offerExpiresAt,
+                ]);
+            }
 
-                'offer_price' => $hasOffer ? $request->offer_price : 0,
-                'max_offer_quantity' => $hasOffer ? $request->max_offer_quantity : 0,
-                'offer_expires_at' => $hasOffer ? $request->offer_expires_at : '9999-1-1',
-            ];
+            $productSupplier->save();
 
-            $supplier->productSuppliers()->updateOrCreate([
-                'supplier_id' => $supplier->id,
-                'product_id' => $request->product_id,
-            ], $productData);
 
             DB::commit();
-            return $this->sudResponse('تم اضافة المنتج بنجاح');
+            return response()->json(['message' => 'تم اضافة المنتج بنجاح'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
-
-            return $this->sudResponse('!حدث خطأ ما ');
+            return response()->json(['message' => '!حدث خطأ ما'], 500);
         }
-}
-
+    }
 
 
    /* public function update(UpdatePriceRequest $request, $product_id)
@@ -99,24 +103,32 @@ class ProductSuppliersController extends Controller
     }
 
 
-
     public function is_available(Request $request, $product_id)
     {
         $supplier = Auth::user();
 
         $request->validate([
             'is_available' => 'required',
+            'quantity' => 'required_if:is_available,1',
+            'price' => 'required_if:is_available,1',
+            'max_selling_quantity' => 'required_if:is_available,1',
         ]);
         $product = $supplier->productSuppliers()->find($product_id);
 
-        //return $product;
-            $product->update([
-                'is_available' => $request->is_available,
-            ]);
-            $product->save();
+        $updateData = [
+            'is_available' => $request->is_available,
+        ];
 
-            return $this->sudResponse('تم بنجاح');
+        if ($request->is_available == 1) {
+            $updateData['quantity'] = $request->quantity;
+            $updateData['price'] = $request->price;
+            $updateData['max_selling_quantity'] = $request->max_selling_quantity;
+        }
 
+        $product->update($updateData);
+        $product->save();
+
+        return $this->sudResponse('تم بنجاح');
     }
 
     /*public function search(Request $request){
