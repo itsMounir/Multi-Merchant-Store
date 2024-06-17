@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Suppliers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Notifications\BillPreparingMarket;
+use App\Notifications\ReciveBillMarket;
 use App\Models\{
 
     Bill,
@@ -185,12 +186,16 @@ class BillController extends Controller
         $validatedData = $request->validate([
             'recieved_price' => 'required',
             ]);
+            if ($request['recieved_price'] > $bill->total_price) {
+                return $this->sudResponse('سعر الاستلام يجب أن يكون اقل أو يساوي سعر الفاتورة');
+            }
         $bill->update([
             'status'=>'تم التوصيل',
             'recieved_price'=>$request['recieved_price'],
         ]);
         $market = Market::find($bill->market_id);
         if ($market) {
+             Notification::send($market,new ReciveBillMarket($supplier));
              $notification->sendNotification($market->deviceToken,"استلام فاتورة","تم  توصيل فاتورتك من عند ". $supplier->store_name . ".");
         }
         return $this->sudResponse('تم بنجاح');
