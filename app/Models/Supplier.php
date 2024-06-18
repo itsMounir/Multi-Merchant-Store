@@ -75,6 +75,10 @@ class Supplier extends Authenticatable
         });
     }
 
+    public function getMinBillPriceAttribute() {
+        return $this->distributionLocations()->where('to_city_id',Auth::user()->city_id)->get()[0]['min_bill_price'];
+    }
+
     public function getImagesAttribute()
     {
         return $this->images()

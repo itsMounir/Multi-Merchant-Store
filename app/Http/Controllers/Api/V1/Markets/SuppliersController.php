@@ -26,7 +26,7 @@ class SuppliersController extends Controller
     public function index(SuppliersFilters $suppliersFilters): JsonResponse
     {
         $offers = Offer::latest()->get();
-        $suppliers = $suppliersFilters->applyFilters(Supplier::query())->active()->site()->orderBy('min_bill_price')->get();
+        $suppliers = $suppliersFilters->applyFilters(Supplier::query())->active()->site()->get()->append('min_bill_price');
         return response()->json([
             'offers' => $offers,
             'suppliers' => $suppliers,
@@ -55,7 +55,7 @@ class SuppliersController extends Controller
         }
 
         return response()->json([
-            'supplier' => $supplier,
+            'supplier' => $supplier->append('min_bill_price'),
             'product_categories' => $categories,
             'slider_offers' => $offers,
             'products_with_offer' => $products_with_offer,

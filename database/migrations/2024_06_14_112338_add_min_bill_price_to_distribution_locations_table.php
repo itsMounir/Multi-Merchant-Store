@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('distribution_locations', function (Blueprint $table) {
-            $table->float('min_bill_price')->after('to_city_id');
+            $table->float('min_bill_price')->after('to_city_id')->default(0.0);
         });
     }
 
