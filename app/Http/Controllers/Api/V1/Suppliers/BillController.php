@@ -97,13 +97,14 @@ class BillController extends Controller
 
             $updated_bill = $request->all();
             $billService = new BillsServices;
-            $bill->products()->detach();
+
             $total_price = $billService->calculatePrice($updated_bill, $supplier);
             $total_price -= $billService->marketDiscount(Market::find($bill->market_id), $total_price);
             $mario=$billService-> checkProductAvailability($updated_bill,$supplier,$bill);
             if ($mario) {
                 return $this->sudResponse($mario, 200);
             }
+            $bill->products()->detach();
 
             $delivery_duration = $request->input('delivery_duration');
             $bill->update([
