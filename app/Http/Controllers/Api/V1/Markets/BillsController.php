@@ -135,20 +135,26 @@ class BillsController extends Controller
 
             $this->billsServices->checkSupplierRequirements($supplier, $updated_bill, $total_price);
 
-            $total_price -= $this->billsServices->supplierDiscount($supplier, $total_price);
+            $supplier_discount = $this->billsServices->supplierDiscount($supplier, $total_price);
 
             $bill->update([
                 'total_price' => $total_price,
+                'goal_discount' => $supplier_discount,
                 'payment_method_id' => $updated_bill['payment_method_id'] ?? $bill->payment_method_id,
                 'supplier_id' => $supplier->id,
                 'market_id' => $market->id,
                 'market_note' => $updated_bill['market_note'] ?? $bill->market_note,
             ]);
 
-            foreach ($updated_bill['products'] as $item) {
+            foreach ($updated_bill['products'] as $product) {
                 $bill->products()->syncWithoutDetaching([
-                    $item['id'] => [
-                        'quantity' => $item['quantity'],
+                    $product['id'] => [
+                        'quantity' => $product['quantity'],
+                        'buying_price' => $product['buying_price'],
+                        'max_selling_quantity' => $product['max_selling_quantity'],
+                        'has_offer' => $product['has_offer'],
+                        'offer_buying_price' => $product['offer_buying_price'],
+                        'max_offer_quantity' => $product['max_offer_quantity'],
                         'created_at' => $bill->created_at,
                         'updated_at' => now(),
                     ],
