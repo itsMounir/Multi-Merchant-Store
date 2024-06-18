@@ -14,6 +14,11 @@ class BillProduct extends Model
         'bill_id',
         'product_id',
         'quantity',
+        'buying_price',
+        'max_selling_quantity',
+        'has_offer',
+        'offer_buying_price',
+        'max_offer_quantity',
     ];
 
 
