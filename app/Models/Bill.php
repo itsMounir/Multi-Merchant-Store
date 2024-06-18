@@ -32,12 +32,12 @@ class Bill extends Model
         'goal_discount',
     ];
 
-    protected $appends = ['payment_method', 'additional_price', 'waffarnalak', 'updatable'];
+    protected $appends = ['created_at_formatted','payment_method', 'additional_price', 'waffarnalak', 'updatable'];
 
     protected $hidden = [
         'deleted_at'
     ];
-        //protected $dates = ['created_at'];
+    //protected $dates = ['created_at'];
 
     /*public function getCreatedAtAttribute($value)
     {
@@ -47,9 +47,9 @@ class Bill extends Model
 
     protected $dates = ['created_at'];
 
-    public function getCreatedAtAttribute($value)
+    public function getCreatedAtFormattedAttribute($value)
     {
-        return Carbon::parse($value)->format('Y-m-d');
+        return Carbon::parse($this->created_at)->format('Y-m-d');
     }
 
     public function getAdditionalPriceAttribute()
@@ -66,22 +66,21 @@ class Bill extends Model
         $total_discounted_price = 0.0;
         $waffarnalak = 0.0;
         $bill = static::find($this->id);
-        $supplier_products = $bill->supplier->products->toArray();
+       // $supplier_products = $bill->supplier->products->toArray();
         foreach ($bill->products as $product) {
-            foreach ($supplier_products as $supplier_product) {
-                if ($product['id'] == $supplier_product['id']) {
-
-                    $price = $supplier_product['pivot']['price'];
+            // foreach ($supplier_products as $supplier_product) {
+            //     if ($product['id'] == $supplier_product['id']) {
+                    $price = $product['pivot']['buying_price'];
                     $quantity = $product['pivot']['quantity'];
-                    if ($supplier_product['pivot']['has_offer']) {
+                    if ($product['pivot']['has_offer']) {
                         $total_discounted_price += min(
-                            $supplier_product['pivot']['max_offer_quantity'],
+                            $product['pivot']['max_offer_quantity'],
                             $quantity
                         )
-                            * ($price - $supplier_product['pivot']['offer_price']);
+                            * ($price - $product['pivot']['offer_buying_price']);
                     }
-                }
-            }
+            //     }
+            // }
         }
         $waffarnalak = $total_discounted_price + $bill['goal_discount'];
         return $waffarnalak;
@@ -107,7 +106,14 @@ class Bill extends Model
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class)
-            ->withPivot('quantity');
+            ->withPivot([
+                'quantity',
+                'buying_price',
+                'max_selling_quantity',
+                'has_offer',
+                'offer_buying_price',
+                'max_offer_quantity',
+            ]);
     }
 
 
