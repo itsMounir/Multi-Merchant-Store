@@ -42,12 +42,7 @@ class BillController extends Controller
         foreach ($bills as $bill) {
             $productIds = $bill->products->pluck('id');
             $bill->load([
-                'products' => function ($query) use ($productIds, $supplier) {
-                    $query->whereIn('products.id', $productIds)
-                          ->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
-                          ->where('product_supplier.supplier_id', $supplier->id)
-                          ->select('products.*', 'product_supplier.price as price');
-                }
+                'products'
             ]);
             $results[] = $bill;
         }
@@ -93,7 +88,7 @@ class BillController extends Controller
             $updated_bill = $request->all();
             $billService = new BillsServices;
 
-            $total_price = $billService->calculatePrice($updated_bill, $supplier);
+            $total_price = $billService->calculatePriceSupplier($updated_bill, $supplier);
             $total_price -= $billService->marketDiscount(Market::find($bill->market_id), $total_price);
             $mario=$billService-> checkProductAvailability($updated_bill,$supplier,$bill);
             if ($mario) {
@@ -109,13 +104,17 @@ class BillController extends Controller
                 'delivery_duration' => $delivery_duration ?: $bill->delivery_duration,
             ]);
 
-            foreach ($updated_bill['products'] as $item) {
+            foreach ($updated_bill['products'] as $product) {
                 $bill->products()->syncWithoutDetaching([
-                    $item['id'] => [
-                        'quantity' => $item['quantity'],
+                    $product['id'] => [
+                        'quantity' => $product['quantity'],
+                        'buying_price' => $product['buying_price'],
+                        'max_selling_quantity' => $product['max_selling_quantity'],
+                        'has_offer' => $product['has_offer'],
+                        'offer_buying_price' => $product['offer_buying_price'],
+                        'max_offer_quantity' => $product['max_offer_quantity'],
                         'created_at' => $bill->created_at,
                         'updated_at' => now(),
-
                     ],
                 ]);
             }
