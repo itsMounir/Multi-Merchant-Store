@@ -88,7 +88,7 @@
             'quantity' => $product['pivot']['quantity'],
             'name' => $product['name'],
             'size' => $product['size'],
-            'price' => $product['price']
+            'price' => $product['pivot']['buying_price']
         ];
     });
 
@@ -136,10 +136,10 @@
         </div>
         <div class="d-flex justify-content-between mt-4 mb-2 total-section">
             <h4>إجمالي الفاتورة</h4>
-            <h5 id="total-price">{{ $bill['total'] }} جـ</h5>
+            <h5 id="total-price">{{ $bill['total_price'] }} جـ</h5>
         </div>
         <div class="text-right border border-2 p-2 rounded-2 savings-message" id="savings-message">
-            🥳الموفراتي وفر لك {{ $bill['savings'] }} جـ
+            🥳الموفراتي وفر لك {{ $bill['waffarnalak'] }} جـ
         </div>
     </div>
 </div>

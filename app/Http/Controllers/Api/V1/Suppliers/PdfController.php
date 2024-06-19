@@ -36,12 +36,7 @@ class PdfController extends Controller
 
         $productIds = $bill->products->pluck('id');
         $bill->load([
-            'products' => function ($query) use ($productIds, $supplier) {
-                $query->whereIn('products.id', $productIds)
-                      ->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
-                      ->where('product_supplier.supplier_id', $supplier->id)
-                      ->select('products.*', 'product_supplier.price as price');
-            }
+            'products' 
         ]);
 
 
