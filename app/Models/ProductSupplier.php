@@ -29,7 +29,6 @@ class ProductSupplier extends Model
         'offer_price',
         'max_offer_quantity',
         'offer_expires_at',
-        'quantity',
     ];
 
 
@@ -44,20 +43,30 @@ class ProductSupplier extends Model
      }
 
 
-     public static function search_Product($supplierId, $productName, $is_available)
-     {
-         $productSuppliers = self::where('supplier_id', $supplierId)
-                                  ->where('is_available', $is_available)
-                                  ->join('products', 'product_supplier.product_id', '=', 'products.id')
-                                  ->where('products.name', 'like', '%' . $productName . '%')
-                                  ->select('product_supplier.id as ID', 'product_supplier.*','products.*')
-                                  ->get();
+   public static function search_Product($supplierId, $productName, $is_available)
+{
+    $productSuppliers = self::where('supplier_id', $supplierId)
+                             ->where('is_available', $is_available)
+                             ->join('products', 'product_supplier.product_id', '=', 'products.id')
+                             ->where('products.name', 'like', '%' . $productName . '%')
+                             ->select('product_supplier.id as ID', 'product_supplier.*', 'products.*')
+                             ->get();
 
-         $response = $productSuppliers->map(function ($productSupplier) {
-             $product = Product::find($productSupplier->product_id);
-             $productCategory = ProductCategory::find($productSupplier->product_category_id);
-             return [
-                 'id' => $productSupplier->product_id,
+    $response = $productSuppliers->map(function ($productSupplier) {
+       
+        $product = Product::find($productSupplier->product_id);
+        if (!$product) {
+            return null; 
+        }
+
+        
+        $productCategory = ProductCategory::find($productSupplier->product_category_id);
+        if (!$productCategory) {
+            return null; 
+        }
+
+        return [
+             'id' => $productSupplier->product_id,
                  'product_category_id' => $productSupplier->product_category_id,
                  'name' => $product->name,
                  'discription' => $product->discription,
@@ -67,7 +76,8 @@ class ProductSupplier extends Model
                  'updated_at' => $product->updated_at,
                  'image' => $product->getImageAttribute(),
                  'product_category' =>$productCategory->name ,
-                 'pivot' => [
+            
+            'pivot' => [
                      'supplier_id' => $productSupplier->supplier_id,
                      'product_id' => $productSupplier->product_id,
                      'id'=>$productSupplier->ID,
@@ -79,11 +89,17 @@ class ProductSupplier extends Model
                      'max_selling_quantity' => $productSupplier->max_selling_quantity,
                      'is_available' => $productSupplier->is_available
                  ]
-             ];
-         });
+        ];
+    });
 
-         return  $response->toArray();
-     }
+    
+  $filteredResponse = array_filter($response->toArray(), function($value) {
+        return !is_null($value);
+    });
+
+    
+    return array_values($filteredResponse);
+}
 
 
 

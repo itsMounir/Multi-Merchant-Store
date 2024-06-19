@@ -54,14 +54,12 @@ class BillPolicy
 
     public function webViewAny(User $user): bool
     {
-        return true;
-        //return $user->hasrole(['admin', 'moderator']);
+        return $user->hasrole(['admin', 'moderator']);
     }
 
     public function webView(User $user): bool
     {
-        return true;
-        //return $user->hasrole(['admin', 'moderator']);
+        return $user->hasrole(['admin', 'moderator']);
     }
 
 

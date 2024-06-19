@@ -8,7 +8,7 @@ use Illuminate\Auth\Access\Response;
 
 class CityPolicy
 {
-    /**
+   /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
@@ -22,8 +22,8 @@ class CityPolicy
      */
     public function view(User $user): bool
     {
-        return true;
-        // return $user->hasrole(['data_entry','admin']);
+       return true;
+        // return $user->hasrole(['data_entry','admin']) ;
     }
 
     /**
@@ -31,7 +31,8 @@ class CityPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasrole(['data_entry', 'admin']);
+        return $user->hasrole(['data_entry','admin']);
+
     }
 
     /**
@@ -39,7 +40,7 @@ class CityPolicy
      */
     public function update(User $user, City $City): bool
     {
-        return $user->hasrole(['data_entry', 'admin']);
+        return $user->hasrole(['data_entry','admin']);
     }
 
     /**
@@ -47,7 +48,7 @@ class CityPolicy
      */
     public function delete(User $user, City $City): bool
     {
-        return $user->hasrole(['data_entry', 'admin']);
+        return $user->hasrole(['data_entry','admin']);
     }
 
     /**
