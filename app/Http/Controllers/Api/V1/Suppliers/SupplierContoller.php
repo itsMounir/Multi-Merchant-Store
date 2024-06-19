@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Suppliers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Traits\Responses;
+use App\Services\MobileNotificationServices;
 use App\Models\{
     Supplier,
     Product,
@@ -40,16 +41,21 @@ class SupplierContoller extends Controller
 {
 
     use Responses;
-    public function index(){
-        $supplier=Auth::user();
-        if(!$supplier){
-            return $this->sudResponse('Unauthorized',401);
+    public function index(Request $request){
+        $supplier = Auth::user();
+        if (!$supplier) {
+            return $this->sudResponse('Unauthorized', 401);
         }
-        $data=Product::get();
-        return $this->indexOrShowResponse('products',$data);
+        if ($request->has('search') && $request->search != '') {
 
+            $data = Product::where('name', 'like', '%' . $request->search . '%')->get();
+        } else {
 
+            $data = Product::get();
+        }
+        return $this->indexOrShowResponse('products', $data);
     }
+
 
        public function categories_supplier(){
         $category = SupplierCategory::get();
@@ -60,16 +66,28 @@ class SupplierContoller extends Controller
         ];
         return $this->indexOrShowResponse('Body', $data);
     }
- public function Personal_Data(){
+
+
+
+    public function Personal_Data(){
         $supplier = Auth::user();
         $supplier->load('city','supplierCategory');
         $supplierImages = $supplier->getImagesAttribute();
         $supplier->image = $supplierImages;
         $cities = City::all();
-        $deliveryLocations = $supplier->distributionLocations->pluck('to_city_id')->toArray();
+        $deliveryLocations = $supplier->distributionLocations;
+
         foreach ($cities as $city) {
-            $city->delivery_available = in_array($city->id, $deliveryLocations);
+            $city->delivery_available = false;
+            foreach ($deliveryLocations as $location) {
+                if ($location->to_city_id == $city->id) {
+                    $city->delivery_available = true;
+                    $city->min_bill_price = $location->min_bill_price;
+                    break;
+                }
+            }
         }
+
         unset($supplier->distributionLocations);
         $data = [
             'supplier' => $supplier,
@@ -79,10 +97,11 @@ class SupplierContoller extends Controller
         return $this->indexOrShowResponse('body', $data);
     }
 
-        public function search(Request $request){
+
+     /*   public function search(Request $request){
 
         return $this->indexOrShowResponse('body',$product=Product::where('name', 'like', '%' . $request->search . '%')->get());
-    }
+    }*/
 
 
     public function edit_name(UpdateName $request){
@@ -96,26 +115,46 @@ class SupplierContoller extends Controller
     public function updateDistributionLocations(UpdateDistributionlocations $request)
     {
         $supplier = Auth::user();
-        $toSitesIds = $request->input('to_sites_id');
-        $toSitesNames = City::whereIn('id', $toSitesIds)->pluck('name', 'id')->toArray();
-        DB::afterCommit(function () use ($supplier, $toSitesNames) {
-            $admins =  User::role('supervisor')->get();
-            Notification::send($admins, new DistributionLocationUpdate($supplier, $toSitesNames));
+        $toSitesData = $request->input('to_sites_id');
+
+        $toSitesIds = array_column($toSitesData, 'id');
+
+        $toSites = City::whereIn('id', $toSitesIds)->get()->keyBy('id');
+
+        $toSitesNamesWithPrices = [];
+        foreach ($toSitesData as $siteData) {
+            $siteId = $siteData['id'];
+            $siteName = $toSites[$siteId]->name;
+            $minBillPrice = $siteData['min_bill_price'];
+            $toSitesNamesWithPrices[$siteName] = $minBillPrice;
+        }
+
+        DB::afterCommit(function () use ($supplier, $toSitesNamesWithPrices) {
+            $admins = User::role('supervisor')->get();
+            Notification::send($admins, new DistributionLocationUpdate($supplier, $toSitesNamesWithPrices));
         });
+
+
         return $this->sudResponse('تم إرسال طلب تعديل مناطق التوزيع إلى الأدمن للمراجعة.');
     }
 
-
     public function add_Discount(AddDiscountRequest $request)
     {
+        $notification=new MobileNotificationServices;
         $supplier = Auth::user();
         foreach ($request->input('discount') as $offerData) {
             $createdDiscount = $supplier->goals()->create($offerData);
         }
         $marketsToNotify = $supplier->getMarketsToNotify();
         Notification::send($marketsToNotify, new DiscountAdded($supplier));
+        foreach ($marketsToNotify as $market) {
+
+            $notification->sendNotification($market->deviceToken,"خصم جديد","تم اضافة خصم من قبل ". $supplier->store_name . ".");
+        }
         return $this->sudResponse('تم اضافة خصم بنجاح');
     }
+
+
 
 
 

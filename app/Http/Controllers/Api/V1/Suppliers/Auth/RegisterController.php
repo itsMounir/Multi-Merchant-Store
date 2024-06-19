@@ -21,6 +21,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
+use App\Services\MobileNotificationServices;
 
 class RegisterController extends Controller
 {
@@ -34,7 +35,8 @@ class RegisterController extends Controller
                 foreach ($toCityIds as $toCityId) {
                     DistributionLocation::create([
                         'supplier_id' => $supplier->id,
-                        'to_city_id' => $toCityId,
+                        'to_city_id' => $toCityId['id'],
+                        'min_bill_price' => $toCityId['min_bill_price']
                     ]);
                 }
             }
@@ -63,10 +65,10 @@ class RegisterController extends Controller
                 Carbon::now()->addMinutes(config('sanctum.rt_expiration'))
             );
 
-            /*
-            $notification = new MobileNotificationServices;
-            $notification->subscribeToTopic($supplier->deviceToken,'supplier');
-            */
+
+            //$notification = new MobileNotificationServices;
+           // $notification->subscribeToTopic($supplier->deviceToken,'supplier');
+
             return response()->json([
                 'message' => '.تم إنشاء الحساب بنجاح، يرجى انتظار التأكيد من الادمن',
                 'access_token' => $accessToken->plainTextToken,

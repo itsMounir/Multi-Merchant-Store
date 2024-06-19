@@ -4,7 +4,8 @@ namespace App\Http\Requests\Api\V1\Suppliers;
 
 use App\Rules\EgyptPhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 class RegisterSupplier extends FormRequest
 {
     /**
@@ -25,19 +26,31 @@ class RegisterSupplier extends FormRequest
         return [
             'first_name' => 'required|string',
             'middle_name' => 'nullable|string',
+            'deviceToken'=>'nullable',
             'last_name' => 'required|string',
             'phone_number' => ['required','string','unique:suppliers,phone_number',new EgyptPhoneNumber],
             'password' => 'required|string|min:6',
             'store_name' => 'required|string',
             'supplier_category_id' => 'required|integer|exists:supplier_categories,id',
-            'min_bill_price' => 'required|numeric',
             'min_selling_quantity' => 'required|integer',
-            'delivery_duration' => 'required|string',
+            'location_details' => 'required|string',
             'city_id' => 'required|integer|exists:cities,id',
-            'image' => ['required','image'],
+           // 'image' => ['required','image'],
             'to_sites' => 'required|array',
-            'to_sites.*' => 'required|integer|distinct|exists:cities,id',
-
+            'to_sites.*' => 'required|array',
+            'to_sites.*.min_bill_price' => 'required|numeric',
         ];
     }
+
+
+    protected function failedValidation(Validator $validator)
+    {
+        $errors = $validator->errors();
+        $Error = $errors->all();
+
+        throw new HttpResponseException(response()->json([
+            'message' => $Error
+        ], 422));
+    }
+
 }

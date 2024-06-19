@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\Markets\{
     StartingPageController
 };
 use App\Enums\TokenAbility;
+use App\Http\Controllers\Api\V1\Markets\NotificationsController;
 
 Route::prefix('markets/')->middleware([
     'auth:sanctum', // Authentication middleware
@@ -32,10 +33,12 @@ Route::prefix('markets/')->middleware([
     // Routes for Bills-related actions
     Route::resource('bills', BillsController::class)->except('edit');
 
-    // Routes for show the achieved goals by aurhenticated market
+    // Routes for show the achieved goals by authenticated market
     Route::get('goals', GoalsController::class);
 
     // Route for show market profile and update it.
     Route::get('renew-subscription', [MarketsController::class, 'sendRenewSubscriptionRequest']);
     Route::apiResource('markets', MarketsController::class)->only(['show', 'update']);
+
+    Route::apiResource('notifications', NotificationsController::class)->only(['index', 'show']);
 });

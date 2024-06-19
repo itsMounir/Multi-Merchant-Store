@@ -8,7 +8,8 @@ use App\Models\{
 
     Bill,
     Supplier,
-    Market
+    Market,
+    Notification
 };
 
 
@@ -62,5 +63,7 @@ class PdfController extends Controller
         );
 
     }
+
+
 
 }

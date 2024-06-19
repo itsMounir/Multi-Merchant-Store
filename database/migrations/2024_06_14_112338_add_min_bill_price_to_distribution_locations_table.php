@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->float('deviceToken');
+        Schema::table('distribution_locations', function (Blueprint $table) {
+            $table->float('min_bill_price')->after('to_city_id')->default(0.0);
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('deviceToken');
+        Schema::table('distribution_locations', function (Blueprint $table) {
+            $table->dropColumn('min_bill_price');
         });
     }
 };

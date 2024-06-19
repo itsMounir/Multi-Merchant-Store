@@ -11,19 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('markets', function (Blueprint $table) {
-            $table->string('location_details')->default('')->after('city_id');
+        Schema::table('product_supplier', function (Blueprint $table) {
+            $table->integer('quantity')->after('price');
         });
     }
 
-    /*;
-     *;
+    /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::table('markets', function (Blueprint $table) {
-            $table->dropColumn('location_details');
+        Schema::table('product_supplier', function (Blueprint $table) {
+            $table->dropColumn('quantity');
         });
     }
 };
