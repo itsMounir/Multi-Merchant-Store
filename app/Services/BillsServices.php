@@ -208,7 +208,7 @@ class BillsServices
 
 
 
-    public function checkProductAvailability($updated_bill, $supplier,$bill)
+    public function checkProductAvailability($updated_bill, $supplier, $bill)
     {
         $unavailableProducts = [];
 
@@ -225,11 +225,11 @@ class BillsServices
             return 'الكمية المتاحة لديك من المنتجات ' . $errorProducts . ' غير كافية';
         }
 
-        foreach($updated_bill['products'] as $item){
+        foreach ($updated_bill['products'] as $item) {
             $product = Product::find($item['id']);
             $pivot = $product->suppliers()->wherePivot('supplier_id', $supplier->id)->first()->pivot;
             $availableQuantity = $pivot->quantity ?? 0;
-            if($availableQuantity >= $item['quantity']){
+            if ($availableQuantity >= $item['quantity']) {
                 $pivot->quantity = $availableQuantity - $item['quantity'];
                 if ($pivot->quantity == 0) {
                     $pivot->is_available = 0;
