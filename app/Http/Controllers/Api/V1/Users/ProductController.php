@@ -24,6 +24,7 @@ class ProductController extends Controller
      */
     public function filterAndSearch(Request $request): JsonResponse
     {
+        $this->authorize('viewAny',Product::class);
         try {
             $category = $request->query('category');
             $name = $request->query('name');
@@ -57,9 +58,9 @@ class ProductController extends Controller
 
         $category = $request->query('category');
         if ($category)
-            $products = Product::where('product_category_id', $category)->paginate(2, ['*'], 'p');
+            $products = Product::where('product_category_id', $category)->paginate(20, ['*'], 'p');
         else {
-            $products = Product::all()->paginate(2, ['*'], 'p');
+            $products = Product::all()->paginate(20, ['*'], 'p');
         }
         return response()->json($products, 200);
     }
@@ -83,8 +84,8 @@ class ProductController extends Controller
     public function show(String $id)
     {
         $product = Product::with('category:id,name')->findOrFail($id);
-
         $this->authorize('view', $product);
+        
         return response()->json($product, 200);
     }
     /**

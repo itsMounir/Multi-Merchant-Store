@@ -12,55 +12,6 @@ use Illuminate\Http\Request;
 
 class SupplierUserController extends Controller
 {
-    /**
-     * Display User Profile.
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function show($id)
-    {
-
-        $supplier = Supplier::with(['category:id,type', 'city:id,name', 'distributionLocations'])->findOrFail($id);
-        $this->authorize('view', $supplier);
-
-        $supplier->category_name = $supplier->category->type;
-        $supplier->city_name = $supplier->city->name;
-
-        return response()->json(['user' => $supplier], 200);
-    }
-
-    /**
-     * To get user info with his incoming Bills
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function userWithBills($id)
-    {
-        $user = Supplier::with(['bills.market'])->findOrFail($id);
-        $this->authorize('view', $user);
-
-        $user->category_name = $user->category->type;
-        $user->city_name = $user->city->name;
-        return response()->json(['user' => $user]);
-    }
-    /**
-     * To change supplier profile
-     * @param SupplierProfileRequest $request
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function update(SupplierProfileRequest $request, $id)
-    {
-        $user = Supplier::findOrFail($id);
-        $this->authorize('update', $user);
-        $user->update($request->all());
-        $user = Supplier::with('category:id,type', 'city:id,name', 'distributionLocations')->findOrFail($id);
-
-        $user->category_name = $user->category->type;
-        $user->city_name = $user->city->name;
-
-        return response()->json(['message' => 'User has been updated successfully', 'user' => $user], 200);
-    }
 
     /**
      * Display listing of suppliers (filtered on category and status) 
@@ -94,20 +45,87 @@ class SupplierUserController extends Controller
     }
 
     /**
+     * Display User Profile.
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function show($id)
+    {
+
+        $supplier = Supplier::with(['category:id,type', 'city:id,name', 'distributionLocations'])->findOrFail($id);
+        $this->authorize('view', $supplier);
+
+        $supplier->category_name = $supplier->category->type;
+        $supplier->city_name = $supplier->city->name;
+
+        return response()->json(['user' => $supplier], 200);
+    }
+
+    /**
      * Display list of Supplier that match the inserted name
      * @param Request $request
      * @return JsonResponse
      */
     public function search(Request $request)
     {
+        $this->authorize('viewAny', Supplier::class);
         try {
             $name = $request->query('name');
-
-            $supplier = Supplier::where('store_name', 'like', '%' . $name . '%')->orderBy('first_name', 'asc')->get();
+            $supplier = Supplier::where('store_name', 'like', '%' . $name . '%')->orderBy('first_name', 'asc')->paginate(20, ['*'], 'p');
             return response()->json($supplier, 200);
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), $e->getCode() ?: 500);
         }
+    }
+
+
+    /**
+     * To get user info with his incoming Bills
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function userWithBills($id)
+    {
+        $user = Supplier::with(['bills.market'])->findOrFail($id);
+        $this->authorize('view', $user);
+
+        $user->category_name = $user->category->type;
+        $user->city_name = $user->city->name;
+        return response()->json(['user' => $user]);
+    }
+
+    /**
+     * Display list of Suppliers with thier products
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function userWithProducts($id)
+    {
+        $user = Supplier::with('products')->findOrFail($id);
+
+        $user->catgory_name = $user->category->type;
+        $user->city_name = $user->city->name;
+        return response()->json(['user' => $user]);
+    }
+
+    /**
+     * To change supplier profile
+     * @param SupplierProfileRequest $request
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function update(SupplierProfileRequest $request, $id)
+    {
+        $user = Supplier::findOrFail($id);
+        $this->authorize('update', $user);
+
+        $user->update($request->all());
+        $user = Supplier::with('category:id,type', 'city:id,name', 'distributionLocations')->findOrFail($id);
+
+        $user->category_name = $user->category->type;
+        $user->city_name = $user->city->name;
+
+        return response()->json(['message' => 'User has been updated successfully', 'user' => $user], 200);
     }
 
     /**

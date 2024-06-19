@@ -21,6 +21,7 @@ class OfferController extends Controller
      */
     public function index()
     {
+         $this->authorize('viewAny',Offer::class);
         $offers = Offer::all();
         foreach ($offers as $offer) {
             $offer->image = asset("storage/$offer->image");
@@ -36,6 +37,7 @@ class OfferController extends Controller
     public function show(string $id)
     {
         $offer = Offer::findOrFail($id);
+        $this->authorize('view',$offer);
         $offer->image = asset("storage/$offer->image");
         return response()->json($offer, 200);
     }
@@ -46,6 +48,7 @@ class OfferController extends Controller
      */
     public function create(OfferRequest $request)
     {
+        $this->authorize('create', Offer::class);
         try {
             $supplier = Supplier::findOrFail($request->supplire_id);
             $path = $request->file('image')->store('Offer', 'public');
@@ -53,10 +56,12 @@ class OfferController extends Controller
                 'supplier_id' => $supplier->id,
                 'image' => $path,
             ]);
-            /*$notification = new MobileNotificationServices;
-            $title = "عرض جديد";
-            $body = 'المورد' . $supplier->store_name . 'قام بإضافة عرض جديد';
-            $notification->sendNotificationToTopic('market', $title, $body);*/
+            /** 
+             *$notification = new MobileNotificationServices;
+             *$title = "عرض جديد";
+             *$body = 'المورد' . $supplier->store_name . 'قام بإضافة عرض جديد';
+             *$notification->sendNotificationToTopic('market', $title, $body);
+             */
             $Offer->image = asset("storage/$path");
             return response()->json($Offer, 201);
         } catch (\Exception $e) {
@@ -76,6 +81,7 @@ class OfferController extends Controller
         DB::beginTransaction();
         try {
             $offer = Offer::findOrFail($id);
+            $this->authorize('update', $offer);
 
             if ($request->hasFile('image')) {
                 $old_image = $offer->image;
@@ -117,6 +123,7 @@ class OfferController extends Controller
         try {
             $offer = Offer::findOrFail($id);
             $old_image = $offer->image;
+            $this->authorize('delete', $offer);
 
             if (Storage::exists('public/' . $old_image)) {
                 Storage::delete('public/' . $old_image);

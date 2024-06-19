@@ -128,7 +128,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-
+        /*
           Role::insert([
             ['guard_name' => 'web', 'name' => 'super_admin', 'created_at' => now()],
             ['guard_name' => 'web', 'name' => 'admin', 'created_at' => now()],
@@ -222,15 +222,15 @@ class DatabaseSeeder extends Seeder
                 'email' => 'dd@gmail.com',
                 'password' => Hash::make('password'),
             ],
-        ]);
+        ]);*/
         // User::factory(10)->create();
-        $this->cities();
-        Market::factory(10)->create();
-        Supplier::factory(10)->create();
-        Product::factory(20)->create();
-        // Bill::factory(10)->create();
+        // $this->cities();
+        //Market::factory(10)->create();
+        // Supplier::factory(10)->create();
+        // Product::factory(20)->create();
+        Bill::factory(10)->create();
         // BillProduct::factory(5)->create();
-          $this->rolesAndPermissions();
+        // $this->rolesAndPermissions();
 
     }
 }

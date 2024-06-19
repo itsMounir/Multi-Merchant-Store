@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('product_categories', function (Blueprint $table) {
             $table->id();
-            $table->integer('position');
+            $table->integer('position')->default(99999);
             $table->string('name')->unique();
             $table->timestamps();
         });

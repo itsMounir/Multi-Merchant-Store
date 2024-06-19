@@ -55,17 +55,33 @@ class BillsController extends Controller
      */
     public function cancelBill($id)
     {
-        $bill = Bill::with(['products' => function ($query) {
-            $query->withTrashed()->with('category');
-        }, 'market.category', 'supplier.category'])->findOrFail($id);
+        try {
+            $bill = Bill::with(['products' => function ($query) {
+                $query->withTrashed()->with('category');
+            }, 'market.category', 'supplier.category'])->findOrFail($id);
 
-        $this->authorize('webUpdate', $bill);
+            $this->authorize('webUpdate', $bill);
 
-        if ($bill->status != 'انتظار')
-            return response()->json(['message' => 'you can`t cancel this bill... it is alredy accepted or canceled'], 422);
-        $bill->status = "ملغية";
-        $bill->save();
-        return response()->json(['messgae' => 'Bill canceled', 'bill' => $bill], 200);
+            if ($bill->status != 'انتظار')
+                return response()->json(['message' => 'you can`t cancel this bill... it is alredy accepted or canceled'], 422);
+            $bill->status = "ملغية";
+            $bill->save();
+            /*$notification = new MobileNotificationServices;
+            $marketDeviceToken = $bill->market->deviceToken;
+            $supplierDeviceToken = $bill->supplier->deviceToken;
+
+            $marketNotiTitle = "الموفراتي";
+            $marketNotiBody = "تم قبول فاتورتك";
+
+            $supplierNotiTitle = "الموفراتي";
+            $supplierNotiBody = "لديك فاتورة جديدة";
+
+            $notification->sendNotification($marketDeviceToken, $title, $body);
+            $notification->sendNotification($supplierDeviceToken, $title, $body);*/
+            return response()->json(['messgae' => 'Bill canceled', 'bill' => $bill], 200);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), 500);
+        }
     }
     /**
      * To show new bills
@@ -105,6 +121,7 @@ class BillsController extends Controller
     public function show(String $id)
     {
         $bill = Bill::with(['market', 'supplier'])->findOrFail($id);
+        $this->authorize('webView', $bill);
         $supplier = Supplier::findOrFail($bill->supplier_id);
         $productIds = $bill->products->pluck('id');
         $bill->load([
@@ -119,7 +136,6 @@ class BillsController extends Controller
         return response()->json(['bill' => $bill]);
     }
 
-
     /**
      * Display list of bills that the supplier or the market in touch are match the inserted name
      * @param Request $request
@@ -127,6 +143,7 @@ class BillsController extends Controller
      */
     public function search(Request $request)
     {
+        $this->authorize('webViewAny', Bill::class);
         try {
             $name = $request->query('name');
             if (!$name) {

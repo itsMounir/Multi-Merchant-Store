@@ -67,9 +67,10 @@ class MarketUserController extends Controller
      */
     public function search(Request $request)
     {
+        $this->authorize('viewAny',Market::class);
         try {
             $name = $request->query('name');
-            $supplier = Market::where('store_name', 'like', '%' . $name . '%')->orderBy('first_name', 'asc')->get();
+            $supplier = Market::where('store_name', 'like', '%' . $name . '%')->orderBy('first_name', 'asc')->paginate(20, ['*'], 'p');
             return response()->json($supplier, 200);
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), $e->getCode() ?: 500);

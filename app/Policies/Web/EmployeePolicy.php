@@ -12,7 +12,8 @@ class EmployeePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole(['admin']);
+        return true;
+        //return $user->hasRole(['admin','data_entry']);
     }
 
     /**
@@ -20,7 +21,8 @@ class EmployeePolicy
      */
     public function view(User $user, User $model): bool
     {
-        return $user->hasRole(['admin']);
+        return true;
+        //return $user->hasRole(['admin','data_entry']);
     }
 
     /**
@@ -28,7 +30,7 @@ class EmployeePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('admin');
+        return $user->hasRole(['admin', 'data_entry']);
     }
 
     /**
@@ -36,7 +38,7 @@ class EmployeePolicy
      */
     public function update(User $user, User $model): bool
     {
-        return $user->hasRole('admin') && !($model->hasRole('super_admin'));
+        return $user->hasRole(['admin', 'data_entry']) && !($model->hasRole('super_admin'));
     }
 
     /**
@@ -44,6 +46,6 @@ class EmployeePolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return $user->hasRole('admin') && !($model->hasRole('super_admin'));
+        return $user->hasRole(['admin', 'data_entry']) && !($model->hasRole('super_admin'));
     }
 }

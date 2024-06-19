@@ -6,11 +6,18 @@ use App\Http\Controllers\Api\V1\Users\Auth\{
 };
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
+use App\Enums\TokenAbility;
 
 
 Route::prefix('users/auth/')->group(function () {
 
     Route::post('login', [AuthController::class, 'create']);
+    Route::get('refresh-token', [AuthController::class, 'refreshToken'])
+        ->middleware([
+            'auth:sanctum',
+            'ability:' . TokenAbility::ISSUE_ACCESS_TOKEN->value
+        ]);
+    Route::post('reset-passowrd', [AuthController::class, 'forgetPassword']);
     Route::post('logout', [AuthController::class, 'destroy'])->middleware(['auth:sanctum', 'type.user']);
     Route::get('profile', [AuthController::class, 'profile'])->middleware(['auth:sanctum', 'type.user']);
 });

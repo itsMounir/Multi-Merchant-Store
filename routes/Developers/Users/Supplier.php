@@ -14,6 +14,7 @@ Route::prefix('users/supplier')->middleware('auth:sanctum')->group(function () {
     Route::get('profile/{id}', [SupplierUserController::class, 'show']); // get user profile
     Route::put('profile/edit/{id}', [SupplierUserController::class, 'update']); // Edit user profile
     Route::get('with-bills/{id}', [SupplierUserController::class, 'userWithBills']); // get user with his bills
+    Route::get('with-products/{id}', [SupplierUserController::class, 'userWithProducts']); // get user with his products
 
     Route::get('category', [SupplierCategoryController::class, 'index']); // get supplier categories
     Route::post('category', [SupplierCategoryController::class, 'store']); // add supplier category

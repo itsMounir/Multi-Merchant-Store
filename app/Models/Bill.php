@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,17 +32,26 @@ class Bill extends Model
         'goal_discount',
     ];
 
-    protected $appends = ['created_from', 'payment_method', 'additional_price', 'waffarnalak', 'updatable'];
+    protected $appends = ['payment_method', 'additional_price', 'waffarnalak', 'updatable'];
 
     protected $hidden = [
         'deleted_at'
     ];
+        //protected $dates = ['created_at'];
 
-    // created from attribute
-    public function getCreatedFromAttribute()
+    /*public function getCreatedAtAttribute($value)
     {
-        return Carbon::parse($this->created_at)->diffForHumans();
+        return Carbon::parse($value)->format('d-m-Y');
+    }*/
+    
+    
+    protected $dates = ['created_at'];
+
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
     }
+
     public function getAdditionalPriceAttribute()
     {
         if ($this->has_additional_cost) {
@@ -66,7 +74,7 @@ class Bill extends Model
                     $price = $supplier_product['pivot']['price'];
                     $quantity = $product['pivot']['quantity'];
                     if ($supplier_product['pivot']['has_offer']) {
-                        $total_discounted_price = min(
+                        $total_discounted_price += min(
                             $supplier_product['pivot']['max_offer_quantity'],
                             $quantity
                         )
@@ -83,7 +91,6 @@ class Bill extends Model
     {
         return $this->paymentMethod()->pluck('name')->first();
     }
-
 
     public function getUpdatableAttribute()
     {
@@ -165,10 +172,4 @@ class Bill extends Model
         })->get();
     }
 
-    protected function createdAt(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => Carbon::parse($value)->format('d/m/Y'),
-        );
-    }
 }
