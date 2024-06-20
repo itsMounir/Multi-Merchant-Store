@@ -25,11 +25,14 @@ class NotificationController extends Controller
 
     public function index(){
         $supplier = Auth::user();
-
         $notifications = $supplier->getNotifications();
-        $supplier->unreadNotifications->markAsRead();
-
         return $this->indexOrShowResponse('body',$notifications);
+    }
+
+    public function show($id){
+        $notification = Auth::user()->notifications()->findOrFail($id);
+        $notification->markAsRead();
+        return $this->sudResponse('تم قراءة الاشعار بنجاح');
     }
 
 }

@@ -35,9 +35,8 @@ class Supplier extends Authenticatable
         'status',
         'supplier_category_id',
         'delivery_duration',
-        'min_bill_price',
         'min_selling_quantity',
-        'delivery_duration',
+        'location_details',
         'city_id',
         'deviceToken',
     ];
@@ -74,6 +73,10 @@ class Supplier extends Authenticatable
         $query->whereHas('distributionLocations', function ($query) {
             return $query->where('to_city_id', Auth::user()->city_id);
         });
+    }
+
+    public function getMinBillPriceAttribute() {
+        return $this->distributionLocations()->where('to_city_id',Auth::user()->city_id)->get()[0]['min_bill_price'];
     }
 
     public function getImagesAttribute()
@@ -127,6 +130,7 @@ class Supplier extends Authenticatable
             ->withPivot(
                 'id',
                 'price',
+                'quantity',
                 'has_offer',
                 'offer_price',
                 'max_offer_quantity',

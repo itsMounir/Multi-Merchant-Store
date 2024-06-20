@@ -35,7 +35,8 @@ class RegisterController extends Controller
                 foreach ($toCityIds as $toCityId) {
                     DistributionLocation::create([
                         'supplier_id' => $supplier->id,
-                        'to_city_id' => $toCityId,
+                        'to_city_id' => $toCityId['id'],
+                        'min_bill_price' => $toCityId['min_bill_price']
                     ]);
                 }
             }

@@ -20,22 +20,32 @@ return [
     ],
     'digits' => 'يجب أن يحتوي حقل :attribute على :digits أرقام.',
     'after_or_equal' => 'يجب أن يكون تاريخ حقل :attribute بعد أو يساوي :date.',
-    'lt' => [
-        'numeric' => 'يجب أن يكون حقل :attribute أقل من :value.',
-    ],
+
     'required_if' => 'حقل :attribute مطلوب    ',
     'distinct' => 'حقل :attribute يحتوي على قيمة مكررة.',
 
 
-    'discount.*.starting_date' => 'تاريخ البدء مطلوب ويجب أن يكون تاريخًا صالحًا.',
-    'discount.*.expiring_date' => 'تاريخ الانتهاء مطلوب ويجب أن يكون تاريخًا صالحًا وبعد أو يساوي تاريخ البدء.',
-    'discount.*.min_bill_price' => 'الحد الأدنى لسعر الفاتورة مطلوب ويجب أن يكون رقمًا ولا يقل عن 0.',
-    'discount.*.discount_price' => 'سعر الخصم مطلوب ويجب أن يكون رقمًا وأقل من الحد الأدنى لسعر الفاتورة.',
+    'discount.*.starting_date' => 'تاريخ البدء مطلوب.',
+    'discount.*.expiring_date' => 'تاريخ الانتهاء مطلوب .',
+    'discount.*.min_bill_price' => 'الحد الأدنى لسعر الفاتورة مطلوب.',
+    'discount.*.discount_price' => 'سعر الخصم مطلوب .',
 
     'custom' => [
         'to_sites' => [
             'required' => 'حقل مناطق التوزيع مطلوب.',
-            'array' => 'يجب أن يكون حقل مناطق التوزيع عبارة عن مصفوفة.',
+
+        ],
+        'discount.*.starting_date' => [
+            'required' => 'حقل تاريخ البدء مطلوب.',
+        ],
+        'discount.*.expiring_date' => [
+            'required' => 'حقل تاريخ الانتهاء مطلوب.',
+        ],
+        'discount.*.min_bill_price' => [
+            'required' => 'حقل سعر الفاتورة الأدنى مطلوب.',
+        ],
+        'discount.*.discount_price' => [
+            'required' => 'حقل سعر الخصم مطلوب.',
         ],
         'to_sites.*' => [
             'required' => 'كل عنصر في مناطق التوزيع مطلوب.',
@@ -43,23 +53,35 @@ return [
             'distinct' => 'يجب ألا تتكرر القيم في حقل مناطق التوزيع.',
             'exists' => 'العنصر المحدد في مناطق التوزيع غير موجود في جدول المدن.',
         ],
+        'discount.*.expiring_date' => [
+            'after_or_equal' => 'يجب أن يكون تاريخ  :attribute اكبر أو يساوي :date.',
+        ],
+        'min_bill_price' => [
+            'min' => 'حقل سعر الفاتورة يجب أن يكون أكبر من صفر.',
+        ],
+        'discount_price' => [
+            'less_than_zero' => 'حقل سعر الخصم يجب أن يكون أقل من صفر.',
+        ],
     ],
 
 
 
 
-    'phone_number' => 'رقم الهاتف مطلوب ويجب أن يكون نصًا وفريدًا ويحتوي على 11 رقمًا.',
-    'password' => 'كلمة المرور مطلوبة ويجب أن تكون نصًا ولا تقل عن 6 أحرف.',
-    'supplier_category_id' => 'معرف فئة المورد مطلوب ويجب أن يكون عددًا صحيحًا وموجودًا في جدول فئات الموردين.',
-    'city_id' => 'معرف المدينة مطلوب ويجب أن يكون عددًا صحيحًا وموجودًا في جدول المدن.',
+    'phone_number' => 'رقم الهاتف مطلوب.',
+    'password' => 'كلمة المرور مطلوبة .',
+    'supplier_category_id' => 'التصنيف مطلوب',
+    'city_id' => 'حقل المدينة مطلوب.',
 
 
     'product_id' => ' حقل المنتج مطلوب.',
-    'price' => 'السعر مطلوب ويجب أن يكون رقمًا.',
+    'price' => 'السعر مطلوب.',
     'max_selling_quantity' => 'الكمية القصوى للبيع مطلوبة.',
 
 
     'attributes' => [
+        'quantity'=>'الكمية',
+        'discount.*.expiring_date'=>'انتهاء الخصم',
+        'discount.*.starting_date'=>'تاريخ بدء الخصم',
         'discount.*.discount_price' => 'سعر الخصم',
         'discount.*.min_bill_price'=>'سعر الفاتورة',
         'discount' => 'الخصم',
@@ -77,7 +99,7 @@ return [
         'verification_code'=>'رمز التحقق',
         'store_name' => 'اسم المتجر',
         'supplier_category_id' => 'فئة المورد',
-        'min_bill_price' => 'الحد الأدنى لسعر الفاتورة',
+        'min_bill_price' => 'سعر الفاتورة',
         'min_selling_quantity' => 'الحد الأدنى لكمية البيع',
         'delivery_duration' => 'مدة التوصيل',
         'city_id' => 'المدينة',

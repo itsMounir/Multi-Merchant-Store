@@ -9,7 +9,9 @@ use App\Exceptions\{
 };
 use App\Models\{
     Bill,
-    Supplier
+    Supplier,
+    Product,
+    BillProduct
 };
 use App\Models\User;
 use App\Notifications\NewBillRequested;
@@ -59,17 +61,20 @@ class BillsServices
 
         }
 
-
         foreach ($bill['products'] as $product) {
             $new_bill->products()->syncWithoutDetaching([
                 $product['id'] => [
                     'quantity' => $product['quantity'],
+                    'buying_price' => $product['buying_price'],
+                    'max_selling_quantity' => $product['max_selling_quantity'],
+                    'has_offer' => $product['has_offer'],
+                    'offer_buying_price' => $product['offer_buying_price'],
+                    'max_offer_quantity' => $product['max_offer_quantity'],
                     'created_at' => now(),
                     'updated_at' => now(),
                 ],
             ]);
         }
-
         // update the users to recieve the notification !!!!!!!!!!!!
         $moderator = User::role('moderator')->get();
 
@@ -110,17 +115,22 @@ class BillsServices
     /**
      * calculate the price for the specified bill
      */
-    public function calculatePrice($bill, $supplier): float
+    public function calculatePrice(&$bill, $supplier): float
     {
         $total_price = 0.0;
         $supplier_products = $supplier->products->toArray();
+        $i = 0;
         foreach ($bill['products'] as $product) {
             $exist = false;
             foreach ($supplier_products as $supplier_product) {
 
                 if ($product['id'] == $supplier_product['id'] && $supplier_product['pivot']['is_available']) {
-
                     $price = $supplier_product['pivot']['price'];
+                    $bill['products'][$i]['buying_price'] = $price;
+                    $bill['products'][$i]['max_selling_quantity'] = $supplier_product['pivot']['max_selling_quantity'];
+                    $bill['products'][$i]['has_offer'] = $supplier_product['pivot']['has_offer'];
+                    $bill['products'][$i]['offer_buying_price'] = $supplier_product['pivot']['offer_price'];
+                    $bill['products'][$i]['max_offer_quantity'] = $supplier_product['pivot']['max_offer_quantity'];
                     $quantity = $product['quantity']; // quantity requested
                     if ($quantity > $supplier_product['pivot']['max_selling_quantity']) {
                         throw new IncorrectBillException('.' . 'لقد تخطيت العدد الأقصى للطلب : ' . $supplier_product['pivot']['max_selling_quantity'] . ' لدى ' . $supplier->store_name);
@@ -147,9 +157,54 @@ class BillsServices
             if (!$exist) {
                 throw new ProductNotExistForSupplierException($product['id'], $supplier->store_name);
             }
+            $i++;
         }
         return $total_price;
 
+    }
+
+
+
+    public function calculatePriceSupplier(&$bill, $supplier): float
+    {
+        $total_price = 0.0;
+        $i = 0;
+
+        foreach ($bill['products'] as $product) {
+            $exist = false;
+            $billProduct = BillProduct::where('product_id', $product['id'])->first();
+            if ($billProduct) {
+                $price = $billProduct->buying_price;
+                $bill['products'][$i]['buying_price'] = $price;
+                $bill['products'][$i]['max_selling_quantity'] = $billProduct->max_selling_quantity;
+                $bill['products'][$i]['has_offer'] = $billProduct->has_offer;
+                $bill['products'][$i]['offer_buying_price'] = $billProduct->offer_buying_price;
+                $bill['products'][$i]['max_offer_quantity'] = $billProduct->max_offer_quantity;
+
+                $quantity = $product['quantity']; // quantity requested
+
+                if ($quantity > $billProduct->max_selling_quantity) {
+                    throw new IncorrectBillException('.' . 'لقد تخطيت العدد الأقصى للطلب : ' . $billProduct->max_selling_quantity . ' لدى ' . $supplier->store_name);
+                }
+                if ($billProduct->has_offer) {
+                    $total_price += min(
+                        $billProduct->max_offer_quantity,
+                        $quantity
+                    ) * $billProduct->offer_buying_price;
+
+                    $quantity -= $billProduct->max_offer_quantity;
+                }
+                if ($quantity > 0) {
+                    $total_price += $price * $quantity; // in case requested quantity is more than offer quantity
+                }
+                $exist = true;
+            }
+            if (!$exist) {
+                throw new ProductNotExistForSupplierException($product['id'], $supplier->store_name);
+            }
+            $i++;
+        }
+        return $total_price;
     }
 
     /**
@@ -193,4 +248,44 @@ class BillsServices
             }
         ])->get()->pluck('products')->toArray()[0])->pluck('id')->toArray();
     }
+
+
+
+
+
+    public function checkProductAvailability($updated_bill, $supplier, $bill)
+    {
+        $unavailableProducts = [];
+
+        foreach ($updated_bill['products'] as $item) {
+            $product = Product::find($item['id']);
+            $availableQuantity = $product->suppliers()->wherePivot('supplier_id', $supplier->id)->first()->pivot->quantity ?? 0;
+            if ($availableQuantity < $item['quantity']) {
+                $unavailableProducts[] = $product->name;
+            }
+        }
+
+        if (count($unavailableProducts) > 0) {
+            $errorProducts = implode(', ', $unavailableProducts);
+            return 'الكمية المتاحة لديك من المنتجات ' . $errorProducts . ' غير كافية';
+        }
+
+        foreach ($updated_bill['products'] as $item) {
+            $product = Product::find($item['id']);
+            $pivot = $product->suppliers()->wherePivot('supplier_id', $supplier->id)->first()->pivot;
+            $availableQuantity = $pivot->quantity ?? 0;
+            if ($availableQuantity >= $item['quantity']) {
+                $pivot->quantity = $availableQuantity - $item['quantity'];
+                if ($pivot->quantity == 0) {
+                    $pivot->is_available = 0;
+                }
+
+                $product->suppliers()->updateExistingPivot($supplier->id, $pivot->toArray());
+
+            }
+        }
+        return null;
+    }
+
 }
+

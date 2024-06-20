@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Suppliers\{
     ProductSuppliersController,
     SupplierContoller,
@@ -52,7 +52,7 @@ Route::middleware(['auth:sanctum', 'type.supplier','active'])->group(function ()
 
     Route::get('generate-pdf/{id}',[PdfController::class,'generate_pdf']);
 
-    Route::get('notification',[NotificationController::class,'index']);
+    Route::apiResource('notifications',NotificationController::class);
 /**============================================================================================================ */
 
     Route::apiResource('bills',BillController::class);

@@ -29,6 +29,7 @@ class ProductSupplier extends Model
         'offer_price',
         'max_offer_quantity',
         'offer_expires_at',
+        'quantity',
     ];
 
 

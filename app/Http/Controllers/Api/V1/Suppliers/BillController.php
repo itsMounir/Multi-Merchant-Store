@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Suppliers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Notifications\BillPreparingMarket;
+use App\Notifications\ReciveBillMarket;
 use App\Models\{
 
     Bill,
@@ -41,12 +42,7 @@ class BillController extends Controller
         foreach ($bills as $bill) {
             $productIds = $bill->products->pluck('id');
             $bill->load([
-                'products' => function ($query) use ($productIds, $supplier) {
-                    $query->whereIn('products.id', $productIds)
-                          ->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
-                          ->where('product_supplier.supplier_id', $supplier->id)
-                          ->select('products.*', 'product_supplier.price as price');
-                }
+                'products'
             ]);
             $results[] = $bill;
         }
@@ -70,12 +66,7 @@ class BillController extends Controller
         }
         $productIds = $bill->products->pluck('id');
         $bill->load([
-            'products' => function ($query) use ($productIds, $supplier) {
-                $query->whereIn('products.id', $productIds)
-                      ->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
-                      ->where('product_supplier.supplier_id', $supplier->id)
-                      ->select('products.*', 'product_supplier.price as price');
-            }
+            'products'
         ]);
 
         return $this->indexOrShowResponse('body', $bill);
@@ -92,12 +83,19 @@ class BillController extends Controller
 
                 return $this->sudResponse('يمكنك تعديل فقط الفواتير التي حالتها جديد',403);
             }
-            $bill->products()->detach();
+            $supplier = Auth::user();
+
             $updated_bill = $request->all();
             $billService = new BillsServices;
-            $supplier = Auth::user();
-            $total_price = $billService->calculatePrice($updated_bill, $supplier);
+
+            $total_price = $billService->calculatePriceSupplier($updated_bill, $supplier);
             $total_price -= $billService->marketDiscount(Market::find($bill->market_id), $total_price);
+            $mario=$billService-> checkProductAvailability($updated_bill,$supplier,$bill);
+            if ($mario) {
+                return $this->sudResponse($mario, 200);
+            }
+            $bill->products()->detach();
+
             $delivery_duration = $request->input('delivery_duration');
             $bill->update([
                 'total_price' => $total_price,
@@ -106,13 +104,17 @@ class BillController extends Controller
                 'delivery_duration' => $delivery_duration ?: $bill->delivery_duration,
             ]);
 
-            foreach ($updated_bill['products'] as $item) {
+            foreach ($updated_bill['products'] as $product) {
                 $bill->products()->syncWithoutDetaching([
-                    $item['id'] => [
-                        'quantity' => $item['quantity'],
+                    $product['id'] => [
+                        'quantity' => $product['quantity'],
+                        'buying_price' => $product['buying_price'],
+                        'max_selling_quantity' => $product['max_selling_quantity'],
+                        'has_offer' => $product['has_offer'],
+                        'offer_buying_price' => $product['offer_buying_price'],
+                        'max_offer_quantity' => $product['max_offer_quantity'],
                         'created_at' => $bill->created_at,
                         'updated_at' => now(),
-
                     ],
                 ]);
             }
@@ -170,6 +172,7 @@ class BillController extends Controller
 
 
     public function recive(Request $request,$billId){
+        $notification=new MobileNotificationServices;
         $supplier=Auth::user();
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
         if(!$bill){
@@ -178,28 +181,47 @@ class BillController extends Controller
         $validatedData = $request->validate([
             'recieved_price' => 'required',
             ]);
+            if ($request['recieved_price'] > $bill->total_price) {
+                return $this->sudResponse('سعر الاستلام يجب أن يكون اقل أو يساوي سعر الفاتورة');
+            }
         $bill->update([
             'status'=>'تم التوصيل',
             'recieved_price'=>$request['recieved_price'],
         ]);
+        $market = Market::find($bill->market_id);
+        if ($market) {
+             Notification::send($market,new ReciveBillMarket($supplier));
+             $notification->sendNotification($market->deviceToken,"استلام فاتورة","تم  توصيل فاتورتك من عند ". $supplier->store_name . ".");
+        }
         return $this->sudResponse('تم بنجاح');
     }
 
 
-
-    public function Refused(Request $request,$billId){
-        $supplier=Auth::user();
+    public function Refused(Request $request, $billId){
+        $supplier = Auth::user();
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
         if(!$bill){
             return $this->sudResponse('غير موجود');
         }
         $validatedData = $request->validate([
             'rejection_reason' => 'required',
-            ]);
-        $bill->update([
-            'status'=>'رفض الاستلام',
-            'rejection_reason'=>$validatedData['rejection_reason'],
         ]);
+        foreach ($bill->products as $product) {
+            $productSupplier = $product->suppliers()->where('supplier_id', $supplier->id)->first();
+            if ($productSupplier) {
+                $productSupplier->pivot->quantity += $product->pivot->quantity;
+                if ($productSupplier->pivot->is_available == 0) {
+                    $productSupplier->pivot->is_available = 1;
+                }
+                $productSupplier->pivot->save();
+            }
+        }
+
+        $bill->update([
+            'status' => 'رفض الاستلام',
+            'rejection_reason' => $validatedData['rejection_reason'],
+        ]);
+
         return $this->sudResponse('تم بنجاح');
     }
 
