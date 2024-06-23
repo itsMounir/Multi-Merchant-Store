@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::prefix('users/offer')->group(function () {
+Route::prefix('users/offer')->middleware('auth:sanctum')->group(function () {
 
     Route::get('list', [OfferController::class, 'index']);
     Route::get('info/{id}', [OfferController::class, 'show']);

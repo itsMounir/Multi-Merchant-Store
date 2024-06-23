@@ -23,12 +23,12 @@ class Offer extends Model
         'updated_at',
     ];
 
-    protected function image(): Attribute
+  /*  protected function image(): Attribute
     {
         return Attribute::make(
             get: fn(string $value) => asset("storage/$value"),
         );
-    }
+    }*/
 
 
     public function supplier()

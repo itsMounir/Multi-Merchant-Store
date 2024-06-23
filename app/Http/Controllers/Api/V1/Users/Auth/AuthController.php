@@ -21,7 +21,7 @@ class AuthController extends Controller
 
         if (!Auth::guard('web')->attempt($credentials)) {
 
-            return response()->json(['message' => 'your provided credentials cannot be verified.'], 401);
+            return response()->json(['message' => 'يرجى التحقق من كلمة المرور أو رقم الهاتف'], 401);
         }
         $user = User::find(Auth::guard('web')->user()->id);
         /*

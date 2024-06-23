@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\V1\Users;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Users\SupplierProfileRequest;
-use App\Models\City;
 use App\Models\Supplier;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -52,7 +51,7 @@ class SupplierUserController extends Controller
     public function show($id)
     {
 
-        $supplier = Supplier::with(['category:id,type', 'city:id,name', 'distributionLocations'])->findOrFail($id);
+        $supplier = Supplier::with(['category:id,type', 'city:id,name','distributionLocations'])->findOrFail($id);
         $this->authorize('view', $supplier);
 
         $supplier->category_name = $supplier->category->type;

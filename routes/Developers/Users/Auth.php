@@ -18,6 +18,10 @@ Route::prefix('users/auth/')->group(function () {
             'ability:' . TokenAbility::ISSUE_ACCESS_TOKEN->value
         ]);
     Route::post('reset-passowrd', [AuthController::class, 'forgetPassword']);
+    Route::post('change-passowrd', [AuthController::class, 'changePassword'])->middleware([
+        'auth:sanctum',
+        'ability:' . TokenAbility::ISSUE_ACCESS_TOKEN->value
+    ]);
     Route::post('logout', [AuthController::class, 'destroy'])->middleware(['auth:sanctum', 'type.user']);
     Route::get('profile', [AuthController::class, 'profile'])->middleware(['auth:sanctum', 'type.user']);
 });

@@ -1,6 +1,5 @@
 <?php
 
-$path = storage_path('app/google-service.json');
 return [
 
     /*
@@ -33,7 +32,7 @@ return [
     ],
     'firebase' => [
         'credentials' => [
-            'file' => $path,
+            'file' => storage_path('app/google-service.json'),
         ],
     ],
 

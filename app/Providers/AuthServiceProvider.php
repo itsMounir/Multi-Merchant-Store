@@ -6,6 +6,7 @@ use App\Models\Bill;
 use App\Models\City;
 use App\Models\Market;
 use App\Models\MarketCategory;
+use App\Models\Offer;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Supplier;
@@ -22,6 +23,7 @@ use App\Policies\Web\MarketPolicy as WebMarketPolicy;
 use App\Policies\Web\MarketCategoryPolicy as WebMarketCategoryPolicy;
 use App\Policies\Web\SupplierPolicy as WebSupplierPolicy;
 use App\Policies\Web\SupplierCategoryPolicy as WebSupplierCategoryPolicy;
+use App\Policies\Web\OfferPolicy as WebOfferPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 
@@ -35,7 +37,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         Bill::class => BillPolicy::class,
 
-            /** Web Policies */
+        /** Web Policies */
         User::class => WebEmpolyeePolicy::class,
         Product::class => WebProductPolicy::class,
         ProductCategory::class => WebProductCategoryPolicy::class,
@@ -44,6 +46,7 @@ class AuthServiceProvider extends ServiceProvider
         MarketCategory::class => WebMarketCategoryPolicy::class,
         Supplier::class => WebSupplierPolicy::class,
         SupplierCategory::class => WebSupplierCategoryPolicy::class,
+        Offer::class => WebOfferPolicy::class,
 
     ];
 
