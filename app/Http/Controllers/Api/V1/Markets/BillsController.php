@@ -37,31 +37,12 @@ class BillsController extends Controller
      */
     public function index(BillsFilters $billsFilters): JsonResponse
     {
-        // $results = [];
-
-
         $bills = $billsFilters->applyFilters(Auth::user()->bills()->getQuery())
-            ->with(['products','supplier'])
+            ->with(['products', 'supplier'])
             ->where('created_at', '>=', Carbon::now()->subMonths(2))
             ->latest()
             ->get()
             ->append('total_price_after_discount');
-
-
-        // foreach ($bills as $bill) {
-        //     $productIds = $bill->products->pluck('id');
-
-        //     $bill = $bill->with([
-        //         'products',
-        //         'supplier.products' => function ($query) use ($productIds) {
-        //             return $query->whereIn('products.id', $productIds)->orderBy('products.id');
-        //         }
-
-        //     ])->where('id', $bill->id)->first()->append('total_price_after_discount');
-
-
-        //     $results[] = $bill;
-        // }
 
         return $this->indexOrShowResponse('bills', $bills);
     }
