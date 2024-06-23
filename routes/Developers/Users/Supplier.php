@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Users\SupplierUserController;
 
 
-Route::prefix('users/supplier')->middleware('auth:sanctum')->group(function () {
+Route::prefix('users/supplier')->middleware('auth:sanctum','type.user')->group(function () {
 
     Route::get('get', [SupplierUserController::class, 'index']); // get filtered supplier users {activated- deactivated - baned}
     Route::get('search', [SupplierUserController::class, 'search']); // search by Store_name
@@ -23,4 +23,10 @@ Route::prefix('users/supplier')->middleware('auth:sanctum')->group(function () {
     Route::post('category/position/{id}', [SupplierCategoryController::class, 'updatePosition']); // reorder the categories
     Route::delete('category/{id}', [SupplierCategoryController::class, 'destroy']); // delete supplier category
 
+    Route::prefix('distribution-location')->group(function () {
+
+        Route::get('index/{id}', [SupplierUserController::class, 'userWithDistributionLocations']);
+        Route::post('create/{id}', [SupplierUserController::class, 'addDistributionLocation']);
+        Route::delete('delete/{Sid}/{Lid}', [SupplierUserController::class, 'deleteDistributionLocation']);
+    });
 });

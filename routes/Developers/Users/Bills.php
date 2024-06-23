@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::prefix('users/bills/')->middleware('auth:sanctum')->group(function () {
+Route::prefix('users/bills/')->middleware('auth:sanctum','type.user')->group(function () {
 
     Route::get('bill/{id}', [BillsController::class, 'show']); // get a single bill
     Route::get('new', [BillsController::class, 'newBills']); // get new orders from users

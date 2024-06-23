@@ -5,7 +5,7 @@ use App\Http\Controllers\Api\V1\Users\MarketUserController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::prefix('users/market/')->middleware('auth:sanctum')->group(function () {
+Route::prefix('users/market/')->middleware('auth:sanctum','type.user')->group(function () {
 
     Route::get('get', [MarketUserController::class, 'index']); // get filtered market users {activated- deactivated - baned}
     Route::get('search', [MarketUserController::class, 'search']); //search By store_name

@@ -51,7 +51,7 @@ class SupplierUserController extends Controller
     public function show($id)
     {
 
-        $supplier = Supplier::with(['category:id,type', 'city:id,name','distributionLocations'])->findOrFail($id);
+        $supplier = Supplier::with(['category', 'city', 'distributionLocations'])->findOrFail($id);
         $this->authorize('view', $supplier);
 
         $supplier->category_name = $supplier->category->type;
@@ -77,36 +77,6 @@ class SupplierUserController extends Controller
         }
     }
 
-
-    /**
-     * To get user info with his incoming Bills
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function userWithBills($id)
-    {
-        $user = Supplier::with(['bills.market'])->findOrFail($id);
-        $this->authorize('view', $user);
-
-        $user->category_name = $user->category->type;
-        $user->city_name = $user->city->name;
-        return response()->json(['user' => $user]);
-    }
-
-    /**
-     * Display list of Suppliers with thier products
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function userWithProducts($id)
-    {
-        $user = Supplier::with('products')->findOrFail($id);
-
-        $user->catgory_name = $user->category->type;
-        $user->city_name = $user->city->name;
-        return response()->json(['user' => $user]);
-    }
-
     /**
      * To change supplier profile
      * @param SupplierProfileRequest $request
@@ -128,7 +98,82 @@ class SupplierUserController extends Controller
     }
 
     /**
-     * TO ACTIVATE SUPPLIER USER
+     * Display the Supplier with his incoming Bills
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function userWithBills($id)
+    {
+        $user = Supplier::with(['bills.market'])->findOrFail($id);
+        $this->authorize('view', $user);
+
+        $user->category_name = $user->category->type;
+        $user->city_name = $user->city->name;
+        return response()->json(['user' => $user]);
+    }
+
+    /**
+     * Display the Supplier with his products
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function userWithProducts($id)
+    {
+        $user = Supplier::with('products')->findOrFail($id);
+        $this->authorize('view', $user);
+
+        $user->catgory_name = $user->category->type;
+        $user->city_name = $user->city->name;
+        return response()->json(['user' => $user]);
+    }
+
+    /**
+     * Display the Supplier with his distribution location
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function userWithDistributionLocations(string $id)
+    {
+        $user = Supplier::with('distributionLocations')->findOrFail($id);
+        $this->authorize('view', $user);
+
+        $user->catgory_name = $user->category->type;
+        $user->city_name = $user->city->name;
+        return response()->json(['user' => $user]);
+    }
+
+    public function addDistributionLocation(Request $request, string $id)
+    {
+        $this->authorize('update', Supplier::class);
+        $request->validate([
+            'to_city_id' => ['required', 'exists:cities,id'],
+            'min_bill_price' => ['required']
+        ]);
+        $supplier = Supplier::findOrFail($id);
+        $existingLocation = $supplier->distributionLocations()->where('to_city_id', $request->to_city_id)->first();
+        if ($existingLocation) {
+            return response()->json(['message' => 'تمت إضافة هذه المدينة سابقاً'], 400);
+        }
+        $supplier->distributionLocations()->create([
+            'to_city_id' => $request->to_city_id,
+            'min_bill_price' => $request->min_bill_price
+        ]);
+        $supplier->load('distributionLocations');
+        return response()->json($supplier, 200);
+    }
+
+    public function deleteDistributionLocation(string $supplierId, string $locationId)
+    {
+        $this->authorize('update', Supplier::class);
+        $supplier = Supplier::findOrFail($supplierId);
+        $distributionLocation = $supplier->distributionLocations()->findOrFail($locationId);
+        $distributionLocation->delete();
+        $supplier->load('distributionLocations');
+        return response()->json(null, 204);
+    }
+
+    /**
+     * Activate Supplier user 
      * @param string $id
      * @return JsonResponse
      */
@@ -153,7 +198,7 @@ class SupplierUserController extends Controller
     }
 
     /**
-     * TO BAN SUPPLIER USER
+     * Ban Supplier user
      * @param string $id
      * @return JsonResponse
      */

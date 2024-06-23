@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\V1\Users\ProductCategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Users\ProductController;
 
-Route::prefix('users/products/')->middleware('auth:sanctum')->group(function () {
+Route::prefix('users/products/')->middleware('auth:sanctum','type.user')->group(function () {
 
     Route::get('list', [ProductController::class, 'index']);  // get products by type
     Route::get('search', [ProductController::class, 'filterAndSearch']); // filter by category and search product by name
