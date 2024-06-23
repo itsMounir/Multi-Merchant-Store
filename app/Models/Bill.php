@@ -32,7 +32,7 @@ class Bill extends Model
         'goal_discount',
     ];
 
-    protected $appends = ['created_at_formatted','payment_method', 'additional_price', 'waffarnalak', 'updatable'];
+    protected $appends = ['created_at_formatted', 'payment_method', 'additional_price', 'waffarnalak', 'updatable'];
 
     protected $hidden = [
         'deleted_at'
@@ -54,11 +54,7 @@ class Bill extends Model
 
     public function getAdditionalPriceAttribute()
     {
-        if ($this->has_additional_cost) {
-            return $this->total_price + $this->total_price * 1.5 / 100;
-        } else {
-            return $this->total_price;
-        }
+        return $this->has_additional_cost ? 5 : 0;
     }
 
     public function getWaffarnalakAttribute()
@@ -66,19 +62,19 @@ class Bill extends Model
         $total_discounted_price = 0.0;
         $waffarnalak = 0.0;
         $bill = static::find($this->id);
-       // $supplier_products = $bill->supplier->products->toArray();
+        // $supplier_products = $bill->supplier->products->toArray();
         foreach ($bill->products as $product) {
             // foreach ($supplier_products as $supplier_product) {
             //     if ($product['id'] == $supplier_product['id']) {
-                    $price = $product['pivot']['buying_price'];
-                    $quantity = $product['pivot']['quantity'];
-                    if ($product['pivot']['has_offer']) {
-                        $total_discounted_price += min(
-                            $product['pivot']['max_offer_quantity'],
-                            $quantity
-                        )
-                            * ($price - $product['pivot']['offer_buying_price']);
-                    }
+            $price = $product['pivot']['buying_price'];
+            $quantity = $product['pivot']['quantity'];
+            if ($product['pivot']['has_offer']) {
+                $total_discounted_price += min(
+                    $product['pivot']['max_offer_quantity'],
+                    $quantity
+                )
+                    * ($price - $product['pivot']['offer_buying_price']);
+            }
             //     }
             // }
         }
