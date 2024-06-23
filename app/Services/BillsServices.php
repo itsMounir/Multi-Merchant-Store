@@ -10,7 +10,8 @@ use App\Exceptions\{
 use App\Models\{
     Bill,
     Supplier,
-    Product
+    Product,
+    BillProduct
 };
 use App\Models\User;
 use App\Notifications\NewBillRequested;
@@ -162,6 +163,50 @@ class BillsServices
 
     }
 
+
+
+    public function calculatePriceSupplier(&$bill, $supplier): float
+    {
+        $total_price = 0.0;
+        $i = 0;
+
+        foreach ($bill['products'] as $product) {
+            $exist = false;
+            $billProduct = BillProduct::where('product_id', $product['id'])->first();
+            if ($billProduct) {
+                $price = $billProduct->buying_price;
+                $bill['products'][$i]['buying_price'] = $price;
+                $bill['products'][$i]['max_selling_quantity'] = $billProduct->max_selling_quantity;
+                $bill['products'][$i]['has_offer'] = $billProduct->has_offer;
+                $bill['products'][$i]['offer_buying_price'] = $billProduct->offer_buying_price;
+                $bill['products'][$i]['max_offer_quantity'] = $billProduct->max_offer_quantity;
+
+                $quantity = $product['quantity']; // quantity requested
+
+                if ($quantity > $billProduct->max_selling_quantity) {
+                    throw new IncorrectBillException('.' . 'لقد تخطيت العدد الأقصى للطلب : ' . $billProduct->max_selling_quantity . ' لدى ' . $supplier->store_name);
+                }
+                if ($billProduct->has_offer) {
+                    $total_price += min(
+                        $billProduct->max_offer_quantity,
+                        $quantity
+                    ) * $billProduct->offer_buying_price;
+
+                    $quantity -= $billProduct->max_offer_quantity;
+                }
+                if ($quantity > 0) {
+                    $total_price += $price * $quantity; // in case requested quantity is more than offer quantity
+                }
+                $exist = true;
+            }
+            if (!$exist) {
+                throw new ProductNotExistForSupplierException($product['id'], $supplier->store_name);
+            }
+            $i++;
+        }
+        return $total_price;
+    }
+
     /**
      * return discount value earned by achieving supplier's goals .
      */
@@ -208,7 +253,7 @@ class BillsServices
 
 
 
-    public function checkProductAvailability($updated_bill, $supplier,$bill)
+    public function checkProductAvailability($updated_bill, $supplier, $bill)
     {
         $unavailableProducts = [];
 
@@ -225,11 +270,11 @@ class BillsServices
             return 'الكمية المتاحة لديك من المنتجات ' . $errorProducts . ' غير كافية';
         }
 
-        foreach($updated_bill['products'] as $item){
+        foreach ($updated_bill['products'] as $item) {
             $product = Product::find($item['id']);
             $pivot = $product->suppliers()->wherePivot('supplier_id', $supplier->id)->first()->pivot;
             $availableQuantity = $pivot->quantity ?? 0;
-            if($availableQuantity >= $item['quantity']){
+            if ($availableQuantity >= $item['quantity']) {
                 $pivot->quantity = $availableQuantity - $item['quantity'];
                 if ($pivot->quantity == 0) {
                     $pivot->is_available = 0;
