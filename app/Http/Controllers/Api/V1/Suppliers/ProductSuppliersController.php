@@ -141,6 +141,7 @@ class ProductSuppliersController extends Controller
 
     public function get_product_available_or_Not_available(Request $request, $id){
         $supplier = Auth::user();
+        $productCount= $supplier->count_product();
 
 
         if ($request->has('search')&&$request->search!='') {
@@ -150,8 +151,12 @@ class ProductSuppliersController extends Controller
 
             $product = $supplier->products()->where('is_available', $id)->get();
         }
+        $data=[
+            'count_product'=>$productCount,
+            'body'=>$product
+        ];
 
-        return $this->indexOrShowResponse('body', $product);
+        return response()->json($data);
     }
 
 
