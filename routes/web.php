@@ -18,5 +18,5 @@ use App\Services\MobileNotificationServices;
 Route::get('noti',function (){
 
     $noti = new MobileNotificationServices;
-    $noti->sendNotification('eYQMl0NXTI--jncxCw6Ncl:APA91bE0BYA1C5ZPNDQmNbYsrsXmiALYhKs1GSUZr6EcgFEuXjfdzY8uainoEeki_-bh5Wz-0Z3y5v2Lyp5FuPFAUqUUcn0fzM-xNbF-JlNVrsLLOEkdC-LHoiTuDh9tjG2vook9pUPd','notificatoin from backend','باك عم الجميع');
+    $noti->sendNotification('dF4ervL2QYe7-AfgOD1KA2:APA91bEeeatGUCUyUlra4IU2P25qQLdXJrbIpTVDIsJeMYf_NDJsNemjqEd3VB1bMjKl-GSMstvLU_j96LgkrYSEhAc3dOpdK-NZuCzMKbdH-UBECzd4wHQXuUVpIf5mjDPSAB1bBOcA','notificatoin from backend','باك عم الجميع');
 });

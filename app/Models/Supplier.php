@@ -91,6 +91,18 @@ class Supplier extends Authenticatable
     }
 
 
+    public function getCategoryNameAttribute()
+    {
+        return $this->supplierCategory()->pluck('type')->first();
+    }
+
+    public function getCityNameAttribute()
+    {
+        return $this->city()->pluck('name')->first();
+    }
+
+
+
     public function isActive(): bool
     {
         return ($this->status == 'نشط');
@@ -215,6 +227,11 @@ public function getNotifications()
 
     return $notifications->values();
 
+}
+
+
+public function count_product(){
+    return $this->products()->where('is_available','1')->count();
 }
 
 }
