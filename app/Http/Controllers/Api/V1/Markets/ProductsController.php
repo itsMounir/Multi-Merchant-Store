@@ -20,9 +20,31 @@ class ProductsController extends Controller
     {
         $products = $productsFilters->applyFilters(Product::query())
             ->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
+            ->join('suppliers', 'suppliers.id', '=', 'product_supplier.supplier_id')
             ->orderBy('product_supplier.price')
-            ->paginate(10, ['product_id', 'product_category_id', 'discription', 'name', 'size', 'size_of', 'supplier_id', 'price', 'max_selling_quantity'])
+            ->select(
+                'products.id',
+                'products.product_category_id',
+                'products.name',
+                'products.discription',
+                'suppliers.id as supplier_id',
+                'suppliers.store_name',
+                'suppliers.min_bill_price',
+                'suppliers.min_selling_quantity',
+                'suppliers.delivery_duration',
+                'product_supplier.price',
+                'product_supplier.max_selling_quantity',
+                'product_supplier.has_offer',
+                'product_supplier.offer_price',
+                'product_supplier.max_offer_quantity'
+            )
+            ->distinct() // Ensure unique results
+            ->paginate(10)
             ->toArray();
+        // // Filter products where suppliers array is empty
+        // $filteredProducts = array_filter($products['data'], function ($product) {
+        //     return empty($product['suppliers']) == false;
+        // });
 
         return response()->json([
             'products' => $products

@@ -26,18 +26,22 @@ class Goal extends Model
         'created_at' => 'date:Y-m-d',
     ];*/
 
-    protected $appends = ['images'];
+    protected $appends = ['supplier_store_name'];
 
     // images attribute
-    public function getImagesAttribute()
-    {
-        return $this->images()
-            ->get(['imageable_type', 'url'])
-            ->map(function ($image) {
-                $dir = explode('\\', $image->imageable_type)[2];
-                unset ($image->imageable_type);
-                return asset("public/$dir") . '/' . $image->url;
-            });
+    // public function getImagesAttribute()
+    // {
+    //     return $this->images()
+    //         ->get(['imageable_type', 'url'])
+    //         ->map(function ($image) {
+    //             $dir = explode('\\', $image->imageable_type)[2];
+    //             unset ($image->imageable_type);
+    //             return asset("public/$dir") . '/' . $image->url;
+    //         });
+    // }
+
+    public function getSupplierStoreNameAttribute() {
+        return $this->supplier()->pluck('store_name')->first();
     }
 
 
@@ -52,9 +56,9 @@ class Goal extends Model
     }
 
     // morphs relation with images table
-    public function images()
-    {
-        return $this->morphMany(Image::class, 'imageable');
-    }
+    // public function images()
+    // {
+    //     return $this->morphMany(Image::class, 'imageable');
+    // }
 
 }
