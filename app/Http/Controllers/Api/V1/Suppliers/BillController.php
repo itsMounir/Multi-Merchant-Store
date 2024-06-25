@@ -43,7 +43,7 @@ class BillController extends Controller
             $productIds = $bill->products->pluck('id');
             $bill->load([
                 'products'
-            ]);
+            ])->append('total_price_after_discount');
             $results[] = $bill;
         }
 
@@ -67,7 +67,7 @@ class BillController extends Controller
         $productIds = $bill->products->pluck('id');
         $bill->load([
             'products'
-        ]);
+        ])->append('total_price_after_discount');
 
         return $this->indexOrShowResponse('body', $bill);
     }
@@ -89,7 +89,8 @@ class BillController extends Controller
             $billService = new BillsServices;
 
             $total_price = $billService->calculatePriceSupplier($updated_bill, $supplier);
-            $total_price -= $billService->marketDiscount(Market::find($bill->market_id), $total_price);
+            //$total_price -= $billService->marketDiscount(Market::find($bill->market_id), $total_price);
+
            // $mario=$billService-> checkProductAvailability($updated_bill,$supplier,$bill);
             /*if ($mario) {
                 return $this->sudResponse($mario, 200);
@@ -182,7 +183,7 @@ class BillController extends Controller
             'recieved_price' => 'required',
             ]);
             if ($request['recieved_price'] > $bill->total_price) {
-                return $this->sudResponse('سعر الاستلام يجب أن يكون اقل أو يساوي سعر الفاتورة');
+                return $this->sudResponse('سعر الاستلام يجب أن يكون اقل أو يساوي اجمالي الفاتورة');
             }
         $bill->update([
             'status'=>'تم التوصيل',
