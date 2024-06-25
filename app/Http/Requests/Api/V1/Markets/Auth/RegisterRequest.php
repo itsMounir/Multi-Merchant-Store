@@ -32,6 +32,7 @@ class RegisterRequest extends FormRequest
             'location_details' => ['string'],
             'market_category_id' => ['required','exists:market_categories,id'],
             'store_name' => ['required'],
+            'deviceToken'=>'nullable',
         ];
     }
 }
