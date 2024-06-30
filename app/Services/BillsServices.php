@@ -17,6 +17,7 @@ use App\Models\User;
 use App\Notifications\NewBillRequested;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 
 class BillsServices
@@ -103,16 +104,10 @@ class BillsServices
 
     public function checkSupplierRequirements($supplier, $bill, $total_price): bool
     {
-        if ($total_price < $supplier->min_bill_price) {
-            return false;
-        }
-
-        $products_count = 0;
-        foreach ($bill['products'] as $product) {
-            $products_count += $product['quantity'];
-        }
-
-        if ($products_count < $supplier->min_selling_quantity) {
+        if (
+            ($total_price < $supplier->min_bill_price)
+            || (count($bill['products']) < $supplier->min_selling_quantity)
+        ) {
             return false;
         }
 
@@ -162,7 +157,8 @@ class BillsServices
                 }
             }
             if (!$exist) {
-                return -1;
+                Log::error('Product Not Found Exception: sheeeeeeeesh');
+                throw new IncorrectBillException('product not exist for this supplier.');
             }
             $i++;
         }
