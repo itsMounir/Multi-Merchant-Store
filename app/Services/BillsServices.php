@@ -29,7 +29,7 @@ class BillsServices
      */
     public function process($bill, $market)
     {
-        $supplier = Supplier::findOrFail($bill['supplier_id']);
+        $supplier = Supplier::findOrFail($bill['supplier_id'])->append('min_bill_price');
 
         if ($supplier->status != 'نشط') {
             throw new InActiveAccountException($supplier->store_name);

@@ -33,8 +33,8 @@ class SuppliersController extends Controller
                 ->active()
                 ->site()
                 ->orderBy('bills_count', 'desc')
-                ->orderBy('min_bill_price')
-                ->get()->append('image');
+                //->orderBy('min_bill_price')
+                ->get()->append(['min_bill_price', 'image']);
 
         return response()->json([
             'offers' => $offers,
@@ -48,7 +48,7 @@ class SuppliersController extends Controller
     public function show(Supplier $supplier, ProductsFilters $productsFilters): JsonResponse
     {
         throw_if($supplier->status != 'نشط', new InActiveAccountException($supplier->store_name));
-        $supplier->append('image');
+        $supplier->append(['min_bill_price', 'image']);
 
         $products = $productsFilters->applyFilters($supplier->availableProducts()->getQuery())->get();
         $categories = ProductCategory::get(['id', 'name']);

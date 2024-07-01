@@ -28,6 +28,10 @@ return new class extends Migration {
             $table->string('phone_number')->unique();
             $table->string('password');
            // $table->float('min_bill_price');
+
+
+            // this value is the minimum number of products that should be demanded
+            // like if min_selling_quantity is equal to 5  the bill should contains at least 5 different products
             $table->integer('min_selling_quantity');
             $table->string('delivery_duration')->default('التوصيل خلال يومين');
 
