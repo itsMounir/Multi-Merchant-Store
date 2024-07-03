@@ -27,6 +27,9 @@ class LoginController extends Controller
             return response()->json(['message' => '.رقم الهاتف أو كلمة المرور خاطئة'], 401);
         }
         $market = Auth::guard('market')->user();
+        if ($request->has('deviceToken')) {
+            $market->update(['deviceToken' => $request->deviceToken]);
+        }
 
         $accessToken = $market->createToken(
             'access_token',

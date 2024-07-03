@@ -76,8 +76,6 @@ class BillController extends Controller
 
     public function update(UpdateBillRequest $request, Bill $bill)
     {
-
-
         return DB::transaction(function () use ($request, $bill) {
             if ($bill->status != 'جديد') {
 
@@ -91,10 +89,10 @@ class BillController extends Controller
             $total_price = $billService->calculatePriceSupplier($updated_bill, $supplier);
             //$total_price -= $billService->marketDiscount(Market::find($bill->market_id), $total_price);
 
-           // $mario=$billService-> checkProductAvailability($updated_bill,$supplier,$bill);
-            /*if ($mario) {
+            $mario=$billService-> checkProductAvailability($updated_bill,$supplier,$bill);
+            if ($mario) {
                 return $this->sudResponse($mario, 200);
-            }*/
+            }
             $bill->products()->detach();
 
             $delivery_duration = $request->input('delivery_duration');
@@ -207,6 +205,7 @@ class BillController extends Controller
         $validatedData = $request->validate([
             'rejection_reason' => 'required',
         ]);
+
         foreach ($bill->products as $product) {
             $productSupplier = $product->suppliers()->where('supplier_id', $supplier->id)->first();
             if ($productSupplier) {
@@ -214,6 +213,7 @@ class BillController extends Controller
                 if ($productSupplier->pivot->is_available == 0) {
                     $productSupplier->pivot->is_available = 1;
                 }
+                
                 $productSupplier->pivot->save();
             }
         }
