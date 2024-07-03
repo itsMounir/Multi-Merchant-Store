@@ -142,11 +142,12 @@ class SupplierContoller extends Controller
     {
         $notification=new MobileNotificationServices;
         $supplier = Auth::user();
+       
         foreach ($request->input('discount') as $offerData) {
             $createdDiscount = $supplier->goals()->create($offerData);
         }
         $marketsToNotify = $supplier->getMarketsToNotify();
-        Notification::send($marketsToNotify, new DiscountAdded($supplier));
+        Notification::send($marketsToNotify, new DiscountAdded($supplier->append('category_name','city_name')));
         foreach ($marketsToNotify as $market) {
 
             $notification->sendNotification($market->deviceToken,"خصم جديد","تم اضافة خصم من قبل ". $supplier->store_name . ".");
@@ -163,6 +164,8 @@ class SupplierContoller extends Controller
         $data=$supplier->goals()->get()->with(['supplier']);
         return $this->sudResponse($data);
     }
+
+
 }
 
 

@@ -17,12 +17,15 @@ use App\Models\User;
 use App\Notifications\NewBillRequested;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 
 class BillsServices
 {
     /**
      * all about bill's calculations and creation.
+     *
+     * Note : if any requirement broke down the bill won't be created and it will retutn an empty string.
      */
     public function process($bill, $market)
     {
@@ -33,8 +36,12 @@ class BillsServices
         }
 
         $total_price = $this->calculatePrice($bill, $supplier);
+        // might be -1 if any supplier requirement broke down ,
+        // then the checkSupplierRequirements will fail and empty string will be returned.
 
-        $this->checkSupplierRequirements($supplier, $bill, $total_price);
+        if (!$this->checkSupplierRequirements($supplier, $bill, $total_price)) {
+            return '';
+        }
 
         $supplier_discount = $this->supplierDiscount($supplier, $total_price);
 
@@ -95,25 +102,20 @@ class BillsServices
         }
     }
 
-    public function checkSupplierRequirements($supplier, $bill, $total_price)
+    public function checkSupplierRequirements($supplier, $bill, $total_price): bool
     {
-        if ($total_price < $supplier->min_bill_price) {
-            throw new IncorrectBillException('.' . 'الرجاء استكمال السعر الأدنى : ' . $supplier->min_bill_price . ' , للطلب لدى ' . $supplier->store_name);
+        if (
+            ($total_price < $supplier->min_bill_price)
+            || (count($bill['products']) < $supplier->min_selling_quantity)
+        ) {
+            return false;
         }
 
-        $products_count = 0;
-        foreach ($bill['products'] as $product) {
-            $products_count += $product['quantity'];
-        }
-
-        if ($products_count < $supplier->min_selling_quantity) {
-            throw new IncorrectBillException('.' . 'الرجاء استكمال العدد الأدنى للمنتجات : ' . $supplier->min_selling_quantity . ' , للطلب لدى ' . $supplier->store_name);
-        }
-
+        return true;
     }
 
     /**
-     * calculate the price for the specified bill
+     * calculate the price for the specified bill  || return -1 if any supplier requirements is broken.
      */
     public function calculatePrice(&$bill, $supplier): float
     {
@@ -133,7 +135,7 @@ class BillsServices
                     $bill['products'][$i]['max_offer_quantity'] = $supplier_product['pivot']['max_offer_quantity'];
                     $quantity = $product['quantity']; // quantity requested
                     if ($quantity > $supplier_product['pivot']['max_selling_quantity']) {
-                        throw new IncorrectBillException('.' . 'لقد تخطيت العدد الأقصى للطلب : ' . $supplier_product['pivot']['max_selling_quantity'] . ' لدى ' . $supplier->store_name);
+                        return -1;
                     }
 
                     if ($supplier_product['pivot']['has_offer']) {
@@ -155,7 +157,8 @@ class BillsServices
                 }
             }
             if (!$exist) {
-                throw new ProductNotExistForSupplierException($product['id'], $supplier->store_name);
+                Log::error('Product Not Found Exception: sheeeeeeeesh');
+                throw new IncorrectBillException('product not exist for this supplier.');
             }
             $i++;
         }

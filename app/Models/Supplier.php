@@ -35,6 +35,7 @@ class Supplier extends Authenticatable
         'status',
         'supplier_category_id',
         'delivery_duration',
+        'min_bill_price',
         'min_selling_quantity',
         'location_details',
         'city_id',
@@ -75,9 +76,22 @@ class Supplier extends Authenticatable
         });
     }
 
-    public function getMinBillPriceAttribute() {
-        return $this->distributionLocations()->where('to_city_id',Auth::user()->city_id)->get()[0]['min_bill_price'];
+
+    public function getCategoryNameAttribute()
+    {
+        return $this->supplierCategory()->pluck('type')->first();
     }
+
+    public function getCityNameAttribute()
+    {
+        return $this->city()->pluck('name')->first();
+    }
+
+    public function getImageAttribute()
+    {
+        return asset('storage/Supplier/' . $this->image()->pluck('url')->first());
+    }
+
 
     public function getImagesAttribute()
     {
@@ -85,7 +99,7 @@ class Supplier extends Authenticatable
             ->get(['imageable_type', 'url'])
             ->map(function ($image) {
                 $dir = explode('\\', $image->imageable_type)[2];
-                unset ($image->imageable_type);
+                unset($image->imageable_type);
                 return asset("storage/$dir") . '/' . $image->url;
             });
     }
@@ -130,7 +144,6 @@ class Supplier extends Authenticatable
             ->withPivot(
                 'id',
                 'price',
-                'quantity',
                 'has_offer',
                 'offer_price',
                 'max_offer_quantity',
@@ -204,17 +217,17 @@ class Supplier extends Authenticatable
     }
 
     /**
- * Get the recent notifications for the supplier.
- *
- * @param int $count Number of notifications to retrieve
- */
-public function getNotifications()
-{
+     * Get the recent notifications for the supplier.
+     *
+     * @param int $count Number of notifications to retrieve
+     */
+    public function getNotifications()
+    {
 
-    $notifications = $this->notifications()->whereIn('type', ['new-bill', 'preparing-bill'])->whereNull('read_at')->get();
+        $notifications = $this->notifications()->whereIn('type', ['new-bill', 'preparing-bill'])->whereNull('read_at')->get();
 
-    return $notifications->values();
+        return $notifications->values();
 
-}
+    }
 
 }
