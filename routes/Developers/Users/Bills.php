@@ -1,12 +1,16 @@
 <?php
 
-use App\Http\Controllers\Api\V1\Suppliers\BillController;
 use App\Http\Controllers\Api\V1\Users\BillsController;
 use Illuminate\Support\Facades\Route;
+use App\Enums\TokenAbility;
 
 
 
-Route::prefix('users/bills/')->middleware('auth:sanctum','type.user')->group(function () {
+Route::prefix('users/bills/')->middleware([
+    'auth:sanctum',
+    'type.user',
+    'ability:' . TokenAbility::ACCESS_API->value
+])->group(function () {
 
     Route::get('bill/{id}', [BillsController::class, 'show']); // get a single bill
     Route::get('new', [BillsController::class, 'newBills']); // get new orders from users

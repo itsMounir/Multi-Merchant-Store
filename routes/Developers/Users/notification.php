@@ -2,10 +2,15 @@
 
 use App\Http\Controllers\Api\V1\Users\NotificationController;
 use Illuminate\Support\Facades\Route;
+use App\Enums\TokenAbility;
 
 
 
-Route::prefix('users/notification')->middleware('auth:sanctum', 'type.user')->group(function () {
+Route::prefix('users/notification')->middleware([
+    'auth:sanctum',
+    'type.user',
+    'ability:' . TokenAbility::ACCESS_API->value
+])->group(function () {
 
     Route::prefix('database')->group(function () {
 

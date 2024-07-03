@@ -3,9 +3,14 @@
 use App\Http\Controllers\Api\V1\Users\SupplierCategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Users\SupplierUserController;
+use App\Enums\TokenAbility;
 
 
-Route::prefix('users/supplier')->middleware('auth:sanctum','type.user')->group(function () {
+Route::prefix('users/supplier')->middleware([
+    'auth:sanctum',
+    'type.user',
+    'ability:' . TokenAbility::ACCESS_API->value
+])->group(function () {
 
     Route::get('get', [SupplierUserController::class, 'index']); // get filtered supplier users {activated- deactivated - baned}
     Route::get('search', [SupplierUserController::class, 'search']); // search by Store_name
@@ -15,6 +20,13 @@ Route::prefix('users/supplier')->middleware('auth:sanctum','type.user')->group(f
     Route::put('profile/edit/{id}', [SupplierUserController::class, 'update']); // Edit user profile
     Route::get('with-bills/{id}', [SupplierUserController::class, 'userWithBills']); // get user with his bills
     Route::get('with-products/{id}', [SupplierUserController::class, 'userWithProducts']); // get user with his products
+
+    Route::prefix('image')->group(function () {
+
+        Route::post('edit/{id}', [SupplierUserController::class, 'changeImageProfile']);
+        Route::delete('delete/{id}', [SupplierUserController::class, 'deleteImageProfile']);
+    });
+
 
     Route::get('category', [SupplierCategoryController::class, 'index']); // get supplier categories
     Route::post('category', [SupplierCategoryController::class, 'store']); // add supplier category
