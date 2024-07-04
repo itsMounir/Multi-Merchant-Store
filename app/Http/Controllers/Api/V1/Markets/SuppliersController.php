@@ -17,6 +17,7 @@ use App\Models\{
 };
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class SuppliersController extends Controller
 {
@@ -32,9 +33,14 @@ class SuppliersController extends Controller
                 ->withCount('bills')
                 ->active()
                 ->site()
-                ->orderBy('bills_count', 'desc')
-                //->orderBy('min_bill_price')
-                ->get()->append(['min_bill_price', 'image']);
+                ->join('distribution_locations', function ($join) {
+                    $join->on('suppliers.id', '=', 'distribution_locations.supplier_id')
+                        ->where('distribution_locations.to_city_id', '=', Auth::user()->city_id);
+                })
+                ->orderByDesc('bills_count')
+                ->orderBy('distribution_locations.min_bill_price')
+                ->get()
+                ->append(['min_bill_price', 'image']);
 
         return response()->json([
             'offers' => $offers,
@@ -51,7 +57,16 @@ class SuppliersController extends Controller
         $supplier->append(['min_bill_price', 'image']);
 
         $products = $productsFilters->applyFilters($supplier->availableProducts()->getQuery())->get();
-        $categories = ProductCategory::get(['id', 'name']);
+        $categories_ids = [];
+
+        foreach ($products as $product) {
+            $categoryId = $product->product_category_id;
+
+            if (!in_array($categoryId, $categories_ids)) {
+                $categories_ids[] = $categoryId;
+            }
+        }
+        $categories = ProductCategory::whereIn('id', $categories_ids)->get(['id', 'name']);
         $offers = Offer::where('supplier_id', $supplier->id)->get();
         $products_with_offer = [];
         $products_without_offer = [];

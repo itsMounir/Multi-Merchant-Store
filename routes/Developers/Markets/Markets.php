@@ -13,10 +13,10 @@ use App\Enums\TokenAbility;
 use App\Http\Controllers\Api\V1\Markets\NotificationsController;
 
 Route::prefix('markets/')->middleware([
-    'auth:sanctum', // Authentication middleware
+    'auth:sanctum',
     'abilities:' . TokenAbility::ACCESS_API->value, // Custom ability check
-    'active', // Other custom middleware
-    'type.market', // Another custom middleware
+    'active',
+    'type.market',
 ])->group(function () {
 
     // Routes for Suppliers-related actions
