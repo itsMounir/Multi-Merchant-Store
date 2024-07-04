@@ -29,7 +29,7 @@ class ProductsController extends Controller
                 'products.discription',
                 'suppliers.id as supplier_id',
                 'suppliers.store_name',
-                'suppliers.min_bill_price',
+                // 'suppliers.min_bill_price',
                 'suppliers.min_selling_quantity',
                 'suppliers.delivery_duration',
                 'product_supplier.price',

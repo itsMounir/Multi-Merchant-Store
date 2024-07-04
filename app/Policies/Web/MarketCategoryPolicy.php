@@ -13,7 +13,8 @@ class MarketCategoryPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole(['admin', 'data_entry']);
+        return true;
+        //return $user->hasRole(['admin', 'data_entry']);
     }
 
     /**
@@ -21,7 +22,8 @@ class MarketCategoryPolicy
      */
     public function view(User $user, marketCategory $marketCategory): bool
     {
-        return $user->hasRole(['admin', 'data_entry']);
+        return true;
+        //return $user->hasRole(['admin', 'data_entry']);
     }
 
     /**

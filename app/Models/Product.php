@@ -19,6 +19,7 @@ class Product extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'user_id',
         'name',
         'size',
         'size_of',
@@ -51,8 +52,6 @@ class Product extends Model
             ->withPivot(
                 'id',
                 'price',
-                'quantity',
-                'is_available',
                 'has_offer',
                 'offer_price',
                 'max_offer_quantity',
@@ -60,6 +59,11 @@ class Product extends Model
             );
     }
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+    
     public function category(): BelongsTo
     {
         return $this->belongsTo(ProductCategory::class, 'product_category_id');
@@ -76,7 +80,7 @@ class Product extends Model
             ->get(['imageable_type', 'url'])
             ->map(function ($image) {
                 $dir = explode('\\', $image->imageable_type)[2];
-                unset ($image->imageable_type);
+                unset($image->imageable_type);
                 return asset("storage/$dir") . '/' . $image->url;
             });
     }

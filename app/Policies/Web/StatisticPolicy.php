@@ -7,14 +7,18 @@ use App\Models\Bill;
 use App\Models\Product;
 use App\Models\Market;
 use App\Models\Supplier;
+use App\Models\Offer;
 
 class StatisticPolicy
 {
     /**
-     * Create a new policy instance.
+     * Determine whether the user can view any models.
      */
-    public function __construct()
+    public function viewAny(User $user): bool
     {
-        //
+        
+        return $user->hasRole(['admin']);
     }
+
+    
 }

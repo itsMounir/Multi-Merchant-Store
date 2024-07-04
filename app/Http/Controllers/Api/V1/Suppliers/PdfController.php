@@ -36,8 +36,8 @@ class PdfController extends Controller
 
         $productIds = $bill->products->pluck('id');
         $bill->load([
-            'products' 
-        ]);
+            'products'
+        ])->append('total_price_after_discount');
 
 
 

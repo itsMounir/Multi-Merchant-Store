@@ -29,7 +29,6 @@ class ProductSupplier extends Model
         'offer_price',
         'max_offer_quantity',
         'offer_expires_at',
-        'quantity',
     ];
 
 
@@ -48,7 +47,6 @@ class ProductSupplier extends Model
     {
         return $this->supplier()->pluck('store_name')->first();
     }
-
 
 
     public static function search_Product($supplierId, $productName, $is_available)
@@ -91,10 +89,4 @@ class ProductSupplier extends Model
 
         return $response->toArray();
     }
-
-
-
-
-
-
 }

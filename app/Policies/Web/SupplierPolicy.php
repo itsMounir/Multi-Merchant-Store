@@ -13,7 +13,8 @@ class SupplierPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole(['admin', 'supervisor']);
+        return true;
+        //return $user->hasRole(['admin', 'supervisor']);
     }
 
     /**
@@ -21,7 +22,8 @@ class SupplierPolicy
      */
     public function view(User $user, Supplier $supplier): bool
     {
-        return $user->hasRole(['admin', 'supervisor']);
+        return true;
+        //return $user->hasRole(['admin', 'supervisor']);
     }
 
     /**

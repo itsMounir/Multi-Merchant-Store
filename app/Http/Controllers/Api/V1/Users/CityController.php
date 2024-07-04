@@ -10,20 +10,6 @@ use Illuminate\Http\Request;
 
 class CityController extends Controller
 {
-
-
-    /*public function index()
-    {
-        $this->authorize('viewAny', City::class);
-        $parent_cities = City::where('parent_id', null)->orderBy('position', 'asc')->get();
-        $child_cities = City::with('parent')->where('parent_id', '!=', null)->orderBy('position', 'asc')->get();
-        $cities = [
-            'parent' => $parent_cities,
-            'child' => $child_cities
-        ];
-        return response()->json($cities);
-    }*/
-
     /**
      * TO get all cities
      * @return JsonResponse
@@ -34,19 +20,8 @@ class CityController extends Controller
         $city = City::with('Childrens')->where('parent_id', null)->get();
         return response()->json($city, 200);
     }
-    /**
-     *public function index()
-     *{}
-     *    $this->authorize('viewAny', City::class);
-     *   $parent_cities = City::where('parent_id', null)->orderBy('name', 'asc')->get();
-     *  $child_cities = City::with('parent')->where('parent_id', '!=', null)->orderBy('name', 'asc')->get();
-     * $cities = [
-     *    'parent' => $parent_cities,
-     *   'child' => $child_cities
-     * ];
-     * return response()->json($cities);
-     * }
-     */
+    
+    
     /**
      * To create new city
      * @param CityRequest $request
