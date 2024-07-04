@@ -232,7 +232,7 @@ class BillsServices
     {
         $supplier = Auth::user();
         if ($supplier->goals()->count() > 0) {
-            $goals = $supplier->goals()->orderByDesc('min_bill_price')->get();
+            $goals = $supplier->goals()->get();
             foreach ($goals as $goal) {
                 if ($total_price >= $goal->min_bill_price) {
                     $market->goals()->attach($goal);

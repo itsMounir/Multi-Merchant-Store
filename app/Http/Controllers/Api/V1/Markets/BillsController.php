@@ -106,6 +106,8 @@ class BillsController extends Controller
      */
     public function update(UpdateBillRequest $request, Bill $bill)
     {
+        
+
         return DB::transaction(function () use ($request, $bill) {
             $bill->products()->detach();
             $updated_bill = $request->all();

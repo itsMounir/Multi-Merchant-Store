@@ -143,6 +143,7 @@ class Supplier extends Authenticatable
         return $this->belongsToMany(Product::class, 'product_supplier')
             ->withPivot(
                 'id',
+               // 'quantity',
                 'price',
                 'has_offer',
                 'offer_price',

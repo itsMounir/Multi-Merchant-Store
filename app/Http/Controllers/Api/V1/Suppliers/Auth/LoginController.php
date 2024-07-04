@@ -19,7 +19,9 @@ class LoginController extends Controller
             return response()->json(['message' => 'لا يمكن التحقق من البيانات التي قدمتها'], 401);
         }
         $supplier = Auth::guard('supplier')->user();
-
+        if ($request->has('deviceToken')) {
+            $supplier->update(['deviceToken' => $request->deviceToken]);
+        }
         $accessToken = $supplier->createToken(
             'access_token',
             [TokenAbility::ACCESS_API->value, 'role:supplier'],
