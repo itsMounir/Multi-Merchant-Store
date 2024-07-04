@@ -24,6 +24,7 @@ class CityRequest extends FormRequest
         $city = $this->route('id');
         return [
             'name' => ['required', 'unique:cities,name,' . $city . ',id', 'string',],
+            'position'=>['nullable'],
             'parent_id' => ['nullable']
         ];
     }

@@ -37,7 +37,7 @@ class Bill extends Model
     protected $hidden = [
         'deleted_at'
     ];
-    //protected $dates = ['created_at'];
+        //protected $dates = ['created_at'];
 
     /*public function getCreatedAtAttribute($value)
     {
@@ -47,9 +47,9 @@ class Bill extends Model
 
     protected $dates = ['created_at'];
 
-    public function getCreatedAtFormattedAttribute($value)
+    public function getCreatedAtAttribute($value)
     {
-        return Carbon::parse($this->created_at)->format('Y-m-d');
+        return Carbon::parse($value)->format('Y-m-d');
     }
 
     public function getAdditionalPriceAttribute()
@@ -102,14 +102,7 @@ class Bill extends Model
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class)
-            ->withPivot([
-                'quantity',
-                'buying_price',
-                'max_selling_quantity',
-                'has_offer',
-                'offer_buying_price',
-                'max_offer_quantity',
-            ]);
+            ->withPivot('quantity');
     }
 
 
@@ -171,7 +164,7 @@ class Bill extends Model
             $query->where('store_name', 'like', '%' . $name . '%');
         })->orWhereHas('market', function ($query) use ($name) {
             $query->where('store_name', 'like', '%' . $name . '%');
-        })->get();
+        })->paginate(20, ['*'], 'p');
     }
 
 }

@@ -13,7 +13,8 @@ class ProductCategoryPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasrole(['admin', 'data_entry']);
+        return true;
+        //return $user->hasrole(['admin', 'data_entry']);
     }
 
     /**
@@ -21,7 +22,8 @@ class ProductCategoryPolicy
      */
     public function view(User $user, Productcategory $productcategory): bool
     {
-        return $user->hasrole(['admin', 'data_entry']);
+        return true;
+        //return $user->hasrole(['admin', 'data_entry']);
     }
 
     /**

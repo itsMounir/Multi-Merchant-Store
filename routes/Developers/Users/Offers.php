@@ -4,10 +4,15 @@ use App\Http\Controllers\Api\V1\Users\{
     OfferController,
 };
 use Illuminate\Support\Facades\Route;
+use App\Enums\TokenAbility;
 
 
 
-Route::prefix('users/offer')->group(function () {
+Route::prefix('users/offer')->middleware([
+    'auth:sanctum',
+    'type.user',
+    'ability:' . TokenAbility::ACCESS_API->value
+])->group(function () {
 
     Route::get('list', [OfferController::class, 'index']);
     Route::get('info/{id}', [OfferController::class, 'show']);

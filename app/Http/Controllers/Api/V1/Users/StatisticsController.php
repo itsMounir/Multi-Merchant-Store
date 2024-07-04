@@ -6,19 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\Supplier;
 use App\Models\Market;
 use App\Models\Bill;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 class StatisticsController extends Controller
 {
 
-    public function getPublicStatistics(Request $request){
-
-
+    public function getPublicStatistics(Request $request)
+    {
     }
 
     public function getBillStatistics(Request $request)
     {
+        $this->authorize('viewAny', User::class);
         $start_date = $request->query('start_date');
         $end_date = $request->query('end_date');
         $start_date = Carbon::createFromFormat('Y-m-d', $request->start_date)->startOfDay();
@@ -57,6 +58,8 @@ class StatisticsController extends Controller
 
     public function getUsersStatistics()
     {
+        $this->authorize('viewAny', User::class);
+
         // $start_date = $request->query('start_date');
         // $end_date = $request->query('end_date');
         $subscribed_users = Market::with('city', 'category')->where('is_subscribed', 1)->latest()->get();
@@ -74,6 +77,7 @@ class StatisticsController extends Controller
 
     public function getUsersWithBillsStatistics()
     {
+        $this->authorize('viewAny', User::class);
 
         $top_requested_markets_for_orders = Market::withCount('bills')->orderBy('bills_count', 'desc')->get();
         $top_orderes_suppliers = Supplier::withCount('bills')->orderBy('bills_count', 'desc')->get();

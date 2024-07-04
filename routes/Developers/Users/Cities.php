@@ -2,9 +2,14 @@
 
 use App\Http\Controllers\Api\V1\Users\CityController;
 use Illuminate\Support\Facades\Route;
+use App\Enums\TokenAbility;
 
 
-Route::prefix('users/cities/')->middleware('auth:sanctum')->group(function () {
+Route::prefix('users/cities/')->middleware([
+    'auth:sanctum',
+    'type.user',
+    'ability:' . TokenAbility::ACCESS_API->value
+])->group(function () {
 
     Route::get('list', [CityController::class, 'index']);
     Route::post('create', [CityController::class, 'create']);

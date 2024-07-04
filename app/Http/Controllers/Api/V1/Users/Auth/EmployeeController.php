@@ -99,7 +99,7 @@ class EmployeeController extends Controller
 
         $employee->tokens()->delete();
         $employee->delete();
-        
+
         return response()->json(['message' => 'User has been deleted successfully'], 204);
     }
 
@@ -116,5 +116,14 @@ class EmployeeController extends Controller
         $employee->password =  Hash::make($request->password);
         $employee->save();
         return response()->json(['message' => 'password changed']);
+    }
+
+
+    public function getEmployeeProducts(string $id)
+    {
+        $employee = User::findOrFail($id);
+        $products = $employee->product;
+        $count = $products->count();
+        return response()->json(['عدد المنتجات' => $count, 'المنتجات' => $products], 200);
     }
 }

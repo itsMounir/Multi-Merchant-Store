@@ -29,6 +29,8 @@ class BillFactory extends Factory
             'supplier_id' => fake()->randomElement($suppliers),
             'market_note' => fake()->paragraph(1),
             'has_additional_cost' => fake()->randomElement([0, 1]),
+            'created_at'=>fake()->date(),
+            'updated_at'=>fake()->date(),
         ];
     }
 }

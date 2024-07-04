@@ -19,7 +19,6 @@ class DistributionLocation extends Model
     protected $fillable = [
         'supplier_id',
         'to_city_id',
-        'min_bill_price',
     ];
 
 

@@ -13,7 +13,8 @@ class CityPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasrole(['data_entry','admin']) ;
+        return true;
+        // return $user->hasrole(['data_entry','admin']) ;
     }
 
     /**
@@ -21,7 +22,8 @@ class CityPolicy
      */
     public function view(User $user): bool
     {
-        return $user->hasrole(['data_entry','admin']);
+       return true;
+        // return $user->hasrole(['data_entry','admin']) ;
     }
 
     /**
