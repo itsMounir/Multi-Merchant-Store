@@ -5,11 +5,12 @@ namespace App\Http\Controllers\Api\V1\Users;
 use App\Http\Controllers\Controller;
 use App\Models\Bill;
 use App\Models\Supplier;
-use App\Services\MobileNotificationServices;
+use App\Traits\FirebaseNotification;
 use Illuminate\Http\Request;
 
 class BillsController extends Controller
 {
+    use FirebaseNotification;
 
     /**
      * To accept a new bill
@@ -29,18 +30,13 @@ class BillsController extends Controller
                 return response()->json(['message' => 'you can`t accept this bill... it is alredy accepted or canceled'], 422);
             $bill->status = "جديد";
             $bill->save();
-            /*$notification = new MobileNotificationServices;
+
+            // send notifications
             $marketDeviceToken = $bill->market->deviceToken;
             $supplierDeviceToken = $bill->supplier->deviceToken;
 
-            $marketNotiTitle = "الموفراتي";
-            $marketNotiBody = "تم قبول فاتورتك";
-
-            $supplierNotiTitle = "الموفراتي";
-            $supplierNotiBody = "لديك فاتورة جديدة";
-
-            $notification->sendNotification($marketDeviceToken, $title, $body);
-            $notification->sendNotification($supplierDeviceToken, $title, $body);*/
+            $this->sendNotification($marketDeviceToken, 'الموفراتي', 'تم قبول فاتورتك');
+            $this->sendNotification($supplierDeviceToken, 'الموفراتي', 'لديك فاتورة جديدة');
 
             return response()->json(['messge' => 'Bill Accepted', 'bill' => $bill], 200);
         } catch (\Exception $e) {

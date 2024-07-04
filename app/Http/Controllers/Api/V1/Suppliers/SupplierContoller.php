@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\V1\Suppliers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Traits\Responses;
-use App\Services\MobileNotificationServices;
 use App\Models\{
     Supplier,
     Product,
@@ -36,11 +35,12 @@ use App\Http\Requests\Api\V1\Suppliers\{
     UpdateName,
     AddDiscountRequest
 };
+use App\Traits\FirebaseNotification;
 
 class SupplierContoller extends Controller
 {
 
-    use Responses;
+    use Responses , FirebaseNotification;
     public function index(Request $request){
         $supplier = Auth::user();
         if (!$supplier) {
@@ -140,7 +140,7 @@ class SupplierContoller extends Controller
 
     public function add_Discount(AddDiscountRequest $request)
     {
-        $notification=new MobileNotificationServices;
+       // $notification=new MobileNotificationServices;
         $supplier = Auth::user();
 
         foreach ($request->input('discount') as $offerData) {
@@ -150,7 +150,7 @@ class SupplierContoller extends Controller
         Notification::send($marketsToNotify, new DiscountAdded($supplier->append('category_name','city_name')));
         foreach ($marketsToNotify as $market) {
 
-            $notification->sendNotification($market->deviceToken,"خصم جديد","تم اضافة خصم من قبل ". $supplier->store_name . ".");
+            $this->sendNotification($market->deviceToken,"خصم جديد","تم اضافة خصم من قبل ". $supplier->store_name . ".");
         }
         return $this->sudResponse('تم اضافة خصم بنجاح');
     }

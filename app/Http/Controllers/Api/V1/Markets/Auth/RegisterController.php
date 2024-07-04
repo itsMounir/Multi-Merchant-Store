@@ -13,6 +13,7 @@ use App\Models\{
 use App\Notifications\NewAccount;
 use App\Notifications\verfication_code;
 use App\Http\Controllers\Controller;
+use App\Traits\FirebaseNotification;
 use App\Traits\Images;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\Notification;
 
 class RegisterController extends Controller
 {
+    use FirebaseNotification;
     public function create(Request $request)
     {
         $cities = City::whereNull('parent_id')->with('childrens')->get();
@@ -58,10 +60,10 @@ class RegisterController extends Controller
             DB::afterCommit(function () use ($supervisor, $market) {
                 Notification::send($supervisor, new NewAccount($market, 'market'));
             });
-            /*
-            $notification = new MobileNotificationServices;
-            $notification->subscribeToTopic($market->deviceToken,'market');
-            */
+            
+            //Subsicribe To Market Topic
+            //$this->subscribeToTopic($market->deviceToken,'market');
+            
             return response()->json([
                 'message' => '.تم إنشاء الحساب بنجاح، يرجى انتظار تأكيده من الادمن',
                 'access_token' => $accessToken->plainTextToken,
