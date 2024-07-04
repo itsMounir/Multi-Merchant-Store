@@ -15,15 +15,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
-
-//Route::get('noti',[UsersController::class , 'notification']);
-
 //  Admin Section
 include __DIR__ . '/Developers/Users/Auth.php';
 include __DIR__ . '/Developers/Users/Market.php';

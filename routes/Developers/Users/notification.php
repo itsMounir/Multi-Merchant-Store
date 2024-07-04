@@ -19,4 +19,7 @@ Route::prefix('users/notification')->middleware([
         Route::put('mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
         Route::delete('delete/{id}', [NotificationController::class, 'destroy']);
     });
+
+    Route::post('market/send/{id}',[NotificationController::class,'sendNotificationToMarket']);
+    Route::post('supplier/send/{id}',[NotificationController::class,'sendNotificationToSupplier']);
 });
