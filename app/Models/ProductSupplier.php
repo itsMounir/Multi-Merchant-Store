@@ -29,6 +29,7 @@ class ProductSupplier extends Model
         'offer_price',
         'max_offer_quantity',
         'offer_expires_at',
+       // 'quantity',
     ];
 
 
@@ -77,6 +78,7 @@ class ProductSupplier extends Model
                     'product_id' => $productSupplier->product_id,
                     'id' => $productSupplier->ID,
                     'price' => $productSupplier->price,
+                   // 'quantity'=>$productSupplier->quantity,
                     'has_offer' => $productSupplier->has_offer,
                     'offer_price' => $productSupplier->offer_price,
                     'max_offer_quantity' => $productSupplier->max_offer_quantity,
