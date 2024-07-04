@@ -54,10 +54,7 @@ class Bill extends Model
 
     public function getAdditionalPriceAttribute()
     {
-
-
         return $this->has_additional_cost ? 5 : 0;
-
     }
 
     public function getWaffarnalakAttribute()
