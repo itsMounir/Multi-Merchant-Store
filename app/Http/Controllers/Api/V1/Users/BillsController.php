@@ -62,18 +62,11 @@ class BillsController extends Controller
                 return response()->json(['message' => 'you can`t cancel this bill... it is alredy accepted or canceled'], 422);
             $bill->status = "ملغية";
             $bill->save();
-            /*$notification = new MobileNotificationServices;
+
+            //send notification to market
             $marketDeviceToken = $bill->market->deviceToken;
-            $supplierDeviceToken = $bill->supplier->deviceToken;
+            $this->sendNotification($marketDeviceToken, 'الموفراتي', 'عذراً, تم رفض فاتورتك');
 
-            $marketNotiTitle = "الموفراتي";
-            $marketNotiBody = "تم قبول فاتورتك";
-
-            $supplierNotiTitle = "الموفراتي";
-            $supplierNotiBody = "لديك فاتورة جديدة";
-
-            $notification->sendNotification($marketDeviceToken, $title, $body);
-            $notification->sendNotification($supplierDeviceToken, $title, $body);*/
             return response()->json(['messgae' => 'Bill canceled', 'bill' => $bill], 200);
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), 500);
