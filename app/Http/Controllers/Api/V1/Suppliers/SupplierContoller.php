@@ -142,7 +142,7 @@ class SupplierContoller extends Controller
     {
         $notification=new MobileNotificationServices;
         $supplier = Auth::user();
-       
+
         foreach ($request->input('discount') as $offerData) {
             $createdDiscount = $supplier->goals()->create($offerData);
         }

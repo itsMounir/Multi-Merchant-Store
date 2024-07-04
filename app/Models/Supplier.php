@@ -35,7 +35,7 @@ class Supplier extends Authenticatable
         'status',
         'supplier_category_id',
         'delivery_duration',
-        'min_bill_price',
+       // 'min_bill_price',
         'min_selling_quantity',
         'location_details',
         'city_id',
@@ -149,7 +149,7 @@ class Supplier extends Authenticatable
         return $this->belongsToMany(Product::class, 'product_supplier')
             ->withPivot(
                 'id',
-               // 'quantity',
+                //'quantity',
                 'price',
                 'has_offer',
                 'offer_price',
@@ -235,6 +235,10 @@ class Supplier extends Authenticatable
 
         return $notifications->values();
 
+    }
+
+    public function count_product(){
+        return $this->productSuppliers()->where('is_available','1')->count();
     }
 
 }
