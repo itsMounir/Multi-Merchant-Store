@@ -29,7 +29,7 @@ class ProductSupplier extends Model
         'offer_price',
         'max_offer_quantity',
         'offer_expires_at',
-        'quantity',
+       // 'quantity',
     ];
 
 
@@ -48,7 +48,6 @@ class ProductSupplier extends Model
     {
         return $this->supplier()->pluck('store_name')->first();
     }
-
 
 
     public static function search_Product($supplierId, $productName, $is_available)
@@ -79,6 +78,7 @@ class ProductSupplier extends Model
                     'product_id' => $productSupplier->product_id,
                     'id' => $productSupplier->ID,
                     'price' => $productSupplier->price,
+                   // 'quantity'=>$productSupplier->quantity,
                     'has_offer' => $productSupplier->has_offer,
                     'offer_price' => $productSupplier->offer_price,
                     'max_offer_quantity' => $productSupplier->max_offer_quantity,
@@ -91,10 +91,4 @@ class ProductSupplier extends Model
 
         return $response->toArray();
     }
-
-
-
-
-
-
 }

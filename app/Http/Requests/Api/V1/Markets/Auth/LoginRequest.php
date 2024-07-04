@@ -25,6 +25,7 @@ class LoginRequest extends FormRequest
         return [
             'phone_number' => ['required','exists:markets,phone_number',new EgyptPhoneNumber],
             'password' => 'required',
+            'deviceToken'=>'nullable',
         ];
     }
 }

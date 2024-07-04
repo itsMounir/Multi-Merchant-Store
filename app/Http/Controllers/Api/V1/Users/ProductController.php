@@ -8,8 +8,10 @@ use App\Http\Requests\Api\V1\Users\ProductUpdaterequest;
 use App\Traits\Images;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -24,7 +26,7 @@ class ProductController extends Controller
      */
     public function filterAndSearch(Request $request): JsonResponse
     {
-        $this->authorize('viewAny',Product::class);
+        $this->authorize('viewAny', Product::class);
         try {
             $category = $request->query('category');
             $name = $request->query('name');
@@ -60,7 +62,7 @@ class ProductController extends Controller
         if ($category)
             $products = Product::where('product_category_id', $category)->paginate(20, ['*'], 'p');
         else {
-            $products = Product::paginate(20,['*'],'p');
+            $products = Product::paginate(20, ['*'], 'p');
         }
         return response()->json($products, 200);
     }
@@ -85,7 +87,7 @@ class ProductController extends Controller
     {
         $product = Product::with('category:id,name')->findOrFail($id);
         $this->authorize('view', $product);
-        
+
         return response()->json($product, 200);
     }
     /**
@@ -96,10 +98,10 @@ class ProductController extends Controller
     public function store(ProductRequest $request)
     {
         $this->authorize('create', Product::class);
-
+        $user = User::find(Auth::user()->id);
         DB::beginTransaction();
         try {
-            $product = Product::create($request->all());
+            $product = $user->product()->create($request->all());
             if ($request->hasFile('image')) {
                 $request_image = $request->file('image');
                 $image_name = $this->setImagesName([$request_image])[0];
@@ -137,7 +139,6 @@ class ProductController extends Controller
                 if ($old_image && Storage::exists('public/Product' . $old_image->url)) {
                     Storage::delete('public/Product' . $old_image->url);
                 }
-
                 $image_name = $this->setImagesName([$request_image])[0];
                 $product->image()->updateOrCreate(
                     ['imageable_id' => $product->id],

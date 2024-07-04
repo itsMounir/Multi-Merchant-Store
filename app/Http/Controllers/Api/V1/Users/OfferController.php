@@ -6,26 +6,24 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Users\OfferRequest;
 use App\Models\Offer;
 use App\Models\Supplier;
-use App\Services\MobileNotificationServices;
+use App\Traits\FirebaseNotification;
 use App\Traits\Images;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class OfferController extends Controller
 {
-    use Images;
+    use Images, FirebaseNotification;
     /**
      * Display a listing of the resource.
      * @return JsonResponse
      */
     public function index()
     {
-         $this->authorize('viewAny',Offer::class);
+        $this->authorize('viewAny', Offer::class);
         $offers = Offer::all();
-        foreach ($offers as $offer) {
-            $offer->image = asset("storage/$offer->image");
-        }
         return response()->json($offers, 200);
     }
 
@@ -37,8 +35,7 @@ class OfferController extends Controller
     public function show(string $id)
     {
         $offer = Offer::findOrFail($id);
-        $this->authorize('view',$offer);
-        $offer->image = asset("storage/$offer->image");
+        $this->authorize('view', $offer);
         return response()->json($offer, 200);
     }
     /**
@@ -50,19 +47,16 @@ class OfferController extends Controller
     {
         $this->authorize('create', Offer::class);
         try {
-            $supplier = Supplier::findOrFail($request->supplire_id);
+            $supplier = Supplier::findOrFail($request->supplier_id);
             $path = $request->file('image')->store('Offer', 'public');
             $Offer = Offer::create([
                 'supplier_id' => $supplier->id,
                 'image' => $path,
             ]);
-            /** 
-             *$notification = new MobileNotificationServices;
-             *$title = "عرض جديد";
-             *$body = 'المورد' . $supplier->store_name . 'قام بإضافة عرض جديد';
-             *$notification->sendNotificationToTopic('market', $title, $body);
-             */
-            $Offer->image = asset("storage/$path");
+
+            //send notification to markets 
+            $this->sendNotificationToTopic('market', 'الموفراتي', 'عرض جديد من' . $supplier->store_name);
+
             return response()->json($Offer, 201);
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), 500);
@@ -102,9 +96,6 @@ class OfferController extends Controller
             ]);
 
             DB::commit();
-
-            $offer->image = asset("storage/$path");
-            $offer->image = asset("storage/$path");
             return response()->json($offer, 200);
         } catch (\Exception $e) {
             DB::rollback();

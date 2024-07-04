@@ -106,11 +106,13 @@ class BillsController extends Controller
      */
     public function update(UpdateBillRequest $request, Bill $bill)
     {
+        
+
         return DB::transaction(function () use ($request, $bill) {
             $bill->products()->detach();
             $updated_bill = $request->all();
             $market = Auth::user();
-            $supplier = Supplier::find($request->supplier_id);
+            $supplier = Supplier::find($request->supplier_id)->append(['min_bill_price', 'image']);
 
             $total_price = $this->billsServices->calculatePrice($updated_bill, $supplier);
 

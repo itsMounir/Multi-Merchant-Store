@@ -35,7 +35,7 @@ class Supplier extends Authenticatable
         'status',
         'supplier_category_id',
         'delivery_duration',
-        'min_bill_price',
+       // 'min_bill_price',
         'min_selling_quantity',
         'location_details',
         'city_id',
@@ -75,6 +75,12 @@ class Supplier extends Authenticatable
             return $query->where('to_city_id', Auth::user()->city_id);
         });
     }
+
+    public function getMinBillPriceAttribute()
+    {
+        return $this->distributionLocations()->where('to_city_id', Auth::user()->city_id)->first()->min_bill_price;
+    }
+
 
 
     public function getCategoryNameAttribute()
@@ -143,6 +149,7 @@ class Supplier extends Authenticatable
         return $this->belongsToMany(Product::class, 'product_supplier')
             ->withPivot(
                 'id',
+                //'quantity',
                 'price',
                 'has_offer',
                 'offer_price',
@@ -228,6 +235,10 @@ class Supplier extends Authenticatable
 
         return $notifications->values();
 
+    }
+
+    public function count_product(){
+        return $this->productSuppliers()->where('is_available','1')->count();
     }
 
 }

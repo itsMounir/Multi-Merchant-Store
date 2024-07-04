@@ -30,7 +30,6 @@ class Offer extends Model
     //     );
     // }
 
-
     public function supplier()
     {
         return $this->belongsTo(Supplier::class, 'supplier_id');

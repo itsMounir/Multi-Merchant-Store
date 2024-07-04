@@ -21,16 +21,10 @@ class AuthController extends Controller
 
         if (!Auth::guard('web')->attempt($credentials)) {
 
-            return response()->json(['message' => 'your provided credentials cannot be verified.'], 401);
+            return response()->json(['message' => 'يرجى التحقق من كلمة المرور أو رقم الهاتف'], 401);
         }
         $user = User::find(Auth::guard('web')->user()->id);
-        /*
-        $token = $user->createToken('access_token', ['role:user'])->plainTextToken;
 
-        return response()->json([
-            'message' => 'User logged in successfully.',
-            'access_token' => $token,
-        ]);*/
         $accessToken = $user->createToken(
             'access_token',
             [TokenAbility::ACCESS_API->value, 'role:user'],
@@ -54,7 +48,6 @@ class AuthController extends Controller
     public function destroy()
     {
         $user = User::find(Auth::user()->id);
-        //Auth::user()->currentAccessToken()->delete();
         $user->tokens()->delete();
         return response()->json(['message' => 'Logged out successfully.']);
     }
@@ -71,7 +64,7 @@ class AuthController extends Controller
 
         $refreshToken = $user->createToken(
             'refresh_token',
-            [TokenAbility::ISSUE_ACCESS_TOKEN->value],
+            TokenAbility::ISSUE_ACCESS_TOKEN->value,
             Carbon::now()->addMinutes(config('sanctum.rt_expiration'))
         );
         return response([

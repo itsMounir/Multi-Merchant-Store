@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Users\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,12 +15,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
 //  Admin Section
 include __DIR__ . '/Developers/Users/Auth.php';
 include __DIR__ . '/Developers/Users/Market.php';
@@ -29,6 +24,7 @@ include __DIR__ . '/Developers/Users/Offers.php';
 include __DIR__ . '/Developers/Users/Products.php';
 include __DIR__ . '/Developers/Users/Cities.php';
 include __DIR__ . '/Developers/Users/Statistics.php';
+include __DIR__ . '/Developers/Users/notification.php';
 
 // Supplier Section
 include __DIR__ . '/Developers/Suppliers/Auth.php';

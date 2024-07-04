@@ -136,7 +136,7 @@
         </div>
         <div class="d-flex justify-content-between mt-4 mb-2 total-section">
             <h4>إجمالي الفاتورة</h4>
-            <h5 id="total-price">{{ $bill['total_price'] }} جـ</h5>
+            <h5 id="total-price">{{ $bill['total_price_after_discount'] }} جـ</h5>
         </div>
         <div class="text-right border border-2 p-2 rounded-2 savings-message" id="savings-message">
             🥳الموفراتي وفر لك {{ $bill['waffarnalak'] }} جـ
