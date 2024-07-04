@@ -29,7 +29,6 @@ class ProductsController extends Controller
                 'products.discription',
                 'suppliers.id as supplier_id',
                 'suppliers.store_name',
-                // 'suppliers.min_bill_price',
                 'suppliers.min_selling_quantity',
                 'suppliers.delivery_duration',
                 'product_supplier.price',
@@ -41,30 +40,10 @@ class ProductsController extends Controller
             ->distinct() // Ensure unique results
             ->paginate(10)
             ->toArray();
-        // // Filter products where suppliers array is empty
-        // $filteredProducts = array_filter($products['data'], function ($product) {
-        //     return empty($product['suppliers']) == false;
-        // });
 
         return response()->json([
             'products' => $products
         ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
     }
 
     /**
@@ -73,29 +52,5 @@ class ProductsController extends Controller
     public function show(Product $product): JsonResponse
     {
         return $this->indexOrShowResponse('product', $product);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Product $product)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Product $product)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Product $product)
-    {
-        //
     }
 }

@@ -24,8 +24,6 @@ class BillsServices
 {
     /**
      * all about bill's calculations and creation.
-     *
-     * Note : if any requirement broke down the bill won't be created and it will retutn an empty string.
      */
     public function process($bill, $market)
     {
@@ -36,8 +34,6 @@ class BillsServices
         }
 
         $total_price = $this->calculatePrice($bill, $supplier);
-        // might be -1 if any supplier requirement broke down ,
-        // then the checkSupplierRequirements will fail and empty string will be returned.
 
         $this->checkSupplierRequirements($supplier, $bill, $total_price);
 
