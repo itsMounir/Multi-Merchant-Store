@@ -38,72 +38,55 @@ class ProductSupplier extends Model
         'created_at' => 'date:Y-m-d',
     ];*/
 
-     public function bills() : BelongsToMany {
-         return $this->belongsToMany(Bill::class);
-     }
+    public function bills(): BelongsToMany
+    {
+        return $this->belongsToMany(Bill::class);
+    }
+
+    public function getSupplierStoreNameAttribute()
+    {
+        return $this->supplier()->pluck('store_name')->first();
+    }
 
 
-   public static function search_Product($supplierId, $productName, $is_available)
-{
-    $productSuppliers = self::where('supplier_id', $supplierId)
-                             ->where('is_available', $is_available)
-                             ->join('products', 'product_supplier.product_id', '=', 'products.id')
-                             ->where('products.name', 'like', '%' . $productName . '%')
-                             ->select('product_supplier.id as ID', 'product_supplier.*', 'products.*')
-                             ->get();
+    public static function search_Product($supplierId, $productName, $is_available)
+    {
+        $productSuppliers = self::where('supplier_id', $supplierId)
+            ->where('is_available', $is_available)
+            ->join('products', 'product_supplier.product_id', '=', 'products.id')
+            ->where('products.name', 'like', '%' . $productName . '%')
+            ->select('product_supplier.id as ID', 'product_supplier.*', 'products.*')
+            ->get();
 
-    $response = $productSuppliers->map(function ($productSupplier) {
-       
-        $product = Product::find($productSupplier->product_id);
-        if (!$product) {
-            return null; 
-        }
+        $response = $productSuppliers->map(function ($productSupplier) {
+            $product = Product::find($productSupplier->product_id);
+            $productCategory = ProductCategory::find($productSupplier->product_category_id);
+            return [
+                'id' => $productSupplier->product_id,
+                'product_category_id' => $productSupplier->product_category_id,
+                'name' => $product->name,
+                'discription' => $product->discription,
+                'size' => $product->size,
+                'size_of' => $product->size_of,
+                'created_at' => $product->created_at,
+                'updated_at' => $product->updated_at,
+                'image' => $product->getImageAttribute(),
+                'product_category' => $productCategory->name,
+                'pivot' => [
+                    'supplier_id' => $productSupplier->supplier_id,
+                    'product_id' => $productSupplier->product_id,
+                    'id' => $productSupplier->ID,
+                    'price' => $productSupplier->price,
+                    'has_offer' => $productSupplier->has_offer,
+                    'offer_price' => $productSupplier->offer_price,
+                    'max_offer_quantity' => $productSupplier->max_offer_quantity,
+                    'offer_expires_at' => $productSupplier->offer_expires_at,
+                    'max_selling_quantity' => $productSupplier->max_selling_quantity,
+                    'is_available' => $productSupplier->is_available
+                ]
+            ];
+        });
 
-        
-        $productCategory = ProductCategory::find($productSupplier->product_category_id);
-        if (!$productCategory) {
-            return null; 
-        }
-
-        return [
-             'id' => $productSupplier->product_id,
-                 'product_category_id' => $productSupplier->product_category_id,
-                 'name' => $product->name,
-                 'discription' => $product->discription,
-                 'size' => $product->size,
-                 'size_of' => $product->size_of,
-                 'created_at' => $product->created_at,
-                 'updated_at' => $product->updated_at,
-                 'image' => $product->getImageAttribute(),
-                 'product_category' =>$productCategory->name ,
-            
-            'pivot' => [
-                     'supplier_id' => $productSupplier->supplier_id,
-                     'product_id' => $productSupplier->product_id,
-                     'id'=>$productSupplier->ID,
-                     'price' => $productSupplier->price,
-                     'has_offer' => $productSupplier->has_offer,
-                     'offer_price' => $productSupplier->offer_price,
-                     'max_offer_quantity' => $productSupplier->max_offer_quantity,
-                     'offer_expires_at' => $productSupplier->offer_expires_at,
-                     'max_selling_quantity' => $productSupplier->max_selling_quantity,
-                     'is_available' => $productSupplier->is_available
-                 ]
-        ];
-    });
-
-    
-  $filteredResponse = array_filter($response->toArray(), function($value) {
-        return !is_null($value);
-    });
-
-    
-    return array_values($filteredResponse);
-}
-
-
-
-
-
-
+        return $response->toArray();
+    }
 }

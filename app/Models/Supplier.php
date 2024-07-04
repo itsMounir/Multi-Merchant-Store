@@ -76,13 +76,30 @@ class Supplier extends Authenticatable
         });
     }
 
+
+    public function getCategoryNameAttribute()
+    {
+        return $this->supplierCategory()->pluck('type')->first();
+    }
+
+    public function getCityNameAttribute()
+    {
+        return $this->city()->pluck('name')->first();
+    }
+
+    public function getImageAttribute()
+    {
+        return asset('storage/Supplier/' . $this->image()->pluck('url')->first());
+    }
+
+
     public function getImagesAttribute()
     {
         return $this->images()
             ->get(['imageable_type', 'url'])
             ->map(function ($image) {
                 $dir = explode('\\', $image->imageable_type)[2];
-                unset ($image->imageable_type);
+                unset($image->imageable_type);
                 return asset("storage/$dir") . '/' . $image->url;
             });
     }
@@ -126,6 +143,7 @@ class Supplier extends Authenticatable
         return $this->belongsToMany(Product::class, 'product_supplier')
             ->withPivot(
                 'id',
+               // 'quantity',
                 'price',
                 'has_offer',
                 'offer_price',
@@ -200,17 +218,17 @@ class Supplier extends Authenticatable
     }
 
     /**
- * Get the recent notifications for the supplier.
- *
- * @param int $count Number of notifications to retrieve
- */
-public function getNotifications()
-{
+     * Get the recent notifications for the supplier.
+     *
+     * @param int $count Number of notifications to retrieve
+     */
+    public function getNotifications()
+    {
 
-    $notifications = $this->notifications()->whereIn('type', ['new-bill', 'preparing-bill'])->whereNull('read_at')->get();
+        $notifications = $this->notifications()->whereIn('type', ['new-bill', 'preparing-bill'])->whereNull('read_at')->get();
 
-    return $notifications->values();
+        return $notifications->values();
 
-}
+    }
 
 }

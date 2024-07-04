@@ -35,7 +35,7 @@ class DiscountAdded extends Notification
     public function toArray($notifiable)
     {
         return [
-            "supplier_id"=>$this->supplier->id,
+            "supplier"=>$this->supplier,
             'message' => "{$this->supplier->first_name} {$this->supplier->last_name} قام بإضافة خصم جديد."
         ];
     }

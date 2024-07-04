@@ -43,7 +43,7 @@ class BillController extends Controller
             $productIds = $bill->products->pluck('id');
             $bill->load([
                 'products'
-            ]);
+            ])->append('total_price_after_discount');
             $results[] = $bill;
         }
 
@@ -67,7 +67,7 @@ class BillController extends Controller
         $productIds = $bill->products->pluck('id');
         $bill->load([
             'products'
-        ]);
+        ])->append('total_price_after_discount');
 
         return $this->indexOrShowResponse('body', $bill);
     }
@@ -76,8 +76,6 @@ class BillController extends Controller
 
     public function update(UpdateBillRequest $request, Bill $bill)
     {
-
-
         return DB::transaction(function () use ($request, $bill) {
             if ($bill->status != 'جديد') {
 
@@ -89,7 +87,8 @@ class BillController extends Controller
             $billService = new BillsServices;
 
             $total_price = $billService->calculatePriceSupplier($updated_bill, $supplier);
-            $total_price -= $billService->marketDiscount(Market::find($bill->market_id), $total_price);
+            //$total_price -= $billService->marketDiscount(Market::find($bill->market_id), $total_price);
+
             $mario=$billService-> checkProductAvailability($updated_bill,$supplier,$bill);
             if ($mario) {
                 return $this->sudResponse($mario, 200);
@@ -182,7 +181,7 @@ class BillController extends Controller
             'recieved_price' => 'required',
             ]);
             if ($request['recieved_price'] > $bill->total_price) {
-                return $this->sudResponse('سعر الاستلام يجب أن يكون اقل أو يساوي سعر الفاتورة');
+                return $this->sudResponse('سعر الاستلام يجب أن يكون اقل أو يساوي اجمالي الفاتورة');
             }
         $bill->update([
             'status'=>'تم التوصيل',
@@ -206,6 +205,7 @@ class BillController extends Controller
         $validatedData = $request->validate([
             'rejection_reason' => 'required',
         ]);
+
         foreach ($bill->products as $product) {
             $productSupplier = $product->suppliers()->where('supplier_id', $supplier->id)->first();
             if ($productSupplier) {
@@ -213,6 +213,7 @@ class BillController extends Controller
                 if ($productSupplier->pivot->is_available == 0) {
                     $productSupplier->pivot->is_available = 1;
                 }
+                
                 $productSupplier->pivot->save();
             }
         }

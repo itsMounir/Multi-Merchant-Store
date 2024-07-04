@@ -89,14 +89,14 @@ class Handler extends ExceptionHandler
             ], $e->getCode());
         }
 
-        if ($e instanceof PusherException) {
-            // Log the Pusher exception
-            Log::error('PusherException: ' . $e->getMessage());
-            // Return an appropriate response (e.g., 500 Internal Server Error)
-            return response()->json([
-                'message' => '.حدث خطأ ما، حاول مرة أخرى لاحقًا'
-            ], 500);
-        }
+        // if ($e instanceof PusherException) {
+        //     // Log the Pusher exception
+        //     Log::error('PusherException: ' . $e->getMessage());
+        //     // Return an appropriate response (e.g., 500 Internal Server Error)
+        //     return response()->json([
+        //         'message' => '.حدث خطأ ما، حاول مرة أخرى لاحقًا'
+        //     ], 500);
+        // }
 
         if ($e instanceof ConnectionException) {
             // Log the queue connection exception

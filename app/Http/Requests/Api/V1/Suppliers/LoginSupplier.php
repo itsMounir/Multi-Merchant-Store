@@ -27,6 +27,7 @@ class LoginSupplier extends FormRequest
         return [
             'phone_number' => ['required','string','exists:suppliers,phone_number',new EgyptPhoneNumber],
             'password' => 'required|string|min:6',
+            'deviceToken'=>'nullable',
         ];
     }
 
