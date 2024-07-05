@@ -40,7 +40,6 @@ Route::prefix('users/auth/')->group(function () {
 
 Route::prefix('users/employee')->middleware([
     'auth:sanctum',
-    'active',
     'type.user',
     'ability:' . TokenAbility::ACCESS_API->value
 ])->group(function () {

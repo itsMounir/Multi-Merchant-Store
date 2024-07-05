@@ -16,16 +16,16 @@ use App\Notifications\verfication_code;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\RegisterRequest;
 use App\Models\User;
+use App\Traits\FirebaseNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
-use App\Services\MobileNotificationServices;
 
 class RegisterController extends Controller
 {
-    use Images;
+    use Images , FirebaseNotification;
     public function create(RegisterSupplier $request)
     {
         return DB::transaction(function () use ($request) {
@@ -64,10 +64,9 @@ class RegisterController extends Controller
                 [TokenAbility::ISSUE_ACCESS_TOKEN->value],
                 Carbon::now()->addMinutes(config('sanctum.rt_expiration'))
             );
-
-
-            //$notification = new MobileNotificationServices;
-           // $notification->subscribeToTopic($supplier->deviceToken,'supplier');
+            
+            //Subsicribe To Supplier Topic
+           // $this->subscribeToTopic($supplier->deviceToken,'supplier');
 
             return response()->json([
                 'message' => '.تم إنشاء الحساب بنجاح، يرجى انتظار التأكيد من الادمن',

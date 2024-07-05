@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Users\CityController;
 use App\Http\Controllers\Api\V1\Users\ProductController;
+use App\Http\Controllers\Api\V1\Users\UsersController;
 use Illuminate\Support\Facades\Route;
 use App\Services\MobileNotificationServices;
 /*
@@ -15,8 +16,6 @@ use App\Services\MobileNotificationServices;
 |
 */
 
-Route::get('noti',function (){
-
-    $noti = new MobileNotificationServices;
-    $noti->sendNotification('dF4ervL2QYe7-AfgOD1KA2:APA91bEeeatGUCUyUlra4IU2P25qQLdXJrbIpTVDIsJeMYf_NDJsNemjqEd3VB1bMjKl-GSMstvLU_j96LgkrYSEhAc3dOpdK-NZuCzMKbdH-UBECzd4wHQXuUVpIf5mjDPSAB1bBOcA','notificatoin from backend','باك عم الجميع');
+Route::get('/', function () {
+    return "welcom";
 });
