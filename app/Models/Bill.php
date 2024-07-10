@@ -37,7 +37,7 @@ class Bill extends Model
     protected $hidden = [
         'deleted_at'
     ];
-        //protected $dates = ['created_at'];
+    //protected $dates = ['created_at'];
 
     /*public function getCreatedAtAttribute($value)
     {
@@ -47,11 +47,15 @@ class Bill extends Model
 
     protected $dates = ['created_at'];
 
-    public function getCreatedAtAttribute($value)
-    {
-        return Carbon::parse($value)->format('Y-m-d');
-    }
+    // public function getCreatedAtAttribute($value)
+    // {
+    //     return Carbon::parse($value)->format('Y-m-d');
+    // }
 
+    public function getCreatedAtFormattedAttribute()
+    {
+        return Carbon::parse($this->created_at)->format('Y-m-d');
+    }
     public function getAdditionalPriceAttribute()
     {
         return $this->has_additional_cost ? 5 : 0;
@@ -102,7 +106,14 @@ class Bill extends Model
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class)
-            ->withPivot('quantity');
+            ->withPivot([
+                'quantity',
+                'buying_price',
+                'max_selling_quantity',
+                'has_offer',
+                'offer_buying_price',
+                'max_offer_quantity'
+            ]);
     }
 
 
