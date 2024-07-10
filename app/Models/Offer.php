@@ -16,6 +16,12 @@ class Offer extends Model
     ];
 
     protected $dates = ['created_at'];
+
+    /**
+     * The accessors to append to the model's array form.
+     * 
+     * @var array<int, string>
+     */
     protected $appends = ['supplier_name'];
 
     protected $hidden = [
@@ -39,6 +45,4 @@ class Offer extends Model
     {
         return $this->supplier()->pluck('store_name')->first();
     }
-
-
 }

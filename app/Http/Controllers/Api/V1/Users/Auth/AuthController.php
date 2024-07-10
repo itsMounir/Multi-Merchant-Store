@@ -24,6 +24,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'يرجى التحقق من كلمة المرور أو رقم الهاتف'], 401);
         }
         $user = User::find(Auth::guard('web')->user()->id);
+        $user->tokens()->delete();
 
         $accessToken = $user->createToken(
             'access_token',
@@ -36,7 +37,7 @@ class AuthController extends Controller
             [TokenAbility::ISSUE_ACCESS_TOKEN->value],
             Carbon::now()->addMinutes(config('sanctum.rt_expiration'))
         );
-
+        $user->load('roles');
         return response()->json([
             'message' => 'تم تسجيل الدخول بنجاح',
             'access_token' => $accessToken->plainTextToken,
