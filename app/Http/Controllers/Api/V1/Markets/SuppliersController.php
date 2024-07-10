@@ -13,7 +13,8 @@ use App\Http\Controllers\Controller;
 use App\Models\{
     Offer,
     ProductCategory,
-    Supplier
+    Supplier,
+    Product
 };
 
 use Illuminate\Http\JsonResponse;
@@ -56,9 +57,25 @@ class SuppliersController extends Controller
         throw_if($supplier->status != 'نشط', new InActiveAccountException($supplier->store_name));
         $supplier->append(['min_bill_price', 'image']);
 
-        $products = $productsFilters->applyFilters($supplier->availableProducts()->getQuery())->get();
-        $categories_ids = [];
 
+        $products = $productsFilters->applyFilters(
+            Product::query()->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
+                ->where('product_supplier.supplier_id', $supplier->id)
+                ->where('product_supplier.is_available', true)
+        )
+            ->select([
+                'products.*',
+                'product_supplier.price',
+                //'product_supplier.is_available',
+                'product_supplier.max_selling_quantity',
+                'product_supplier.has_offer',
+                'product_supplier.offer_price',
+                'product_supplier.max_offer_quantity',
+                'product_supplier.offer_expires_at'
+            ])
+            ->get();
+
+        $categories_ids = [];
         foreach ($products as $product) {
             $categoryId = $product->product_category_id;
 

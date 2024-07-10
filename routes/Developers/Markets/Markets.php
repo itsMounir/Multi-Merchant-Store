@@ -31,7 +31,7 @@ Route::prefix('markets/')->middleware([
     Route::apiResource('products', ProductsController::class)->only(['index', 'show']);
 
     // Routes for Bills-related actions
-    Route::resource('bills', BillsController::class)->except('edit');
+    Route::resource('bills', BillsController::class)->except(['edit', 'show']);
 
     // Routes for show the achieved goals by authenticated market
     Route::get('goals', GoalsController::class);
