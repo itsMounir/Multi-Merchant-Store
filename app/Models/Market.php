@@ -64,6 +64,11 @@ class Market extends Authenticatable
         'password' => 'hashed',
     ];
 
+    /**
+     * The accessors to append to the model's array form.
+     * 
+     * @var array<int, string>
+     */
     protected $appends = ['created_from', 'city_name', 'category_name'];
 
     // created from attribute
