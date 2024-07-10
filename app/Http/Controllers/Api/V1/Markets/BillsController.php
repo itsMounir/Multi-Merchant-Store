@@ -81,16 +81,16 @@ class BillsController extends Controller
      */
     public function show(Bill $bill)
     {
-        $productIds = $bill->products->pluck('id');
+        // $productIds = $bill->products->pluck('id');
 
-        $bill = $bill->with([
-            'products',
-            'supplier.products' => function ($query) use ($productIds) {
-                return $query->whereIn('products.id', $productIds)->orderBy('products.id');
-            }
-        ])->where('id', $bill->id)->get()->append('total_price_after_discount');
+        // $bill = $bill->with([
+        //     'products',
+        //     'supplier.products' => function ($query) use ($productIds) {
+        //         return $query->whereIn('products.id', $productIds)->orderBy('products.id');
+        //     }
+        // ])->where('id', $bill->id)->get()->append('total_price_after_discount');
 
-        return $this->indexOrShowResponse('bill', $bill);
+        // return $this->indexOrShowResponse('bill', $bill);
     }
 
     /**
@@ -106,7 +106,7 @@ class BillsController extends Controller
      */
     public function update(UpdateBillRequest $request, Bill $bill)
     {
-        
+
 
         return DB::transaction(function () use ($request, $bill) {
             $bill->products()->detach();
