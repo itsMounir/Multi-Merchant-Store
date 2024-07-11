@@ -22,10 +22,15 @@ class Goal extends Model
 
     protected $dates = ['created_at'];
 
-   /* protected $casts = [
+    /* protected $casts = [
         'created_at' => 'date:Y-m-d',
     ];*/
 
+    /**
+     * The accessors to append to the model's array form.
+     * 
+     * @var array<int, string>
+     */
     protected $appends = ['supplier_store_name'];
 
     // images attribute
@@ -40,7 +45,8 @@ class Goal extends Model
     //         });
     // }
 
-    public function getSupplierStoreNameAttribute() {
+    public function getSupplierStoreNameAttribute()
+    {
         return $this->supplier()->pluck('store_name')->first();
     }
 

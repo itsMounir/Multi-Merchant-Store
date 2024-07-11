@@ -9,6 +9,7 @@ use App\Enums\TokenAbility;
 Route::prefix('users/bills/')->middleware([
     'auth:sanctum',
     'type.user',
+    'isOnline',
     'ability:' . TokenAbility::ACCESS_API->value
 ])->group(function () {
 

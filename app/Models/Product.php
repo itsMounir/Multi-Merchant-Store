@@ -29,6 +29,11 @@ class Product extends Model
 
     protected $dates = ['created_at', 'deleted_at'];
 
+    /**
+     * The accessors to append to the model's array form.
+     * 
+     * @var array<int, string>
+     */
     protected $appends = ['image', 'product_category'];
 
     /**
@@ -63,7 +68,7 @@ class Product extends Model
     {
         return $this->belongsTo(User::class);
     }
-    
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(ProductCategory::class, 'product_category_id');

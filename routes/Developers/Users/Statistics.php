@@ -8,6 +8,7 @@ use App\Enums\TokenAbility;
 Route::prefix('users/statistic')->middleware([
     'auth:sanctum',
     'type.user',
+    'isOnline',
     'ability:' . TokenAbility::ACCESS_API->value
 ])->group(function () {
 

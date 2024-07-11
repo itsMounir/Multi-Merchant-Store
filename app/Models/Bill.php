@@ -32,6 +32,11 @@ class Bill extends Model
         'goal_discount',
     ];
 
+    /**
+     * The accessors to append to the model's array form.
+     * 
+     * @var array<int, string>
+     */
     protected $appends = ['created_at_formatted', 'payment_method', 'additional_price', 'waffarnalak', 'updatable'];
 
     protected $hidden = [
@@ -177,5 +182,4 @@ class Bill extends Model
             $query->where('store_name', 'like', '%' . $name . '%');
         })->paginate(20, ['*'], 'p');
     }
-
 }
