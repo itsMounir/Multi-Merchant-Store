@@ -58,7 +58,22 @@ class SuppliersController extends Controller
         $supplier->append(['min_bill_price', 'image']);
 
 
-        $products = $productsFilters->applyFilters(
+        $products = Product::query()->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
+                ->where('product_supplier.supplier_id', $supplier->id)
+                ->where('product_supplier.is_available', true)
+            ->select([
+                'products.*',
+                'product_supplier.price',
+                //'product_supplier.is_available',
+                'product_supplier.max_selling_quantity',
+                'product_supplier.has_offer',
+                'product_supplier.offer_price',
+                'product_supplier.max_offer_quantity',
+                'product_supplier.offer_expires_at'
+            ])
+            ->get();
+
+        $filtered_products = $productsFilters->applyFilters(
             Product::query()->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
                 ->where('product_supplier.supplier_id', $supplier->id)
                 ->where('product_supplier.is_available', true)
@@ -87,7 +102,7 @@ class SuppliersController extends Controller
         $offers = Offer::where('supplier_id', $supplier->id)->get();
         $products_with_offer = [];
         $products_without_offer = [];
-        foreach ($products as $product) {
+        foreach ($filtered_products as $product) {
             if ($product->has_offer) {
                 $products_with_offer[] = $product;
             } else {
