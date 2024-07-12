@@ -151,16 +151,14 @@ class BillsServices
                 }
             }
             if (!$exist) {
-                Log::error('Product Not Found Exception: sheeeeeeeesh');
-                throw new IncorrectBillException('product not exist for this supplier.');
+                $not_existing_product = Product::findOrFail($product['id']);
+                throw new ProductNotExistForSupplierException($not_existing_product, $supplier);
             }
             $i++;
         }
         return $total_price;
 
     }
-
-
 
     public function calculatePriceSupplier(&$bill, $supplier): float
     {
@@ -197,7 +195,8 @@ class BillsServices
                 $exist = true;
             }
             if (!$exist) {
-                throw new ProductNotExistForSupplierException($product['id'], $supplier->store_name);
+                $not_existing_product = Product::findOrFail($product['id']);
+                throw new ProductNotExistForSupplierException($not_existing_product, $supplier);
             }
             $i++;
         }

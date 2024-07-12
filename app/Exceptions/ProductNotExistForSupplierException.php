@@ -6,16 +6,15 @@ use Exception;
 
 class ProductNotExistForSupplierException extends Exception
 {
-    protected $productId;
-    protected $store_name;
+    public $product;
+    public $supplier;
 
-    public function __construct($productId, $store_name)
+    public function __construct($product, $supplier)
     {
-        $this->productId = $productId;
-        $this->store_name = $store_name;
+        $this->product = $product;
+        $this->supplier = $supplier;
 
-        $this->message = 'المنتج المحدد بالمعرف (' . $this->productId .') غير موجود للمورد المحدد (' . $this->store_name .')';
-
+        $this->message = 'عفوا ! اصبح ' . $product->name.' غير متاح الآن عند ' . $supplier->store_name .' برجاء إلغائه من الفاتورة لاستكمال الفاتورة بنجاح';
         $this->code = 400;
     }
 }
