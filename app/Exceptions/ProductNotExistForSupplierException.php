@@ -6,8 +6,8 @@ use Exception;
 
 class ProductNotExistForSupplierException extends Exception
 {
-    protected $product;
-    protected $supplier;
+    public $product;
+    public $supplier;
 
     public function __construct($product, $supplier)
     {
