@@ -20,9 +20,9 @@ class BillsController extends Controller
     public function acceptBill(String $id)
     {
         try {
-            $bill = Bill::with(['products' => function ($query) {
+            $bill = Bill::with(['market.category', 'supplier.category', 'products' => function ($query) {
                 $query->withTrashed()->with('category');
-            }, 'market.category', 'supplier.category'])->findOrFail($id);
+            }])->findOrFail($id);
 
             $this->authorize('webUpdate', $bill);
 
@@ -30,7 +30,7 @@ class BillsController extends Controller
                 return response()->json(['message' => 'you can`t accept this bill... it is alredy accepted or canceled'], 422);
             $bill->status = "جديد";
             $bill->save();
-
+            $bill->supplier->makeHidden('min_bill_price');
             // send notifications
             $marketDeviceToken = $bill->market->deviceToken;
             $supplierDeviceToken = $bill->supplier->deviceToken;
@@ -52,9 +52,9 @@ class BillsController extends Controller
     public function cancelBill($id)
     {
         try {
-            $bill = Bill::with(['products' => function ($query) {
+            $bill = Bill::with(['market.category', 'supplier.category', 'products' => function ($query) {
                 $query->withTrashed()->with('category');
-            }, 'market.category', 'supplier.category'])->findOrFail($id);
+            }])->findOrFail($id);
 
             $this->authorize('webUpdate', $bill);
 
@@ -62,7 +62,7 @@ class BillsController extends Controller
                 return response()->json(['message' => 'you can`t cancel this bill... it is alredy accepted or canceled'], 422);
             $bill->status = "ملغية";
             $bill->save();
-
+            $bill->supplier->makeHidden('min_bill_price');
             //send notification to market
             $marketDeviceToken = $bill->market->deviceToken;
             $this->sendNotification($marketDeviceToken, 'الموفراتي', 'عذراً, تم رفض فاتورتك');
@@ -79,7 +79,10 @@ class BillsController extends Controller
     public function newBills()
     {
         $this->authorize('webViewAny', Bill::class);
-        $bills = Bill::with('products.category', 'market.category', 'supplier.category')->where('status', 'انتظار')->get();
+        $bills = Bill::with('market.category', 'supplier.category', 'products.category')->where('status', 'انتظار')->get();
+        $bills->each(function ($bill) {
+            $bill->supplier->makeHidden('min_bill_price');
+        });
         return response()->json(['bills' => $bills]);
     }
 
@@ -93,13 +96,16 @@ class BillsController extends Controller
         $this->authorize('webViewAny', Bill::class);
 
         $withFee = $request->query('fee');
-        $query = Bill::query()->with(['products' => function ($query) {
+        $query = Bill::query()->with(['market.category', 'supplier.category', 'products' => function ($query) {
             $query->withTrashed()->with('category');
-        }, 'market.category', 'supplier.category']);
+        }]);
 
         if ($withFee == '1' || $withFee == '0')
             $query->where('has_additional_cost', $withFee);
         $bills = $query->where('status', '!=', 'انتظار')->get();
+        $bills->each(function ($bill) {
+            $bill->supplier->makeHidden('min_bill_price');
+        });
         return response()->json(['bills' => $bills]);
     }
     /**
@@ -121,7 +127,7 @@ class BillsController extends Controller
                     ->select('products.*', 'product_supplier.price as price');
             }
         ]);
-
+        $bill->supplier->makeHidden('min_bill_price');
         return response()->json(['bill' => $bill]);
     }
 
