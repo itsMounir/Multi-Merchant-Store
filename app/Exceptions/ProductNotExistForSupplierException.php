@@ -14,7 +14,7 @@ class ProductNotExistForSupplierException extends Exception
         $this->product = $product;
         $this->supplier = $supplier;
 
-        $this->message = 'عفوا ! اصبح ' . $product->name.' غير متاح الآن عند ' . $supplier->store_name .' برجاء إلغائه من الفاتورة لاستكمال الفاتورة بنجاح';
+        $this->message = 'عفوا ! اصبح ' . $product->name.' غير متاح الآن عند ' . $supplier->store_name;
         $this->code = 400;
     }
 }
