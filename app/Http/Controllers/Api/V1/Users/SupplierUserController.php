@@ -115,14 +115,15 @@ class SupplierUserController extends Controller
         try {
             $request->validate(['image' => 'nullable|image']);
             $supplier = Supplier::findOrFail($id);
+            $image = $supplier->image()->first();
 
             $request_image = $request->file('image');
             $image_name = $this->setImagesName([$request_image])[0];
 
-            if ($supplier->image != null) {
-                if (Storage::exists('public/Supplier/' . $supplier->image->url))
-                    Storage::delete('public/Supplier/' . $supplier->image->url);
-                $supplier->image()->update(['url' => $image_name]);
+            if ($image != null) {
+                if (Storage::exists('public/Supplier/' . $image->url))
+                    Storage::delete('public/Supplier/' . $image->url);
+                $image->update(['url' => $image_name]);
             } else {
                 $supplier->image()->Create(['url' => $image_name]);
             }
@@ -146,12 +147,13 @@ class SupplierUserController extends Controller
         DB::beginTransaction();
         try {
             $supplier = Supplier::with('image')->findOrFail($id);
-            if ($supplier->image == null) {
+            $image = $supplier->image()->first();
+            if ($image == null) {
                 return response()->json(['message' => 'لا يوجد صورة لهذا المورد'], 422);
             }
-            if (Storage::exists('public/Supplier/' . $supplier->image->url))
-                Storage::delete('public/Supplier/' . $supplier->image->url);
-            $supplier->image->delete();
+            if (Storage::exists('public/Supplier/' . $image->url))
+                Storage::delete('public/Supplier/' . $image->url);
+            $supplier->image()->delete();
             DB::commit();
             return response()->json(null, 204);
         } catch (\Exception $e) {
@@ -159,7 +161,7 @@ class SupplierUserController extends Controller
             return response()->json($e->getMessage(), 400);
         }
     }
-    
+
     /**
      * Display the Supplier with his incoming Bills
      * @param string $id
@@ -207,8 +209,13 @@ class SupplierUserController extends Controller
         $supplier->city_name = $supplier->city->name;
         return response()->json(['supplier' => $supplier]);
     }
-
-    public function addDistributionLocation(Request $request, string $id)
+    /**
+     * Add or Update a distribution location to supplier
+     * @param Request $requset
+     * @param string $id 
+     * @return JsonResponse
+     */
+    public function createOrUpdateDistributionLocation(Request $request, string $id)
     {
         $request->validate([
             'to_city_id' => ['required', 'exists:cities,id'],
@@ -216,12 +223,9 @@ class SupplierUserController extends Controller
         ]);
         $supplier = Supplier::findOrFail($id);
         $this->authorize('update', $supplier);
-        $existingLocation = $supplier->distributionLocations()->where('to_city_id', $request->to_city_id)->first();
-        if ($existingLocation) {
-            return response()->json(['message' => 'تمت إضافة هذه المدينة سابقاً'], 400);
-        }
-        $supplier->distributionLocations()->create([
-            'to_city_id' => $request->to_city_id,
+        $supplier->distributionLocations()->updateOrCreate([
+            'to_city_id' => $request->to_city_id
+        ], [
             'min_bill_price' => $request->min_bill_price
         ]);
 
