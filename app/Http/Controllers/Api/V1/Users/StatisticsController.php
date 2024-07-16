@@ -110,15 +110,19 @@ class StatisticsController extends Controller
     }
 
     /**
-     * Show the top three requested markets and top three orderes suppliers
+     * Show the top three requested markets and top three orderes suppliers (THE ORDER IS NOT CANCELED)
      * @return JsonResponse
      */
     public function getUsersWithBillsStatistics()
     {
         $this->authorize('viewAny', User::class);
 
-        $top_three_markets_with_orders = Market::withCount('bills')->orderBy('bills_count', 'desc')->take(3)->get();
-        $top_three_suppliers_submitting_orders = Supplier::withCount('bills')->orderBy('bills_count', 'desc')->take(3)->get();
+        $top_three_markets_with_orders = Market::withCount(['bills' => function ($query) {
+            $query->where('status', '!=', 'ملغية');
+        }])->orderBy('bills_count', 'desc')->take(3)->get();
+        $top_three_suppliers_submitting_orders = Supplier::withCount(['bills' => function ($query) {
+            $query->where('status', '!=', 'ملغية');
+        }])->orderBy('bills_count', 'desc')->take(3)->get();
         $top_three_suppliers_submitting_orders->makeHidden('min_bill_price');
 
 
