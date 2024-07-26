@@ -44,6 +44,10 @@ class BillsController extends Controller
             ->get()
             ->append('total_price_after_discount');
 
+        $bills->each(function ($bill) {
+            $bill->supplier->append('min_bill_price');
+        });
+
         return $this->indexOrShowResponse('bills', $bills);
     }
 
