@@ -27,7 +27,12 @@ class ProductsController extends Controller
                 ->where('distribution_locations.to_city_id', Auth::user()->city_id)
                 ->where('product_supplier.is_available', true)
         )
-            ->orderBy('product_supplier.price')
+            ->orderByRaw('
+                CASE
+                    WHEN product_supplier.offer_price IS NULL OR product_supplier.offer_price = 0 THEN product_supplier.price
+                    ELSE product_supplier.offer_price
+                END ASC
+            ')
             ->select([
                 'products.id',
                 'products.product_category_id',
