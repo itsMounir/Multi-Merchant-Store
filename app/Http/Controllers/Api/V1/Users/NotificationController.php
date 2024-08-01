@@ -68,6 +68,14 @@ class NotificationController extends Controller
         return response()->json(['message' => 'تم حذف الاشعار بنجاح'], 200);
     }
 
+    public function sendNotificationToDevice(Request $request)
+    {
+        $token = $request->device_token;
+        $title = $request->title;
+        $body = $request->body;
+        $this->sendNotification($token, $title, $body);
+        return response()->json(['message' => 'Notification sent successfully'], 200);
+    }
     /**
      * Send Private Notifiacation [ database and firebase] to specific market user
      * 

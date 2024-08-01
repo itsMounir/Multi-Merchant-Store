@@ -38,6 +38,7 @@ class SupplierUserController extends Controller
         $suppliers = $query->orderBy('first_name', 'asc')->paginate(20, ['*'], 'p');
 
         foreach ($suppliers as $supplier) {
+            $supplier->makeHidden('min_bill_price');
             $supplier->category_name = $supplier->category->type;
             $supplier->city_name = $supplier->city->name;
         }
@@ -56,6 +57,7 @@ class SupplierUserController extends Controller
         $supplier = Supplier::with('image', 'distributionLocations')->findOrFail($id);
         $this->authorize('view', $supplier);
 
+        $supplier->makeHidden('min_bill_price');
         $supplier->category_name = $supplier->category->type;
         $supplier->city_name = $supplier->city->name;
 
@@ -73,6 +75,7 @@ class SupplierUserController extends Controller
         try {
             $name = $request->query('name');
             $supplier = Supplier::where('store_name', 'like', '%' . $name . '%')->orderBy('first_name', 'asc')->paginate(20, ['*'], 'p');
+            $supplier->makeHidden('min_bill_price');
             return response()->json($supplier, 200);
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), $e->getCode() ?: 500);
@@ -87,16 +90,17 @@ class SupplierUserController extends Controller
      */
     public function update(SupplierProfileRequest $request, $id)
     {
-        $user = Supplier::findOrFail($id);
-        $this->authorize('update', $user);
+        $supplier = Supplier::findOrFail($id);
+        $this->authorize('update', $supplier);
 
-        $user->update($request->all());
-        $user = Supplier::with('image', 'distributionLocations')->findOrFail($id);
+        $supplier->update($request->all());
+        $supplier = Supplier::with('image', 'distributionLocations')->findOrFail($id);
 
-        $user->category_name = $user->category->type;
-        $user->city_name = $user->city->name;
+        $supplier->makeHidden('min_bill_price');
+        $supplier->category_name = $supplier->category->type;
+        $supplier->city_name = $supplier->city->name;
 
-        return response()->json(['message' => 'User has been updated successfully', 'user' => $user], 200);
+        return response()->json(['message' => 'User has been updated successfully', 'user' => $supplier], 200);
     }
 
     /**
@@ -111,14 +115,15 @@ class SupplierUserController extends Controller
         try {
             $request->validate(['image' => 'nullable|image']);
             $supplier = Supplier::findOrFail($id);
+            $image = $supplier->image()->first();
 
             $request_image = $request->file('image');
             $image_name = $this->setImagesName([$request_image])[0];
 
-            if ($supplier->image != null) {
-                if (Storage::exists('public/Supplier/' . $supplier->image->url))
-                    Storage::delete('public/Supplier/' . $supplier->image->url);
-                $supplier->image()->update(['url' => $image_name]);
+            if ($image != null) {
+                if (Storage::exists('public/Supplier/' . $image->url))
+                    Storage::delete('public/Supplier/' . $image->url);
+                $image->update(['url' => $image_name]);
             } else {
                 $supplier->image()->Create(['url' => $image_name]);
             }
@@ -142,12 +147,13 @@ class SupplierUserController extends Controller
         DB::beginTransaction();
         try {
             $supplier = Supplier::with('image')->findOrFail($id);
-            if ($supplier->image == null) {
+            $image = $supplier->image()->first();
+            if ($image == null) {
                 return response()->json(['message' => 'لا يوجد صورة لهذا المورد'], 422);
             }
-            if (Storage::exists('public/Supplier/' . $supplier->image->url))
-                Storage::delete('public/Supplier/' . $supplier->image->url);
-            $supplier->image->delete();
+            if (Storage::exists('public/Supplier/' . $image->url))
+                Storage::delete('public/Supplier/' . $image->url);
+            $supplier->image()->delete();
             DB::commit();
             return response()->json(null, 204);
         } catch (\Exception $e) {
@@ -155,7 +161,7 @@ class SupplierUserController extends Controller
             return response()->json($e->getMessage(), 400);
         }
     }
-    
+
     /**
      * Display the Supplier with his incoming Bills
      * @param string $id
@@ -163,12 +169,13 @@ class SupplierUserController extends Controller
      */
     public function userWithBills($id)
     {
-        $user = Supplier::with('image', 'bills.market')->findOrFail($id);
-        $this->authorize('view', $user);
+        $supplier = Supplier::with('image', 'bills.market')->findOrFail($id);
+        $this->authorize('view', $supplier);
 
-        $user->category_name = $user->category->type;
-        $user->city_name = $user->city->name;
-        return response()->json(['user' => $user]);
+        $supplier->makeHidden('min_bill_price');
+        $supplier->category_name = $supplier->category->type;
+        $supplier->city_name = $supplier->city->name;
+        return response()->json(['supplier' => $supplier]);
     }
 
     /**
@@ -178,12 +185,13 @@ class SupplierUserController extends Controller
      */
     public function userWithProducts($id)
     {
-        $user = Supplier::with('image', 'products')->findOrFail($id);
-        $this->authorize('view', $user);
+        $supplier = Supplier::with('image', 'products')->findOrFail($id);
+        $this->authorize('view', $supplier);
 
-        $user->catgory_name = $user->category->type;
-        $user->city_name = $user->city->name;
-        return response()->json(['user' => $user]);
+        $supplier->makeHidden('min_bill_price');
+        $supplier->catgory_name = $supplier->category->type;
+        $supplier->city_name = $supplier->city->name;
+        return response()->json(['supplier' => $supplier]);
     }
 
     /**
@@ -193,40 +201,47 @@ class SupplierUserController extends Controller
      */
     public function userWithDistributionLocations(string $id)
     {
-        $user = Supplier::with('image', 'distributionLocations')->findOrFail($id);
-        $this->authorize('view', $user);
+        $supplier = Supplier::with('image', 'distributionLocations')->findOrFail($id);
+        $this->authorize('view', $supplier);
 
-        $user->catgory_name = $user->category->type;
-        $user->city_name = $user->city->name;
-        return response()->json(['user' => $user]);
+        $supplier->makeHidden('min_bill_price');
+        $supplier->catgory_name = $supplier->category->type;
+        $supplier->city_name = $supplier->city->name;
+        return response()->json(['supplier' => $supplier]);
     }
-
-    public function addDistributionLocation(Request $request, string $id)
+    /**
+     * Add or Update a distribution location to supplier
+     * @param Request $requset
+     * @param string $id 
+     * @return JsonResponse
+     */
+    public function createOrUpdateDistributionLocation(Request $request, string $id)
     {
-        $this->authorize('update', Supplier::class);
         $request->validate([
             'to_city_id' => ['required', 'exists:cities,id'],
             'min_bill_price' => ['required']
         ]);
         $supplier = Supplier::findOrFail($id);
-        $existingLocation = $supplier->distributionLocations()->where('to_city_id', $request->to_city_id)->first();
-        if ($existingLocation) {
-            return response()->json(['message' => 'تمت إضافة هذه المدينة سابقاً'], 400);
-        }
-        $supplier->distributionLocations()->create([
-            'to_city_id' => $request->to_city_id,
+        $this->authorize('update', $supplier);
+        $supplier->distributionLocations()->updateOrCreate([
+            'to_city_id' => $request->to_city_id
+        ], [
             'min_bill_price' => $request->min_bill_price
         ]);
+
+        $supplier->makeHidden('min_bill_price');
         $supplier->load('distributionLocations');
         return response()->json($supplier, 200);
     }
 
     public function deleteDistributionLocation(string $supplierId, string $locationId)
     {
-        $this->authorize('update', Supplier::class);
         $supplier = Supplier::findOrFail($supplierId);
+        $this->authorize('update', $supplier);
         $distributionLocation = $supplier->distributionLocations()->findOrFail($locationId);
         $distributionLocation->delete();
+
+        $supplier->makeHidden('min_bill_price');
         $supplier->load('distributionLocations');
         return response()->json(null, 204);
     }
@@ -248,6 +263,7 @@ class SupplierUserController extends Controller
             $user->status = 'نشط';
             $user->save();
 
+            $user->makeHidden('min_bill_price');
             $user->category_name = $user->category->type;
             $user->city_name = $user->city->name;
             return response()->json(['message' => 'User has been activated successfully', 'user' => $user], 200);
@@ -273,6 +289,7 @@ class SupplierUserController extends Controller
             $user->tokens()->delete();
             $user->save();
 
+            $user->makeHidden('min_bill_price');
             $user->category_name = $user->category->type;
             $user->city_name = $user->city->name;
 

@@ -33,7 +33,7 @@ class SupplierProfileRequest extends FormRequest
             'store_name' => ['string', 'unique:suppliers,store_name,' . $user . ',id', 'required'],
             'supplier_category_id' => ['required'],
             'delivery_duration'=>['nullable'],
-            'min_bill_price' => ['required'],
+            //'min_bill_price' => ['required'],
             'min_selling_quantity' => ['required'],
         ];
     }
