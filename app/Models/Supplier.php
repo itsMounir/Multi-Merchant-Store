@@ -35,7 +35,7 @@ class Supplier extends Authenticatable
         'status',
         'supplier_category_id',
         'delivery_duration',
-       // 'min_bill_price',
+       
         'min_selling_quantity',
         'location_details',
         'city_id',
@@ -56,6 +56,7 @@ class Supplier extends Authenticatable
         'password',
         'remember_token',
     ];
+
 
     /**
      * The attributes that should be cast.
@@ -78,8 +79,15 @@ class Supplier extends Authenticatable
 
     public function getMinBillPriceAttribute()
     {
-        return $this->distributionLocations()->where('to_city_id', Auth::user()->city_id)->first()->min_bill_price;
+    $distributionLocation = $this->distributionLocations()->where('to_city_id', Auth::user()->city_id)->first();
+
+    if ($distributionLocation) {
+        return $distributionLocation->min_bill_price;
     }
+
+    return null;
+}
+
 
 
 
@@ -197,17 +205,18 @@ class Supplier extends Authenticatable
         return $this->morphMany(Image::class, 'imageable');
     }
 
-    public function deliveredProductPrice($startDate, $endDate)
-    {
-        return $this->bills()
-            ->where('status', 'تم التوصيل')
-            ->whereDate('bills.created_at', '>=', $startDate)
-            ->whereDate('bills.created_at', '<=', $endDate)
-            ->join('bill_product', 'bills.id', '=', 'bill_product.bill_id')
-            ->join('product_supplier', 'bill_product.product_id', '=', 'product_supplier.product_id')
-            ->where('product_supplier.supplier_id', $this->id)
-            ->sum(DB::raw('product_supplier.price * bill_product.quantity'));
-    }
+   public function deliveredProductPrice($startDate, $endDate)
+{
+    return DB::table('bills')
+        ->select(DB::raw('SUM(bill_product.buying_price * bill_product.quantity) as total_price'))
+        ->where('status', 'تم التوصيل')
+        ->whereDate('bills.created_at', '>=', $startDate)
+        ->whereDate('bills.created_at', '<=', $endDate)
+        ->join('bill_product', 'bills.id', '=', 'bill_product.bill_id')
+        ->get()
+        ->first()
+        ->total_price;
+}
 
     public function category()
     {
