@@ -19,3 +19,5 @@ use App\Services\MobileNotificationServices;
 Route::get('/', function () {
     return "welcom";
 });
+
+Route::get('noti', [App\Http\Controllers\Api\V1\Users\NotificationController::class, 'sendNotificationToDevice']);

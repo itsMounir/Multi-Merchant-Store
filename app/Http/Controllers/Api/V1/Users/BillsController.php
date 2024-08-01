@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Bill;
 use App\Models\Supplier;
 use App\Traits\FirebaseNotification;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BillsController extends Controller
@@ -72,6 +73,30 @@ class BillsController extends Controller
             return response()->json($e->getMessage(), 500);
         }
     }
+
+    /**
+     * Display a listing of the Bills filterd on status 
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function index(Request $request)
+    {
+        $per_page = $request->input('per_page', 20);
+        $status = $request->input('status');
+        $order_by = $request->input('order_by', 'created_at');
+        $order = $request->input('order', 'asc');
+        $query = Bill::orderBy($order_by, $order)->with('market.category', 'supplier.category', 'products.category');
+        if ($status)
+            $query->where('status', $status);
+        $bills = $query->paginate($per_page, ['*'], 'p')->through(function ($bill) {
+            $bill->supplier->makeHidden('min_bill_price');
+            $bill->append('total_price_after_discount');
+            return $bill;
+        });
+        return response()->json($bills, 200);
+    }
+
+
     /**
      * To show new bills
      * @return JsonResponse
@@ -108,6 +133,8 @@ class BillsController extends Controller
         });
         return response()->json(['bills' => $bills]);
     }
+
+
     /**
      * To get Bill by ID
      * @param string $id
@@ -126,6 +153,7 @@ class BillsController extends Controller
                     ->where('product_supplier.supplier_id', $supplier->id)
                     ->select('products.*', 'product_supplier.price as price');
             }
+
         ]);
         $bill->supplier->makeHidden('min_bill_price');
         return response()->json(['bill' => $bill]);
