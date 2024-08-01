@@ -149,7 +149,8 @@ class Supplier extends Authenticatable
         return $this->belongsToMany(Product::class, 'product_supplier')
             ->withPivot(
                 'id',
-                //'quantity',
+                'quantity',
+                'buying_price',
                 'price',
                 'has_offer',
                 'offer_price',
@@ -204,9 +205,7 @@ class Supplier extends Authenticatable
             ->whereDate('bills.created_at', '>=', $startDate)
             ->whereDate('bills.created_at', '<=', $endDate)
             ->join('bill_product', 'bills.id', '=', 'bill_product.bill_id')
-            ->join('product_supplier', 'bill_product.product_id', '=', 'product_supplier.product_id')
-            ->where('product_supplier.supplier_id', $this->id)
-            ->sum(DB::raw('product_supplier.price * bill_product.quantity'));
+            ->sum(DB::raw('bill_product.buying_price * bill_product.quantity'));
     }
 
     public function category()

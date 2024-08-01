@@ -73,7 +73,7 @@ class SupplierContoller extends Controller
         $supplier = Auth::user();
         $supplier->load('city','supplierCategory');
         $supplierImages = $supplier->getImagesAttribute();
-        $supplier->image = $supplierImages;
+        $supplier->images= [$supplierImages];
         $cities = City::all();
         $deliveryLocations = $supplier->distributionLocations;
 

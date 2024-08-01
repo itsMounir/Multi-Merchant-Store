@@ -1,84 +1,56 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice</title>
+    <title>فاتورة</title>
     <style>
         body {
-            direction: rtl;
             font-family: 'DejaVu Sans', sans-serif;
-            padding: 20px;
-            border: 1px solid #dee2e6;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-        .name, .item-quantity, .price {
-    margin: 0 10px;
-    flex: 1;
-}
-.item-quantity {
-    flex: 1;
-    background-color: #f8f9fa;
-    padding: 10px;
-    border-radius: 10px;
-    text-align: center;
-}
-
-.price {
-    flex: 1;
-}
-        .savings-message {
-            background-color: rgb(123, 255, 0);
-            color: white;
-            font-weight: bold;
-            font-size: 1.25rem;
-            padding: 10px;
-            border: 2px solid #dee2e6;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-        .invoice-header {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-        }
-        .text-right {
+            direction: rtl; /* Right-to-left text direction for Arabic */
             text-align: right;
+            margin: 20px;
+            background-color: #f9f9f9;
         }
-        .text-left {
-            text-align: left;
+        section {
+            max-width: 800px;
+            margin: auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: #fff;
         }
-        .text-black-50 {
-            color: rgba(0, 0, 0, 0.5);
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
         }
-        .invoice-summary {
-            border-top: 1px solid #dee2e6;
-            margin-top: 20px;
-            padding-top: 20px;
-        }
-        .item-row {
-    display: flex;
-    padding: 10px;
-    align-items: center;
-    text-align: right;
-    justify-content: space-between;
-}
-        .item-text {
-            margin-bottom: 0;
-        }
-        .total-section {
+        .first, .totals {
             display: flex;
             justify-content: space-between;
-            margin-top: 20px;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
-
-
+        .totals div {
+            flex: 1;
+            text-align: center;
+        }
+        .table {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        .discount {
+            text-align: center;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -94,54 +66,72 @@
 
     $billData = [
         'number' => $bill->id,
-        'date' => $bill->created_at,
+        'date' => $bill->created_at_formatted,
         'paymentMethod' => $bill->payment_method,
         'storeName' => $bill->supplier->store_name,
         'status' => $bill->status,
         'marketName' => $bill->market->store_name,
+        'numberMarket'=>$bill->market->phone_number,
         'items' => $products,
-        'total' => $bill->total_price,
+        'total_price' => $bill->total_price,
         'savings' => $bill->waffarnalak,
+        'total_price_after_discount'=>$bill->total_price_after_discount,
+        'additional_price'=>$bill->additional_price,
+        'location_details'=>$bill->market->location_details,
+        'city'=>$bill->market->city->name,
+
     ];
 @endphp
-<div class="container border p-5 rounded-3 mt-5">
-    <div class="invoice-header">
-        <div class="d-flex flex-column align-items-start">
-            <h3 id="invoice-number">رقم الفاتورة: {{ $billData['number'] }}</h3>
-            <h5 id="invoice-date" class="text-black-50">التاريخ : {{ $billData['date'] }}</h5>
-        </div>
-        <div class="d-flex justify-content-between text-black-50">
-            <h5 id="payment-method">طريقة الدفع : {{ $billData['paymentMethod'] }}</h5>
-            <h5 id="store-name">الشراء من : {{ $billData['storeName'] }}</h5>
-        </div>
-    </div>
-    <div class="invoice-summary border-top mt-3 pt-3">
-        <div class="text-right d-flex justify-content-between align-items-center">
-            <h5>ملخص الفاتورة</h5>
-            <h5 id="invoice-status" class="text-success">{{ $billData['status'] }}</h5>
-        </div>
-        <div class="text-right">
-            <h6 id="market-name">{{ $billData['marketName'] }}</h6>
-        </div>
-        <div id="invoice-items">
-            @foreach ($billData['items'] as $item)
-            <div class="item">
-                <span class="item-name">{{ $item['name'] }}</span>
-                <span class="item-quantity">x{{ $item['quantity'] }}</span>
-                <span class="item-price">{{ $item['price'] }} جـ</span>
+    <section>
+
+        <h1>   <span>#{{ $billData['number'] }}</span>  رقم الفاتورة </h1>
+        <div class="first">
+            <div>
+                <p> {{ $billData['storeName'] }} <strong>الشراء من:</strong> </p>
+                <p>{{ $billData['date'] }}<strong>تاريخ الطلب:</strong> </p>
+                <p>{{ $billData['paymentMethod'] }}<strong>طريقة الدفع:</strong> </p>
+                <p>{{ $billData['numberMarket'] }}<strong>رقم موبايل العميل:</strong></p>
+                <p>{{ $billData['location_details'] }}<strong>عنوان العميل:</strong></p>
+                <p>{{ $billData['city'] }}<strong>منطقة العميل:</strong></
+
             </div>
-        @endforeach
-
-
+            <p> {{ $billData['status'] }}</p>
         </div>
-        <div class="d-flex justify-content-between mt-4 mb-2 total-section">
-            <h4>إجمالي الفاتورة</h4>
-            <h5 id="total-price">{{ $bill['total_price_after_discount'] }} جـ</h5>
+
+        <div class="table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>السعر</th>
+                        <th>اسم المنتج</th>
+                        <th>الكمية</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($billData['items'] as $item)
+                        <tr>
+                            <td>{{ $item['price'] }} جنيه</td>
+                            <td>{{ $item['name'] }}</td>
+                            <td>×{{ $item['quantity'] }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
-        <div class="text-right border border-2 p-2 rounded-2 savings-message" id="savings-message">
-            🥳الموفراتي وفر لك {{ $bill['waffarnalak'] }} جـ
+
+        <div class="totals">
+            <div>
+                <p>     {{ $billData['total_price'] }}    <strong>اجمالي الفاتورة:</strong></p>
+                <p>   {{ $billData['total_price_after_discount']}}   <strong>اجمالي الفاتورة بعد الخصم:</strong></p> <!-- Example discount applied -->
+            </div>
+            <div>
+                <p>   5  <strong>قيمة التوفير:</strong> </p>
+                <p>  {{ $billData['total_price_after_discount'] +$billData['additional_price'] }} <strong>اجمالي الفاتورة النهائي:</strong> </p>
+            </div>
+         <div class="discount">
+            <p>  {{ ($billData['savings']+$billData['total_price'])*0.015 }}    <strong>الموفراتي وفر لك:</strong></p>
         </div>
     </div>
-</div>
+    </section>
 </body>
 </html>

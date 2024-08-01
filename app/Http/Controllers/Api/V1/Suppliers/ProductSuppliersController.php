@@ -117,6 +117,10 @@ class ProductSuppliersController extends Controller
 
         $updateData = [
             'is_available' => $request->is_available,
+            'has_offer' => 0,
+            'offer_price' => 0,
+            'max_offer_quantity' => 0,
+            'offer_expires_at' =>  "9999-1-1",
         ];
 
         if ($request->is_available == 1) {
@@ -179,7 +183,14 @@ class ProductSuppliersController extends Controller
         $supplier = Auth::user();
         $productSupplier = $this->findProductSupplier($supplier->id, $product_id);
 
-        $updateData = $request->only(['price', 'offer_price', 'max_offer_quantity', 'offer_expires_at']);
+        $updateData = $request->only(['price','quantity','offer_price', 'max_offer_quantity', 'offer_expires_at']);
+        if($updateData['quantity']==0){
+            $productSupplier->is_available=0;
+            $productSupplier->has_offer=0;
+            $productSupplier->max_offer_quantity=0;
+            $productSupplier->offer_price=0;
+            $productSupplier->offer_expires_at="9999-1-1";
+        }
         $productSupplier->update($updateData);
 
 

@@ -51,6 +51,7 @@ class Product extends Model
         return $this->belongsToMany(Supplier::class, 'product_supplier')
             ->withPivot(
                 'id',
+                'quantity',
                 'price',
                 'has_offer',
                 'offer_price',
@@ -63,7 +64,7 @@ class Product extends Model
     {
         return $this->belongsTo(User::class);
     }
-    
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(ProductCategory::class, 'product_category_id');

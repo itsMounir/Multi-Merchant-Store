@@ -35,9 +35,9 @@ class RegisterSupplier extends FormRequest
             'min_selling_quantity' => 'required|integer',
             'location_details' => 'required|string',
             'city_id' => 'required|integer|exists:cities,id',
-            'image' => ['required','image'],
+            //'image' => ['required','image'],
             'to_sites' => 'required|array',
-            'to_sites.*' => 'required|array',
+           // 'to_sites.*' => 'required|array',
             'to_sites.*.min_bill_price' => 'required|numeric',
         ];
     }

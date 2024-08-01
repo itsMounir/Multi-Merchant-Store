@@ -151,16 +151,14 @@ class BillsServices
                 }
             }
             if (!$exist) {
-                Log::error('Product Not Found Exception: sheeeeeeeesh');
-                throw new IncorrectBillException('product not exist for this supplier.');
+                $not_existing_product = Product::findOrFail($product['id']);
+                throw new ProductNotExistForSupplierException($not_existing_product, $supplier);
             }
             $i++;
         }
         return $total_price;
 
     }
-
-
 
     public function calculatePriceSupplier(&$bill, $supplier): float
     {
@@ -181,7 +179,7 @@ class BillsServices
                 $quantity = $product['quantity']; // quantity requested
 
                 if ($quantity > $billProduct->max_selling_quantity) {
-                    throw new IncorrectBillException('.' . 'لقد تخطيت العدد الأقصى للطلب : ' . $billProduct->max_selling_quantity . ' لدى ' . $supplier->store_name);
+                    //throw new IncorrectBillException('.' . 'لقد تخطيت العدد الأقصى للطلب : ' . $billProduct->max_selling_quantity . ' لدى ' . $supplier->store_name);
                 }
                 if ($billProduct->has_offer) {
                     $total_price += min(
@@ -197,7 +195,8 @@ class BillsServices
                 $exist = true;
             }
             if (!$exist) {
-                throw new ProductNotExistForSupplierException($product['id'], $supplier->store_name);
+                $not_existing_product = Product::findOrFail($product['id']);
+                throw new ProductNotExistForSupplierException($not_existing_product, $supplier);
             }
             $i++;
         }
@@ -283,6 +282,21 @@ class BillsServices
         }
         return null;
     }
+
+    public function removeProducts($product){
+        $products=[];
+
+        foreach($product['products'] as $product){
+            $quantity=$product['quantity'];
+            if($quantity>0){
+                $products[]=$product;
+            }
+        }
+           return [
+        'products' => $products
+    ];
+    }
+
 
 }
 
