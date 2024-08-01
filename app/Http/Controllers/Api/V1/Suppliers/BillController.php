@@ -173,19 +173,21 @@ class BillController extends Controller
     }*/
 
 
-    public function recive(Request $request,$billId){
+     public function recive(Request $request,$billId){
         $notification=new MobileNotificationServices;
         $supplier=Auth::user();
+
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
         if(!$bill){
             return $this->sudResponse('غير موجود');
         }
+
         $validatedData = $request->validate([
             'recieved_price' => 'required',
             ]);
-           /* if ($request['recieved_price'] > $bill->append('total_price_after_discount')+$bill->append('additional_price')) {
-                return $this->sudResponse('سعر الاستلام يجب أن يكون اقل أو يساوي اجمالي الفاتورة');
-            }*/
+             //if ($request['recieved_price'] > $bill->append('total_price_after_discount')+$bill->append('additional_price')) {
+               // return $this->sudResponse('سعر الاستلام يجب أن يكون اقل أو يساوي اجمالي الفاتورة');
+            //}
         $bill->update([
             'status'=>'تم التوصيل',
             'recieved_price'=>$request['recieved_price'],
@@ -197,6 +199,8 @@ class BillController extends Controller
         }
         return $this->sudResponse('تم بنجاح');
     }
+
+
 
 
     public function Refused(Request $request, $billId){
