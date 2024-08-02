@@ -36,7 +36,6 @@ class Bill extends Model
      * The accessors to append to the model's array form.
 
      *
-
      * @var array<int, string>
      */
     protected $appends = ['created_at_formatted', 'payment_method', 'additional_price', 'waffarnalak', 'updatable'];
@@ -44,6 +43,8 @@ class Bill extends Model
     protected $hidden = [
         'deleted_at'
     ];
+
+    //protected $dates = ['created_at'];
 
     //protected $dates = ['created_at'];
 
@@ -56,13 +57,10 @@ class Bill extends Model
     protected $dates = ['created_at'];
 
 
-
-
     // public function getCreatedAtAttribute($value)
     // {
     //     return Carbon::parse($value)->format('Y-m-d');
     // }
-
 
 
     public function getCreatedAtFormattedAttribute()

@@ -26,9 +26,6 @@ use Illuminate\Support\Facades\{
 use App\Notifications\RejectedNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Services\BillsServices;
-
-use App\Services\MobileNotificationServices;
-
 use App\Traits\FirebaseNotification;
 
 class BillController extends Controller
@@ -134,9 +131,11 @@ class BillController extends Controller
 
 
 
-    public function reject(Request $request,$billId){
-        $notification=new MobileNotificationServices;
-        $supplier=Auth::user();
+
+
+    public function reject(Request $request, $billId)
+    {
+        $supplier = Auth::user();
 
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
         if (!$bill) {
@@ -175,13 +174,9 @@ class BillController extends Controller
 
 
 
-
-    public function recive(Request $request,$billId){
-        $notification=new MobileNotificationServices;
-        $supplier=Auth::user();
-
-
-
+    public function recive(Request $request, $billId)
+    {
+        $supplier = Auth::user();
 
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
         if (!$bill) {
