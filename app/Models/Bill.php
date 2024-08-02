@@ -37,20 +37,11 @@ class Bill extends Model
     protected $hidden = [
         'deleted_at'
     ];
-    //protected $dates = ['created_at'];
 
-    /*public function getCreatedAtAttribute($value)
-    {
-        return Carbon::parse($value)->format('d-m-Y');
-    }*/
 
 
     protected $dates = ['created_at'];
 
-    // public function getCreatedAtAttribute($value)
-    // {
-    //     return Carbon::parse($value)->format('Y-m-d');
-    // }
 
     public function getCreatedAtFormattedAttribute()
     {
