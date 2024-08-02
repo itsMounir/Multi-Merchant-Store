@@ -39,7 +39,7 @@ Route::prefix('users/supplier')->middleware([
     Route::prefix('distribution-location')->group(function () {
 
         Route::get('index/{id}', [SupplierUserController::class, 'userWithDistributionLocations']);
-        Route::post('create/{id}', [SupplierUserController::class, 'addDistributionLocation']);
+        Route::post('create/{id}', [SupplierUserController::class, 'createOrUpdateDistributionLocation']);
         Route::delete('delete/{Sid}/{Lid}', [SupplierUserController::class, 'deleteDistributionLocation']);
     });
 });

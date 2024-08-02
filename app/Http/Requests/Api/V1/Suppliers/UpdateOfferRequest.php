@@ -23,6 +23,7 @@ class UpdateOfferRequest extends FormRequest
     {
         return [
             'price'=>'nullable|numeric',
+            'quantity'=>'nullable',
             'offer_price' => 'nullable|numeric',
             'max_offer_quantity' => 'nullable|numeric',
             'offer_expires_at' => 'nullable|date'

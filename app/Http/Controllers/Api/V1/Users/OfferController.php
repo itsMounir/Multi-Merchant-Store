@@ -17,7 +17,7 @@ class OfferController extends Controller
 {
     use Images, FirebaseNotification;
     /**
-     * Display a listing of the resource.
+     * Display a listing of the Offers.
      * @return JsonResponse
      */
     public function index()

@@ -33,7 +33,7 @@ class SuppliersController extends Controller
             $suppliersFilters->applyFilters(Supplier::query())
                 ->withCount('bills')
                 ->active()
-                ->site()
+                // ->site()
                 ->join('distribution_locations', function ($join) {
                     $join->on('suppliers.id', '=', 'distribution_locations.supplier_id')
                         ->where('distribution_locations.to_city_id', '=', Auth::user()->city_id);
