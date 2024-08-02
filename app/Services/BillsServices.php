@@ -178,9 +178,7 @@ class BillsServices
 
                 $quantity = $product['quantity']; // quantity requested
 
-                if ($quantity > $billProduct->max_selling_quantity) {
-                    //throw new IncorrectBillException('.' . 'لقد تخطيت العدد الأقصى للطلب : ' . $billProduct->max_selling_quantity . ' لدى ' . $supplier->store_name);
-                }
+                
                 if ($billProduct->has_offer) {
                     $total_price += min(
                         $billProduct->max_offer_quantity,

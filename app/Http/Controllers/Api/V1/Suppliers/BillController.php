@@ -76,8 +76,6 @@ class BillController extends Controller
 
     public function update(UpdateBillRequest $request, Bill $bill)
     {
-
-
         return DB::transaction(function () use ($request, $bill) {
             if ($bill->status != 'جديد') {
 
@@ -86,10 +84,8 @@ class BillController extends Controller
             $supplier = Auth::user();
 
             $updated_bill = $request->all();
-
             $billService = new BillsServices;
             $updated_bill=$billService->removeProducts($updated_bill);
-
             $total_price = $billService->calculatePriceSupplier($updated_bill, $supplier);
             //$total_price -= $billService->marketDiscount(Market::find($bill->market_id), $total_price);
 
@@ -173,7 +169,7 @@ class BillController extends Controller
     }*/
 
 
-     public function recive(Request $request,$billId){
+    public function recive(Request $request,$billId){
         $notification=new MobileNotificationServices;
         $supplier=Auth::user();
 
@@ -185,9 +181,7 @@ class BillController extends Controller
         $validatedData = $request->validate([
             'recieved_price' => 'required',
             ]);
-             //if ($request['recieved_price'] > $bill->append('total_price_after_discount')+$bill->append('additional_price')) {
-               // return $this->sudResponse('سعر الاستلام يجب أن يكون اقل أو يساوي اجمالي الفاتورة');
-            //}
+
         $bill->update([
             'status'=>'تم التوصيل',
             'recieved_price'=>$request['recieved_price'],
@@ -199,8 +193,6 @@ class BillController extends Controller
         }
         return $this->sudResponse('تم بنجاح');
     }
-
-
 
 
     public function Refused(Request $request, $billId){
@@ -220,7 +212,6 @@ class BillController extends Controller
                 if ($productSupplier->pivot->is_available == 0) {
                     $productSupplier->pivot->is_available = 1;
                 }
-
                 $productSupplier->pivot->save();
             }
         }
