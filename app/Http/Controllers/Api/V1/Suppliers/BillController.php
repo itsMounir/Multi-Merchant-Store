@@ -26,7 +26,9 @@ use Illuminate\Support\Facades\{
 use App\Notifications\RejectedNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Services\BillsServices;
+
 use App\Services\MobileNotificationServices;
+
 use App\Traits\FirebaseNotification;
 
 class BillController extends Controller
@@ -136,8 +138,6 @@ class BillController extends Controller
         $notification=new MobileNotificationServices;
         $supplier=Auth::user();
 
-
-
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
         if (!$bill) {
             return $this->sudResponse('غير موجود');
@@ -175,9 +175,11 @@ class BillController extends Controller
 
 
 
+
     public function recive(Request $request,$billId){
         $notification=new MobileNotificationServices;
         $supplier=Auth::user();
+
 
 
 
@@ -188,8 +190,8 @@ class BillController extends Controller
 
         $validatedData = $request->validate([
             'recieved_price' => 'required',
-
             ]);
+
 
         $bill->update([
             'status' => 'تم التوصيل',
