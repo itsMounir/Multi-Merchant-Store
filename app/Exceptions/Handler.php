@@ -80,13 +80,19 @@ class Handler extends ExceptionHandler
         }
 
         if (
-            $e instanceof ProductNotExistForSupplierException ||
             $e instanceof InActiveAccountException ||
             $e instanceof IncorrectBillException
         ) {
             return response()->json([
                 'message' => $e->getMessage(),
             ], $e->getCode());
+        }
+
+        if ($e instanceof ProductNotExistForSupplierException) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'product_id' => $e->product->id
+            ],$e->getCode());
         }
 
         // if ($e instanceof PusherException) {

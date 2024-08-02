@@ -30,7 +30,7 @@ return new class extends Migration {
             $table->string('phone_number')->unique();
             $table->string('password');
             $table->string('representator_code')->default('');
-            $table->boolean('is_subscribed')->default(true);
+            $table->boolean('is_subscribed')->default(false);
             $table->date('subscription_expires_at');
             $table->enum('status', ['نشط', 'محظور', 'غير نشط'])->default('غير نشط');
             $table->timestamps();

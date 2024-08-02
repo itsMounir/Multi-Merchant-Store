@@ -10,6 +10,7 @@ use App\Models\{
 };
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductsController extends Controller
 {
@@ -18,11 +19,21 @@ class ProductsController extends Controller
      */
     public function index(ProductsFilters $productsFilters): JsonResponse
     {
-        $products = $productsFilters->applyFilters(Product::query())
-            ->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
-            ->join('suppliers', 'suppliers.id', '=', 'product_supplier.supplier_id')
-            ->orderBy('product_supplier.price')
-            ->select(
+        $products = $productsFilters->applyFilters(
+            Product::query()->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
+                ->join('suppliers', 'suppliers.id', '=', 'product_supplier.supplier_id')
+                ->join('distribution_locations', 'suppliers.id', '=', 'distribution_locations.supplier_id')
+                ->where('suppliers.status', 'نشط')
+                ->where('distribution_locations.to_city_id', Auth::user()->city_id)
+                ->where('product_supplier.is_available', true)
+        )
+            ->orderByRaw('
+                CASE
+                    WHEN product_supplier.offer_price IS NULL OR product_supplier.offer_price = 0 THEN product_supplier.price
+                    ELSE product_supplier.offer_price
+                END ASC
+            ')
+            ->select([
                 'products.id',
                 'products.product_category_id',
                 'products.name',
@@ -35,8 +46,9 @@ class ProductsController extends Controller
                 'product_supplier.max_selling_quantity',
                 'product_supplier.has_offer',
                 'product_supplier.offer_price',
-                'product_supplier.max_offer_quantity'
-            )
+                'product_supplier.max_offer_quantity',
+                'product_supplier.offer_expires_at',
+            ])
             ->distinct() // Ensure unique results
             ->paginate(10)
             ->toArray();

@@ -8,10 +8,12 @@ use App\Enums\TokenAbility;
 Route::prefix('users/statistic')->middleware([
     'auth:sanctum',
     'type.user',
+    'isOnline',
     'ability:' . TokenAbility::ACCESS_API->value
 ])->group(function () {
 
     Route::get('bills', [StatisticsController::class, 'getBillStatistics']);
-    Route::get('subscribers', [StatisticsController::class, 'getUsersStatistics']);
+    Route::get('market-users', [StatisticsController::class, 'getMarketUsersStatistics']);
+    //Route::get('subscriptions', [StatisticsController::class, 'getMarketSubscriptionsStatistics']);
     Route::get('users-with-bills', [StatisticsController::class, 'getUsersWithBillsStatistics']);
 });

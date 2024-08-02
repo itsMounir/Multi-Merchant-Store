@@ -25,6 +25,11 @@ class DistributionLocation extends Model
 
     protected $dates = ['created_at'];
 
+    /**
+     * The accessors to append to the model's array form.
+     * 
+     * @var array<int, string>
+     */
     protected $appends = ['city_name'];
 
     public function supplier(): BelongsTo
@@ -37,8 +42,8 @@ class DistributionLocation extends Model
         return $this->belongsTo(City::class, 'to_city_id');
     }
 
-    public function getCitynameAttribute(){
+    public function getCitynameAttribute()
+    {
         return $this->toCity->name;
-
     }
 }

@@ -9,6 +9,7 @@ use App\Enums\TokenAbility;
 Route::prefix('users/supplier')->middleware([
     'auth:sanctum',
     'type.user',
+    'isOnline',
     'ability:' . TokenAbility::ACCESS_API->value
 ])->group(function () {
 
@@ -38,7 +39,7 @@ Route::prefix('users/supplier')->middleware([
     Route::prefix('distribution-location')->group(function () {
 
         Route::get('index/{id}', [SupplierUserController::class, 'userWithDistributionLocations']);
-        Route::post('create/{id}', [SupplierUserController::class, 'addDistributionLocation']);
+        Route::post('create/{id}', [SupplierUserController::class, 'createOrUpdateDistributionLocation']);
         Route::delete('delete/{Sid}/{Lid}', [SupplierUserController::class, 'deleteDistributionLocation']);
     });
 });

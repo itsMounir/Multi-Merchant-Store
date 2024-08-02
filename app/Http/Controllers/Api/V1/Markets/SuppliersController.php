@@ -13,7 +13,8 @@ use App\Http\Controllers\Controller;
 use App\Models\{
     Offer,
     ProductCategory,
-    Supplier
+    Supplier,
+    Product
 };
 
 use Illuminate\Http\JsonResponse;
@@ -32,7 +33,7 @@ class SuppliersController extends Controller
             $suppliersFilters->applyFilters(Supplier::query())
                 ->withCount('bills')
                 ->active()
-                ->site()
+                // ->site()
                 ->join('distribution_locations', function ($join) {
                     $join->on('suppliers.id', '=', 'distribution_locations.supplier_id')
                         ->where('distribution_locations.to_city_id', '=', Auth::user()->city_id);
@@ -56,9 +57,40 @@ class SuppliersController extends Controller
         throw_if($supplier->status != 'نشط', new InActiveAccountException($supplier->store_name));
         $supplier->append(['min_bill_price', 'image']);
 
-        $products = $productsFilters->applyFilters($supplier->availableProducts()->getQuery())->get();
-        $categories_ids = [];
 
+        $products = Product::query()->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
+                ->where('product_supplier.supplier_id', $supplier->id)
+                ->where('product_supplier.is_available', true)
+            ->select([
+                'products.*',
+                'product_supplier.price',
+                //'product_supplier.is_available',
+                'product_supplier.max_selling_quantity',
+                'product_supplier.has_offer',
+                'product_supplier.offer_price',
+                'product_supplier.max_offer_quantity',
+                'product_supplier.offer_expires_at'
+            ])
+            ->get();
+
+        $filtered_products = $productsFilters->applyFilters(
+            Product::query()->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
+                ->where('product_supplier.supplier_id', $supplier->id)
+                ->where('product_supplier.is_available', true)
+        )
+            ->select([
+                'products.*',
+                'product_supplier.price',
+                //'product_supplier.is_available',
+                'product_supplier.max_selling_quantity',
+                'product_supplier.has_offer',
+                'product_supplier.offer_price',
+                'product_supplier.max_offer_quantity',
+                'product_supplier.offer_expires_at'
+            ])
+            ->get();
+
+        $categories_ids = [];
         foreach ($products as $product) {
             $categoryId = $product->product_category_id;
 
@@ -70,7 +102,7 @@ class SuppliersController extends Controller
         $offers = Offer::where('supplier_id', $supplier->id)->get();
         $products_with_offer = [];
         $products_without_offer = [];
-        foreach ($products as $product) {
+        foreach ($filtered_products as $product) {
             if ($product->has_offer) {
                 $products_with_offer[] = $product;
             } else {

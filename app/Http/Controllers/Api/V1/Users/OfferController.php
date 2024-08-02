@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Users\OfferRequest;
 use App\Models\Offer;
 use App\Models\Supplier;
-use App\Services\MobileNotificationServices;
+use App\Traits\FirebaseNotification;
 use App\Traits\Images;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -15,9 +15,9 @@ use Illuminate\Support\Facades\Storage;
 
 class OfferController extends Controller
 {
-    use Images;
+    use Images, FirebaseNotification;
     /**
-     * Display a listing of the resource.
+     * Display a listing of the Offers.
      * @return JsonResponse
      */
     public function index()
@@ -53,12 +53,10 @@ class OfferController extends Controller
                 'supplier_id' => $supplier->id,
                 'image' => $path,
             ]);
-            /** 
-             *$notification = new MobileNotificationServices;
-             *$title = "عرض جديد";
-             *$body = 'المورد' . $supplier->store_name . 'قام بإضافة عرض جديد';
-             *$notification->sendNotificationToTopic('market', $title, $body);
-             */
+
+            //send notification to markets 
+            $this->sendNotificationToTopic('market', 'الموفراتي', 'عرض جديد من' . $supplier->store_name);
+
             return response()->json($Offer, 201);
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), 500);

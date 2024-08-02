@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -27,7 +29,16 @@ class User extends Authenticatable
         'phone_number',
         'password',
         'email',
+        'last_activity',
     ];
+
+    /**
+     * The accessors to append to the model's array form.
+     * 
+     * @var array<int, string>
+     */
+    protected $appends = ['isOnline'];
+
 
     protected $dates = ['created_at'];
 
@@ -51,10 +62,16 @@ class User extends Authenticatable
         //'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'created_at' => 'date:Y-m-d',
+        'last_activity' => 'datetime',
     ];
 
     public function product(): HasMany
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function getIsOnlineAttribute()
+    {
+        return $this->last_activity && $this->last_activity->gt(Carbon::now()->subMinutes(5));
     }
 }

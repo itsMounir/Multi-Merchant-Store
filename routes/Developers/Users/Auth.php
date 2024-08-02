@@ -27,12 +27,14 @@ Route::prefix('users/auth/')->group(function () {
     Route::post('change-passowrd', [AuthController::class, 'changePassword'])->middleware([
         'auth:sanctum',
         'type.user',
+        'isOnline',
         'ability:' . TokenAbility::ACCESS_API->value
     ]);
 
     Route::get('profile', [AuthController::class, 'profile'])->middleware([
         'auth:sanctum',
         'type.user',
+        'isOnline',
         'ability:' . TokenAbility::ACCESS_API->value
     ]);
 });
@@ -40,8 +42,8 @@ Route::prefix('users/auth/')->group(function () {
 
 Route::prefix('users/employee')->middleware([
     'auth:sanctum',
-    'active',
     'type.user',
+    'isOnline',
     'ability:' . TokenAbility::ACCESS_API->value
 ])->group(function () {
 
