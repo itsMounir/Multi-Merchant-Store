@@ -13,7 +13,13 @@ class BillProduct extends Model
     protected $fillable = [
         'bill_id',
         'product_id',
+        'buying_price',
         'quantity',
+        'buying_price',
+        'max_selling_quantity',
+        'has_offer',
+        'offer_buying_price',
+        'max_offer_quantity'
     ];
 
 
