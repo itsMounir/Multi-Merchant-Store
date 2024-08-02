@@ -178,9 +178,7 @@ class BillsServices
 
                 $quantity = $product['quantity']; // quantity requested
 
-                if ($quantity > $billProduct->max_selling_quantity) {
-                    throw new IncorrectBillException('.' . 'لقد تخطيت العدد الأقصى للطلب : ' . $billProduct->max_selling_quantity . ' لدى ' . $supplier->store_name);
-                }
+                
                 if ($billProduct->has_offer) {
                     $total_price += min(
                         $billProduct->max_offer_quantity,
@@ -282,6 +280,21 @@ class BillsServices
         }
         return null;
     }
+
+    public function removeProducts($product){
+        $products=[];
+
+        foreach($product['products'] as $product){
+            $quantity=$product['quantity'];
+            if($quantity>0){
+                $products[]=$product;
+            }
+        }
+           return [
+        'products' => $products
+    ];
+    }
+
 
 }
 

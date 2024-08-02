@@ -29,7 +29,7 @@ class ProductSupplier extends Model
         'offer_price',
         'max_offer_quantity',
         'offer_expires_at',
-       // 'quantity',
+        'quantity',
     ];
 
 
@@ -62,6 +62,7 @@ class ProductSupplier extends Model
         $response = $productSuppliers->map(function ($productSupplier) {
             $product = Product::find($productSupplier->product_id);
             $productCategory = ProductCategory::find($productSupplier->product_category_id);
+            if($product){
             return [
                 'id' => $productSupplier->product_id,
                 'product_category_id' => $productSupplier->product_category_id,
@@ -78,7 +79,7 @@ class ProductSupplier extends Model
                     'product_id' => $productSupplier->product_id,
                     'id' => $productSupplier->ID,
                     'price' => $productSupplier->price,
-                   // 'quantity'=>$productSupplier->quantity,
+                   'quantity'=>$productSupplier->quantity,
                     'has_offer' => $productSupplier->has_offer,
                     'offer_price' => $productSupplier->offer_price,
                     'max_offer_quantity' => $productSupplier->max_offer_quantity,
@@ -87,8 +88,9 @@ class ProductSupplier extends Model
                     'is_available' => $productSupplier->is_available
                 ]
             ];
-        });
+    }})->filter();
 
-        return $response->toArray();
+        return $response->values()->toArray();
     }
+
 }

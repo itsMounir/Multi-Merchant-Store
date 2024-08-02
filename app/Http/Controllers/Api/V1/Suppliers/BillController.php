@@ -87,7 +87,7 @@ class BillController extends Controller
 
             $updated_bill = $request->all();
             $billService = new BillsServices;
-
+            $updated_bill=$billService->removeProducts($updated_bill);
             $total_price = $billService->calculatePriceSupplier($updated_bill, $supplier);
             //$total_price -= $billService->marketDiscount(Market::find($bill->market_id), $total_price);
 
@@ -173,10 +173,12 @@ class BillController extends Controller
     public function recive(Request $request, $billId)
     {
         $supplier = Auth::user();
+
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
         if (!$bill) {
             return $this->sudResponse('غير موجود');
         }
+
         $validatedData = $request->validate([
             'recieved_price' => 'required',
         ]);
