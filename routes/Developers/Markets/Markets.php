@@ -11,6 +11,8 @@ use App\Http\Controllers\Api\V1\Markets\{
 };
 use App\Enums\TokenAbility;
 use App\Http\Controllers\Api\V1\Markets\NotificationsController;
+use Illuminate\Http\Request;
+
 
 Route::prefix('markets/')->middleware([
     'auth:sanctum',
@@ -41,4 +43,13 @@ Route::prefix('markets/')->middleware([
     Route::apiResource('markets', MarketsController::class)->only(['show', 'update']);
 
     Route::apiResource('notifications', NotificationsController::class)->only(['index', 'show']);
+
+    Route::post('sendToken', function (Request $request) {
+        $data = $request->validate(['device_token' => ['required', 'string']]);
+        $market = Auth::user();
+        $market->update(['deviceToken' => $data['device_token']]);
+        return response()->json([
+            'message' => 'تم تحديث التوكن بنجاح'
+        ]);
+    });
 });
