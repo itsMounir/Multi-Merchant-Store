@@ -67,11 +67,11 @@ class Handler extends ExceptionHandler
             ]);
         }
 
-       /* if ($e instanceof QueryException) {
-            return response()->json([
-                'message' => 'Unknown sql error.',
-            ]);
-        }*/
+        /* if ($e instanceof QueryException) {
+             return response()->json([
+                 'message' => 'Unknown sql error.',
+             ]);
+         }*/
 
         if ($e instanceof RouteNotFoundException) {
             return response()->json([
@@ -91,8 +91,9 @@ class Handler extends ExceptionHandler
         if ($e instanceof ProductNotExistForSupplierException) {
             return response()->json([
                 'message' => $e->getMessage(),
-                'product_id' => $e->product->id
-            ],$e->getCode());
+                'product_id' => $e->product->id,
+                'supplier_id' => $e->supplier->id
+            ], $e->getCode());
         }
 
         // if ($e instanceof PusherException) {
@@ -123,9 +124,9 @@ class Handler extends ExceptionHandler
         }
 
         // // general case exception message.
-        // if ($e instanceof Throwable) {
-        //     return response()->json('something went wrong, try again later.',500);
-        // }
+        if ($e instanceof Throwable) {
+            return response()->json('something went wrong, try again later.',500);
+        }
 
 
         return parent::render($request, $e);
