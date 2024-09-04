@@ -22,10 +22,14 @@ class MarketUserController extends Controller
         $category = $request->query('category');
         $status = $request->query('status');
         $city = $request->query('city');
+        $code = $request->query('code');
         $query = Market::query();
 
         if ($category) {
             $query->where('market_category_id', $category);
+        }
+        if ($code) {
+            $query->where('representator_code', $code);
         }
         if ($city) {
             $query->where('city_id', $city);
