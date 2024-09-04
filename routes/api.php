@@ -25,6 +25,7 @@ include __DIR__ . '/Developers/Users/Products.php';
 include __DIR__ . '/Developers/Users/Cities.php';
 include __DIR__ . '/Developers/Users/Statistics.php';
 include __DIR__ . '/Developers/Users/notification.php';
+include __DIR__ . '/Developers/Users/pdf.php';
 
 // Supplier Section
 include __DIR__ . '/Developers/Suppliers/Auth.php';

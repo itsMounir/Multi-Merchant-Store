@@ -162,7 +162,7 @@ class BillsServices
 
     }
 
-    public function calculatePriceSupplier(&$bill, $supplier): float
+    public function calculatePriceSupplier($bill, $supplier): float
     {
         $total_price = 0.0;
         $i = 0;
@@ -283,14 +283,16 @@ class BillsServices
         return null;
     }
 
-    public function removeProducts($product)
-    {
-        $products = [];
+    public function removeProducts($product,$bill){
+        $products=[];
 
         foreach ($product['products'] as $product) {
             $quantity = $product['quantity'];
             if ($quantity > 0) {
                 $products[] = $product;
+            }
+            if($product['quantity']==0){
+                $bill->products()->detach($product['id']);
             }
         }
         return [
