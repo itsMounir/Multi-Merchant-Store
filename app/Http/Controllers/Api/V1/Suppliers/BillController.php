@@ -87,7 +87,8 @@ class BillController extends Controller
 
             $updated_bill = $request->all();
             $billService = new BillsServices;
-            $updated_bill=$billService->removeProducts($updated_bill);
+            $updated_bill=$billService->removeProducts($updated_bill,$bill);
+            //return $updated_bill;
             $total_price = $billService->calculatePriceSupplier($updated_bill, $supplier);
             //$total_price -= $billService->marketDiscount(Market::find($bill->market_id), $total_price);
 
@@ -95,8 +96,6 @@ class BillController extends Controller
             if ($mario) {
                 return $this->sudResponse($mario, 200);
             }
-            $bill->products()->detach();
-
             $delivery_duration = $request->input('delivery_duration');
             $bill->update([
                 'total_price' => $total_price,
@@ -105,23 +104,16 @@ class BillController extends Controller
                 'delivery_duration' => $delivery_duration ?: $bill->delivery_duration,
             ]);
 
+
             foreach ($updated_bill['products'] as $product) {
-                $bill->products()->syncWithoutDetaching([
-                    $product['id'] => [
-                        'quantity' => $product['quantity'],
-                        'buying_price' => $product['buying_price'],
-                        'max_selling_quantity' => $product['max_selling_quantity'],
-                        'has_offer' => $product['has_offer'],
-                        'offer_buying_price' => $product['offer_buying_price'],
-                        'max_offer_quantity' => $product['max_offer_quantity'],
-                        'created_at' => $bill->created_at,
-                        'updated_at' => now(),
-                    ],
+                $bill->products()->updateExistingPivot($product['id'], [
+                    'quantity' => $product['quantity'],
+                    'updated_at' => now(),
                 ]);
             }
             $market = Market::find($bill->market_id);
-            $market->notify(new BillPreparingMarket($bill, $supplier));
-            $this->sendNotification($market->deviceToken, "تحديث الفاتورة", "أصبحت فاتورتك قيد التحضير من عند  " . $supplier->store_name . ".");
+            //$market->notify(new BillPreparingMarket($bill, $supplier));
+           // $this->sendNotification($market->deviceToken, "تحديث الفاتورة", "أصبحت فاتورتك قيد التحضير من عند  " . $supplier->store_name . ".");
             $bill->save();
 
             return $this->sudResponse('تم تحديث الفاتورة بنجاح');
