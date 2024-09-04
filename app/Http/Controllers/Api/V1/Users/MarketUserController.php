@@ -21,11 +21,14 @@ class MarketUserController extends Controller
 
         $category = $request->query('category');
         $status = $request->query('status');
-
+        $city = $request->query('city');
         $query = Market::query();
 
         if ($category) {
             $query->where('market_category_id', $category);
+        }
+        if ($city) {
+            $query->where('city_id', $city);
         }
         if (!is_null($status)) {
             $query->where('status', $status);
@@ -67,13 +70,13 @@ class MarketUserController extends Controller
      */
     public function search(Request $request)
     {
-        $this->authorize('viewAny',Market::class);
+        $this->authorize('viewAny', Market::class);
         try {
             $name = $request->query('name');
             $supplier = Market::where('store_name', 'like', '%' . $name . '%')->orderBy('first_name', 'asc')->paginate(20, ['*'], 'p');
             return response()->json($supplier, 200);
         } catch (\Exception $e) {
-            return response()->json($e->getMessage(), $e->getCode() ?: 500);
+            return response()->json($e->getMessage(), 400);
         }
     }
 
@@ -90,7 +93,7 @@ class MarketUserController extends Controller
         $market->update($request->all());
         return response()->json(['message' => 'User has been updated successfully', 'user' => $market], 200);
     }
-    
+
 
     /**
      * Activate market account
