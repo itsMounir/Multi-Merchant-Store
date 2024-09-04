@@ -32,7 +32,7 @@ return [
     ],
     'firebase' => [
         'credentials' => [
-            'file' => storage_path('app/google-service.json'),
+            'file' => storage_path('suppliers-c8b5a-firebase-adminsdk-4jv7p-c31f976bf5.json'),
         ],
     ],
 

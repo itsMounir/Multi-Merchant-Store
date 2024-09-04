@@ -71,6 +71,7 @@ class BillsServices
                     'has_offer' => $product['has_offer'],
                     'offer_buying_price' => $product['offer_buying_price'],
                     'max_offer_quantity' => $product['max_offer_quantity'],
+                    'offer_expires_at' => $product['offer_expires_at'],
                     'created_at' => now(),
                     'updated_at' => now(),
                 ],
@@ -126,7 +127,8 @@ class BillsServices
                     $bill['products'][$i]['has_offer'] = $supplier_product['pivot']['has_offer'];
                     $bill['products'][$i]['offer_buying_price'] = $supplier_product['pivot']['offer_price'];
                     $bill['products'][$i]['max_offer_quantity'] = $supplier_product['pivot']['max_offer_quantity'];
-                    $quantity = $product['quantity']; // quantity requested
+                    $bill['products'][$i]['offer_expires_at'] = $supplier_product['pivot']['offer_expires_at'];
+                    $quantity = $product['quantity']; // requested quantity
 
                     if ($quantity > $supplier_product['pivot']['max_selling_quantity']) {
                         throw new IncorrectBillException('.' . 'لقد تخطيت العدد الأقصى للطلب : ' . $supplier_product['pivot']['max_selling_quantity'] . ' لدى ' . $supplier->store_name);
@@ -160,7 +162,7 @@ class BillsServices
 
     }
 
-    public function calculatePriceSupplier(&$bill, $supplier): float
+    public function calculatePriceSupplier($bill, $supplier): float
     {
         $total_price = 0.0;
         $i = 0;
@@ -178,7 +180,7 @@ class BillsServices
 
                 $quantity = $product['quantity']; // quantity requested
 
-                
+
                 if ($billProduct->has_offer) {
                     $total_price += min(
                         $billProduct->max_offer_quantity,
@@ -281,18 +283,21 @@ class BillsServices
         return null;
     }
 
-    public function removeProducts($product){
+    public function removeProducts($product,$bill){
         $products=[];
 
-        foreach($product['products'] as $product){
-            $quantity=$product['quantity'];
-            if($quantity>0){
-                $products[]=$product;
+        foreach ($product['products'] as $product) {
+            $quantity = $product['quantity'];
+            if ($quantity > 0) {
+                $products[] = $product;
+            }
+            if($product['quantity']==0){
+                $bill->products()->detach($product['id']);
             }
         }
-           return [
-        'products' => $products
-    ];
+        return [
+            'products' => $products
+        ];
     }
 
 
