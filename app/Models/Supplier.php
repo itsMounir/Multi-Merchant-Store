@@ -205,18 +205,30 @@ class Supplier extends Authenticatable
         return $this->morphMany(Image::class, 'imageable');
     }
 
-   public function deliveredProductPrice($startDate, $endDate)
-{
-    return DB::table('bills')
-        ->select(DB::raw('SUM(bill_product.buying_price * bill_product.quantity) as total_price'))
-        ->where('status', 'تم التوصيل')
-        ->whereDate('bills.created_at', '>=', $startDate)
-        ->whereDate('bills.created_at', '<=', $endDate)
-        ->join('bill_product', 'bills.id', '=', 'bill_product.bill_id')
-        ->get()
-        ->first()
-        ->total_price;
-}
+    public function deliveredProductPrice($startDate, $endDate)
+    {
+        return DB::table('bills')
+            ->select(DB::raw('SUM(
+                CASE
+                    WHEN bill_product.has_offer = 1 THEN
+                        (bill_product.offer_buying_price *
+                         LEAST(bill_product.max_offer_quantity, bill_product.quantity))
+                        +
+                        (bill_product.buying_price *
+                         GREATEST(bill_product.quantity - bill_product.max_offer_quantity, 0))
+                    ELSE
+                        (bill_product.buying_price * bill_product.quantity)
+                END
+            ) as total_price'))
+            ->where('status', 'تم التوصيل')
+            ->whereDate('bills.created_at', '>=', $startDate)
+            ->whereDate('bills.created_at', '<=', $endDate)
+            ->join('bill_product', 'bills.id', '=', 'bill_product.bill_id')
+            ->get()
+            ->first()
+            ->total_price;
+    }
+
 
     public function category()
     {
