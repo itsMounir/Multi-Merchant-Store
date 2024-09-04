@@ -123,12 +123,9 @@ class BillController extends Controller
 
 
 
-
-
     public function reject(Request $request, $billId)
     {
         $supplier = Auth::user();
-
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
         if (!$bill) {
             return $this->sudResponse('غير موجود');
@@ -165,7 +162,6 @@ class BillController extends Controller
     }*/
 
 
-
     public function recive(Request $request, $billId)
     {
         $supplier = Auth::user();
@@ -177,9 +173,10 @@ class BillController extends Controller
 
         $validatedData = $request->validate([
             'recieved_price' => 'required',
-            ]);
-
-
+        ]);
+        if ($request['recieved_price'] > $bill->total_price) {
+            return $this->sudResponse('سعر الاستلام يجب أن يكون اقل أو يساوي اجمالي الفاتورة');
+        }
         $bill->update([
             'status' => 'تم التوصيل',
             'recieved_price' => $request['recieved_price'],
