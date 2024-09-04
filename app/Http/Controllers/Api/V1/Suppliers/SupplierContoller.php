@@ -15,8 +15,6 @@ use App\Models\{
     Market,
     User,
     City
-
-
 };
 
 
@@ -27,7 +25,6 @@ use Illuminate\Support\Facades\{
 use App\Notifications\{
     DistributionLocationUpdate,
     DiscountAdded
-
 };
 use Illuminate\Support\Facades\Notification;
 use App\Http\Requests\Api\V1\Suppliers\{
@@ -40,8 +37,9 @@ use App\Traits\FirebaseNotification;
 class SupplierContoller extends Controller
 {
 
-    use Responses , FirebaseNotification;
-    public function index(Request $request){
+    use Responses, FirebaseNotification;
+    public function index(Request $request)
+    {
         $supplier = Auth::user();
         if (!$supplier) {
             return $this->sudResponse('Unauthorized', 401);
@@ -57,7 +55,8 @@ class SupplierContoller extends Controller
     }
 
 
-       public function categories_supplier(){
+    public function categories_supplier()
+    {
         $category = SupplierCategory::get();
         $cities = City::with('childrens.childrens')->whereNull('parent_id')->get();
         $data = [
@@ -69,9 +68,10 @@ class SupplierContoller extends Controller
 
 
 
-    public function Personal_Data(){
+    public function Personal_Data()
+    {
         $supplier = Auth::user();
-        $supplier->load('city','supplierCategory');
+        $supplier->load('city', 'supplierCategory');
         $supplierImages = $supplier->getImagesAttribute();
         $supplier->images= [$supplierImages];
         $cities = City::all();
@@ -98,18 +98,18 @@ class SupplierContoller extends Controller
     }
 
 
-     /*   public function search(Request $request){
+    /*   public function search(Request $request){
 
         return $this->indexOrShowResponse('body',$product=Product::where('name', 'like', '%' . $request->search . '%')->get());
     }*/
 
 
-    public function edit_name(UpdateName $request){
+    public function edit_name(UpdateName $request)
+    {
 
-        $supplier=Auth::user();
+        $supplier = Auth::user();
         $supplier->update($request->all());
         return $this->sudResponse('تم تعديل الاسم بنجاح');
-
     }
 
     public function updateDistributionLocations(UpdateDistributionlocations $request)
@@ -140,34 +140,35 @@ class SupplierContoller extends Controller
 
     public function add_Discount(AddDiscountRequest $request)
     {
-       // $notification=new MobileNotificationServices;
+        // $notification=new MobileNotificationServices;
         $supplier = Auth::user();
 
         foreach ($request->input('discount') as $offerData) {
             $createdDiscount = $supplier->goals()->create($offerData);
         }
         $marketsToNotify = $supplier->getMarketsToNotify();
-        Notification::send($marketsToNotify, new DiscountAdded($supplier->append('category_name','city_name')));
+        Notification::send($marketsToNotify, new DiscountAdded($supplier->append('category_name', 'city_name')));
         foreach ($marketsToNotify as $market) {
 
-            $this->sendNotification($market->deviceToken,"خصم جديد","تم اضافة خصم من قبل ". $supplier->store_name . ".");
+            $this->sendNotification($market->deviceToken, "خصم جديد", "تم اضافة خصم من قبل " . $supplier->store_name . ".");
         }
         return $this->sudResponse('تم اضافة خصم بنجاح');
     }
 
 
-
-
-
-    public function get_Discount(){
-        $supplier=Auth::user();
-        $data=$supplier->goals()->get()->with(['supplier']);
+    public function get_Discount()
+    {
+        $supplier = Auth::user();
+        $data = $supplier->goals()->get()->with(['supplier']);
         return $this->sudResponse($data);
     }
 
 
+    public function getDeviceToken(Request $request)
+    {
+        $data = $request->validate(['device_token' => 'required']);
+        $supplier = Auth::user();
+        $supplier->update(['deviceToken' => $data['device_token']]);
+        return $this->sudResponse('تم تحديث التوكن بنجاح');
+    }
 }
-
-
-
-

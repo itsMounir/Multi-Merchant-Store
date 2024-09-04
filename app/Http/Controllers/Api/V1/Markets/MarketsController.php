@@ -103,4 +103,13 @@ class MarketsController extends Controller
     {
         //
     }
+
+
+    public function getDeviceToken(Request $request)
+    {
+        $data = $request->validate(['device_token' => 'required']);
+        $market = Auth::user();
+        $market->update(['deviceToken' => $data['device_token']]);
+        return $this->sudResponse('تم تحديث التوكن بنجاح');
+    }
 }
