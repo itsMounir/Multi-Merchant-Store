@@ -62,7 +62,7 @@ class RegisterController extends Controller
             });
             
             //Subsicribe To Market Topic
-            //$this->subscribeToTopic($market->deviceToken,'market');
+            $this->subscribeToTopic($market->deviceToken,'market');
             
             return response()->json([
                 'message' => '.تم إنشاء الحساب بنجاح، يرجى انتظار تأكيده من الادمن',

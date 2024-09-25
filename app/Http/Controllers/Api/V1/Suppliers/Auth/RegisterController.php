@@ -66,7 +66,7 @@ class RegisterController extends Controller
             );
             
             //Subsicribe To Supplier Topic
-           // $this->subscribeToTopic($supplier->deviceToken,'supplier');
+            $this->subscribeToTopic($supplier->deviceToken,'supplier');
 
             return response()->json([
                 'message' => '.تم إنشاء الحساب بنجاح، يرجى انتظار التأكيد من الادمن',

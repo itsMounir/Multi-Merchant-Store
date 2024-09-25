@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Users;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Users\SupplierProfileRequest;
 use App\Models\Supplier;
+use App\Traits\FirebaseNotification;
 use App\Traits\Images;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Storage;
 class SupplierUserController extends Controller
 {
     use Images;
+    use FirebaseNotification;
 
     /**
      * Display listing of suppliers (filtered on category and status) 
@@ -100,6 +102,8 @@ class SupplierUserController extends Controller
         $supplier->category_name = $supplier->category->type;
         $supplier->city_name = $supplier->city->name;
 
+        $this->sendNotification($supplier->deviceToken, 'الموفراتي', 'تم تعديل معلوماتك بنجاح
+        راجع ملفك الشخصي');
         return response()->json(['message' => 'User has been updated successfully', 'user' => $supplier], 200);
     }
 
