@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Bill extends Model
@@ -141,6 +143,11 @@ class Bill extends Model
     public function market()
     {
         return $this->belongsTo(Market::class);
+    }
+
+    public function coupon(): HasMany
+    {
+        return $this->hasMany(CouponBill::class);
     }
 
     public function scopeNewStatusCount($query, $supplier_id)

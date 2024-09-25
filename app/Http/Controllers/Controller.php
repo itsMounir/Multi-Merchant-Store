@@ -15,7 +15,6 @@ class Controller extends BaseController
 
     public function filter(Request $request, $query)
     {
-        $perPage = $request->input('per_page', 20);
         $orderBy = $request->input('order_by', 'created_at');
         $order = $request->input('order', 'desc');
         $filter = $request->input('filter', 'id');
@@ -56,6 +55,6 @@ class Controller extends BaseController
             $query->orderBy($orderBy, $order);
         }
 
-        return $query->paginate($perPage, ['*'], 'p');
+        return $query;
     }
 }
