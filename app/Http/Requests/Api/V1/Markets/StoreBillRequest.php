@@ -25,6 +25,7 @@ class StoreBillRequest extends FormRequest
         return [
             'bills' => ['array','required'],
             'bills.*.supplier_id' => ['required','exists:suppliers,id'],
+            'bills.*.coupon_code' => ['string'],
             'bills.*.payment_method_id' => ['required','exists:payment_methods,id'],
             'bills.*.products' => ['array','required'],
             'bills.*.products.*.id' => ['required','exists:products,id','distinct'],
