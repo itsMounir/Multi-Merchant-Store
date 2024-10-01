@@ -24,8 +24,9 @@ include __DIR__ . '/Developers/Users/Offers.php';
 include __DIR__ . '/Developers/Users/Products.php';
 include __DIR__ . '/Developers/Users/Cities.php';
 include __DIR__ . '/Developers/Users/Statistics.php';
-include __DIR__ . '/Developers/Users/notification.php';
-include __DIR__ . '/Developers/Users/pdf.php';
+include __DIR__ . '/Developers/Users/Notification.php';
+include __DIR__ . '/Developers/Users/Pdf.php';
+include __DIR__ . '/Developers/Users/Coupon.php';
 
 // Supplier Section
 include __DIR__ . '/Developers/Suppliers/Auth.php';

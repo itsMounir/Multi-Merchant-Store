@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Bill extends Model
@@ -37,7 +39,15 @@ class Bill extends Model
      *
      * @var array<int, string>
      */
-    protected $appends = ['created_at_formatted', 'payment_method', 'additional_price', 'waffarnalak', 'updatable'];
+    protected $appends = [
+        'created_at_formatted',
+        'payment_method',
+        'additional_price',
+        'waffarnalak',
+        'updatable',
+        'has_coupon',
+        'coupon_discount_value'
+    ];
 
     protected $hidden = [
         'deleted_at'
@@ -67,7 +77,8 @@ class Bill extends Model
     }
     public function getAdditionalPriceAttribute()
     {
-        return $this->has_additional_cost ? 5 : 0;
+        // return $this->has_additional_cost ? 5 : 0;
+        return 0;
     }
 
     public function getWaffarnalakAttribute()
@@ -105,8 +116,24 @@ class Bill extends Model
         return $this->isUpdatable();
     }
 
+    public function getHasCouponAttribute(): bool
+    {
+        return $this->couponBill()->first() ? true : false;
+    }
+
+    public function getCouponDiscountValueAttribute(): float
+    {
+        if ($this->has_coupon) {
+            return $this->coupons()->first()->disscount_value;
+        }
+        return 0;
+    }
+
     public function getTotalPriceAfterDiscountAttribute()
     {
+        if ($this->has_coupon) {
+            return ($this->total_price - $this->goal_discount - $this->coupons()->first()->disscount_value);
+        }
         return ($this->total_price - $this->goal_discount);
     }
 
@@ -142,6 +169,16 @@ class Bill extends Model
     public function market()
     {
         return $this->belongsTo(Market::class);
+    }
+
+    public function coupons(): BelongsToMany
+    {
+        return $this->belongsToMany(Coupon::class, 'coupon_bills');
+    }
+
+    public function couponBill(): HasMany
+    {
+        return $this->hasMany(CouponBill::class);
     }
 
     public function scopeNewStatusCount($query, $supplier_id)
