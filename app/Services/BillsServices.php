@@ -160,46 +160,37 @@ class BillsServices
 
     }
 
-    public function calculatePriceSupplier($bill, $supplier): float
-    {
-        $total_price = 0.0;
-        $i = 0;
+    public function calculatePriceSupplier($bill, $supplier,$billId): float
+{
+    $total_price = 0.0;
 
-        foreach ($bill['products'] as $product) {
-            $exist = false;
-            $billProduct = BillProduct::where('product_id', $product['id'])->first();
-            if ($billProduct) {
-                $price = $billProduct->buying_price;
-                $bill['products'][$i]['buying_price'] = $price;
-                $bill['products'][$i]['max_selling_quantity'] = $billProduct->max_selling_quantity;
-                $bill['products'][$i]['has_offer'] = $billProduct->has_offer;
-                $bill['products'][$i]['offer_buying_price'] = $billProduct->offer_buying_price;
-                $bill['products'][$i]['max_offer_quantity'] = $billProduct->max_offer_quantity;
+    foreach ($bill['products'] as $product) {
+        $billProduct = BillProduct::where('product_id', $product['id'])->where('bill_id',$billId)->first();
 
-                $quantity = $product['quantity']; // quantity requested
+        /*if (!$billProduct) {
+            $not_existing_product = Product::findOrFail($product['id']);
+            throw new ProductNotExistForSupplierException($not_existing_product, $supplier);
+        }*/
+
+        $price = $billProduct->buying_price;
+        $quantity = $product['quantity'];
 
 
-                if ($billProduct->has_offer) {
-                    $total_price += min(
-                        $billProduct->max_offer_quantity,
-                        $quantity
-                    ) * $billProduct->offer_buying_price;
+        if ($billProduct->has_offer) {
 
-                    $quantity -= $billProduct->max_offer_quantity;
-                }
-                if ($quantity > 0) {
-                    $total_price += $price * $quantity; // in case requested quantity is more than offer quantity
-                }
-                $exist = true;
-            }
-            if (!$exist) {
-                $not_existing_product = Product::findOrFail($product['id']);
-                throw new ProductNotExistForSupplierException($not_existing_product, $supplier);
-            }
-            $i++;
+            $offer_quantity = min($billProduct->max_offer_quantity, $quantity);
+            $total_price += $offer_quantity * $billProduct->offer_buying_price;
+            $quantity -= $offer_quantity;
         }
-        return $total_price;
+
+
+        if ($quantity > 0) {
+            $total_price += $quantity * $price;
+        }
     }
+
+    return $total_price;
+}
 
     /**
      * return discount value earned by achieving supplier's goals .

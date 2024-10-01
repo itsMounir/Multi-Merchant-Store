@@ -147,9 +147,9 @@ class SupplierContoller extends Controller
             $createdDiscount = $supplier->goals()->create($offerData);
         }
         $marketsToNotify = $supplier->getMarketsToNotify();
-        Notification::send($marketsToNotify, new DiscountAdded($supplier->append('category_name','city_name')));
-        foreach ($marketsToNotify as $market) {
 
+        foreach ($marketsToNotify as $market) {
+            Notification::send($market, new DiscountAdded($supplier->append('category_name','city_name')));
             $this->sendNotification($market->deviceToken,"خصم جديد","تم اضافة خصم من قبل ". $supplier->store_name . ".");
         }
         return $this->sudResponse('تم اضافة خصم بنجاح');
