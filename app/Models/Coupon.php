@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 
 class Coupon extends Model
 {
@@ -22,6 +23,14 @@ class Coupon extends Model
         'disscount_value',
         'active',
     ];
+
+    /**
+     * Scope a query to only include same-site suppliers.
+     */
+    public static function scopeActive(Builder $query): void
+    {
+        $query->where('active',true);
+    }
 
 
     public function bill(): HasMany

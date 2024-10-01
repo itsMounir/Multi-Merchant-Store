@@ -13,6 +13,8 @@ use App\Models\{
     Product,
     BillProduct
 };
+use App\Models\Coupon;
+use App\Models\CouponBill;
 use App\Models\User;
 use App\Notifications\NewBillRequested;
 use Illuminate\Support\Facades\Auth;
@@ -77,6 +79,11 @@ class BillsServices
                 ],
             ]);
         }
+
+        if (array_key_exists('coupon_code', $bill)) {
+            $this->checkCouponDiscount($new_bill, $bill['coupon_code']);
+        }
+
         // update the users to recieve the notification !!!!!!!!!!!!
         $moderator = User::role('moderator')->get();
 
@@ -283,15 +290,16 @@ class BillsServices
         return null;
     }
 
-    public function removeProducts($product,$bill){
-        $products=[];
+    public function removeProducts($product, $bill)
+    {
+        $products = [];
 
         foreach ($product['products'] as $product) {
             $quantity = $product['quantity'];
             if ($quantity > 0) {
                 $products[] = $product;
             }
-            if($product['quantity']==0){
+            if ($product['quantity'] == 0) {
                 $bill->products()->detach($product['id']);
             }
         }
@@ -300,6 +308,29 @@ class BillsServices
         ];
     }
 
+    public function checkCouponDiscount($bill, $coupon_code): void
+    {
+        $codes = Coupon::active()->pluck('code')->all();
+
+        if (in_array($coupon_code, $codes)) {
+            // the coupon code sent in the bill is correct
+
+            $coupon = Coupon::where('code', $coupon_code)->first();
+
+            $coupon_bil = CouponBill::where('coupon_id', $coupon->id)
+                ->where('market_id', $bill->market_id)
+                ->first();
+
+            // check to ensure that every coupon_code is used just one time.
+            if ($coupon && ! $coupon_bil  && ($bill->total_price > $coupon->min_bill_limit)) {
+                $couponBill = new CouponBill();
+                $couponBill->coupon_id = $coupon->id;
+                $couponBill->bill_id = $bill->id;
+                $couponBill->market_id = $bill->market_id;
+                $couponBill->save();
+            }
+        }
+    }
 
 }
 

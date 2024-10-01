@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('coupons', function (Blueprint $table) {
             $table->id();
             $table->string('code', '6');
-            $table->string('min_bill_limit');
-            $table->string('disscount_value');
+            $table->float('min_bill_limit');
+            $table->float('disscount_value');
             $table->boolean('active')->default(0);
             $table->softDeletes();
             $table->timestamps();
