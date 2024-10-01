@@ -6,18 +6,18 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class ReciveBillMarket extends Notification
+class Reject extends Notification
 {
 
 
 
-    public function __construct(public  $supplier)
+    public function __construct(public  $supplier,public $rejection_reason,public $market )
     {
 
     }
     public function databaseType(object $notifiable): string
     {
-        return 'receive-bill';
+        return 'reject-bill-dash';
     }
 
     public function via($notifiable)
@@ -28,8 +28,8 @@ class ReciveBillMarket extends Notification
     public function toArray($notifiable)
     {
         return [
-            'message' => 'لقد تم توصيل فاتورتك من قبل المورد ' . $this->supplier->store_name,
-            'image'=>$this->supplier->images
+            'message' => "لقد رفض الماركت '{$this->market->store_name}' استلام الفاتورة من عند المورد '{$this->supplier->store_name}'   بسبب:   '{$this->rejection_reason}'.",
         ];
     }
+
 }

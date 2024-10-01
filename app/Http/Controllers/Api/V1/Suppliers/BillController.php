@@ -10,7 +10,8 @@ use App\Models\{
 
     Bill,
     Supplier,
-    Market
+    Market,
+    User
 };
 use Carbon\Carbon;
 
@@ -23,7 +24,7 @@ use Illuminate\Support\Facades\{
     Auth,
     DB
 };
-use App\Notifications\RejectedNotification;
+use App\Notifications\{updateStatusBill,RejectedNotification,Reject};
 use Illuminate\Support\Facades\Notification;
 use App\Services\BillsServices;
 use App\Traits\FirebaseNotification;
@@ -78,7 +79,10 @@ class BillController extends Controller
 
     public function update(UpdateBillRequest $request, Bill $bill)
     {
-        return DB::transaction(function () use ($request, $bill) {
+        $supervisor = User::role('supervisor')->get();
+        $admin = User::role('admin')->get();
+        //return $bill;
+        return DB::transaction(function () use ($request, $bill,$admin,$supervisor) {
             if ($bill->status != 'جديد') {
 
                 return $this->sudResponse('يمكنك تعديل فقط الفواتير التي حالتها جديد', 403);
@@ -89,7 +93,8 @@ class BillController extends Controller
             $billService = new BillsServices;
             $updated_bill=$billService->removeProducts($updated_bill,$bill);
             //return $updated_bill;
-            $total_price = $billService->calculatePriceSupplier($updated_bill, $supplier);
+            $total_price = $billService->calculatePriceSupplier($updated_bill, $supplier,$bill->id);
+           // return $total_price;
             //$total_price -= $billService->marketDiscount(Market::find($bill->market_id), $total_price);
 
             $mario = $billService->checkProductAvailability($updated_bill, $supplier, $bill);
@@ -112,7 +117,9 @@ class BillController extends Controller
                 ]);
             }
             $market = Market::find($bill->market_id);
-            //$market->notify(new BillPreparingMarket($bill, $supplier));
+            $market->notify(new BillPreparingMarket($bill, $supplier));
+            Notification::send($supervisor, new updateStatusBill($supplier,'قيد التحضير',$market));
+            Notification::send($admin, new updateStatusBill($supplier,'قيد التحضير',$market));
            // $this->sendNotification($market->deviceToken, "تحديث الفاتورة", "أصبحت فاتورتك قيد التحضير من عند  " . $supplier->store_name . ".");
             $bill->save();
 
@@ -126,6 +133,8 @@ class BillController extends Controller
     public function reject(Request $request, $billId)
     {
         $supplier = Auth::user();
+        $supervisor = User::role('supervisor')->get();
+        $admin = User::role('admin')->get();
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
         if (!$bill) {
             return $this->sudResponse('غير موجود');
@@ -140,8 +149,10 @@ class BillController extends Controller
         ]);
         $market = Market::find($bill->market_id);
         if ($market) {
+            Notification::send($supervisor, new updateStatusBill($supplier,'ملغية',$market));
+            Notification::send($admin, new updateStatusBill($supplier,'ملغية',$market));
             Notification::send($market, new RejectedNotification($supplier));
-            $this->sendNotification($market->deviceToken, "رفض فاتورة", "تم رفض فاتورتك من عند " . $supplier->store_name . ".");
+           // $this->sendNotification($market->deviceToken, "رفض فاتورة", "تم رفض فاتورتك من عند " . $supplier->store_name . ".");
         }
         return $this->sudResponse('تم بنجاح');
     }
@@ -165,6 +176,8 @@ class BillController extends Controller
     public function recive(Request $request, $billId)
     {
         $supplier = Auth::user();
+        $supervisor = User::role('supervisor')->get();
+        $admin = User::role('admin')->get();
 
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
         if (!$bill) {
@@ -174,18 +187,22 @@ class BillController extends Controller
         $validatedData = $request->validate([
             'recieved_price' => 'required',
         ]);
-        if ($request['recieved_price'] > $bill->total_price) {
+        /*if ($request['recieved_price'] > $bill->total_price) {
             return $this->sudResponse('سعر الاستلام يجب أن يكون اقل أو يساوي اجمالي الفاتورة');
-        }
+        }*/
         $bill->update([
             'status' => 'تم التوصيل',
             'recieved_price' => $request['recieved_price'],
         ]);
+
         $market = Market::find($bill->market_id);
         if ($market) {
+            Notification::send($supervisor, new updateStatusBill($supplier,'تم التوصيل',$market));
+            Notification::send($admin, new updateStatusBill($supplier,'تم التوصيل',$market));
             Notification::send($market, new ReciveBillMarket($supplier));
-            $this->sendNotification($market->deviceToken, "استلام فاتورة", "تم  توصيل فاتورتك من عند " . $supplier->store_name . ".");
+            //$this->sendNotification($market->deviceToken, "استلام فاتورة", "تم  توصيل فاتورتك من عند " . $supplier->store_name . ".");
         }
+
         return $this->sudResponse('تم بنجاح');
     }
 
@@ -193,7 +210,9 @@ class BillController extends Controller
     public function Refused(Request $request, $billId)
     {
         $supplier = Auth::user();
+        $admin = User::role('admin')->get();
         $bill = Bill::where('id', $billId)->where('supplier_id', $supplier->id)->first();
+        $market = Market::find($bill->market_id);
         if (!$bill) {
             return $this->sudResponse('غير موجود');
         }
@@ -212,6 +231,8 @@ class BillController extends Controller
                 $productSupplier->pivot->save();
             }
         }
+        Notification::send($admin, new Reject($supplier,$request->rejection_reason,$market));
+
 
         $bill->update([
             'status' => 'رفض الاستلام',
