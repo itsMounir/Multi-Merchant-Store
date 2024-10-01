@@ -89,7 +89,6 @@ class BillsController extends Controller
         if ($status)
             $query->where('status', $status);
         $bills = $query->paginate($per_page, ['*'], 'p')->through(function ($bill) {
-            $bill->supplier->makeHidden('min_bill_price');
             $bill->append('total_price_after_discount');
             return $bill;
         });
@@ -143,19 +142,9 @@ class BillsController extends Controller
     public function show(String $id)
     {
         $bill = Bill::with(['market', 'supplier'])->findOrFail($id);
+        $bill->append('total_price_after_discount');
         $this->authorize('webView', $bill);
-        $supplier = Supplier::findOrFail($bill->supplier_id);
-        $productIds = $bill->products->pluck('id');
-        $bill->load([
-            'products' => function ($query) use ($productIds, $supplier) {
-                $query->whereIn('products.id', $productIds)
-                    ->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
-                    ->where('product_supplier.supplier_id', $supplier->id)
-                    ->select('products.*', 'product_supplier.price as price');
-            }
-
-        ]);
-        $bill->supplier->makeHidden('min_bill_price');
+        $bill->load(['products']);
         return response()->json(['bill' => $bill]);
     }
 
