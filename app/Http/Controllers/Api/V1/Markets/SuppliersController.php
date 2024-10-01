@@ -59,8 +59,8 @@ class SuppliersController extends Controller
 
 
         $products = Product::query()->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
-                ->where('product_supplier.supplier_id', $supplier->id)
-                ->where('product_supplier.is_available', true)
+            ->where('product_supplier.supplier_id', $supplier->id)
+            ->where('product_supplier.is_available', true)
             ->select([
                 'products.*',
                 'product_supplier.price',
@@ -98,7 +98,7 @@ class SuppliersController extends Controller
                 $categories_ids[] = $categoryId;
             }
         }
-        $categories = ProductCategory::whereIn('id', $categories_ids)->get(['id', 'name']);
+        $categories = ProductCategory::whereIn('id', $categories_ids)->orderBy('position')->get(['id', 'name']);
         $offers = Offer::where('supplier_id', $supplier->id)->get();
         $products_with_offer = [];
         $products_without_offer = [];

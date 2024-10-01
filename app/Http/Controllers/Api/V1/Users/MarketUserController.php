@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Api\V1\Users;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Users\MarketProfileRequest;
 use App\Models\Market;
+use App\Traits\FirebaseNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class MarketUserController extends Controller
 {
+    use FirebaseNotification;
+
     /**
      * Display listing of markets (filtered on category and status)
      * @param Request $request
@@ -19,18 +22,21 @@ class MarketUserController extends Controller
     {
         $this->authorize('viewAny', Market::class);
 
-        $category = $request->query('category');
-        $status = $request->query('status');
-
         $query = Market::query();
+        $perPage = $request->input('per_page', 20);
 
-        if ($category) {
-            $query->where('market_category_id', $category);
+        $filter = $this->filter($request, $query);
+
+        if ($request->query('category')) {
+            $query->where('market_category_id', $request->query('category'));
         }
-        if (!is_null($status)) {
-            $query->where('status', $status);
+        if ($request->query('city')) {
+            $query->where('city_id', $request->query('city'));
         }
-        $markets = $query->orderBy('first_name', 'asc')->paginate(20, ['*'], 'p');
+        if (!is_null($request->query('status'))) {
+            $query->where('status', $request->query('status'));
+        }
+        $markets = $filter->paginate($perPage, ['*'], 'p');
 
         return response()->json(['market users' => $markets]);
     }
@@ -67,13 +73,13 @@ class MarketUserController extends Controller
      */
     public function search(Request $request)
     {
-        $this->authorize('viewAny',Market::class);
+        $this->authorize('viewAny', Market::class);
         try {
             $name = $request->query('name');
             $supplier = Market::where('store_name', 'like', '%' . $name . '%')->orderBy('first_name', 'asc')->paginate(20, ['*'], 'p');
             return response()->json($supplier, 200);
         } catch (\Exception $e) {
-            return response()->json($e->getMessage(), $e->getCode() ?: 500);
+            return response()->json($e->getMessage(), 400);
         }
     }
 
@@ -88,9 +94,13 @@ class MarketUserController extends Controller
         $market = Market::findOrFail($id);
         $this->authorize('update', $market);
         $market->update($request->all());
+
+        $this->sendNotification($market->deviceToken, 'الموفراتي', 'تم تعديل معلوماتك بنجاح
+        راجع ملفك الشخصي');
+
         return response()->json(['message' => 'User has been updated successfully', 'user' => $market], 200);
     }
-    
+
 
     /**
      * Activate market account
