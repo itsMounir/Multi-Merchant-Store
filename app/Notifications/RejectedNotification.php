@@ -36,6 +36,7 @@ class RejectedNotification extends Notification implements ShouldBroadcast, Shou
     {
         return new BroadcastMessage([
             'message' => "تم رفض فاتورتك من قبل المورد: {$this->supplier->store_name}",
+            'image'=>$this->supplier->images
         ]);
     }
 }

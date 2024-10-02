@@ -46,23 +46,13 @@ class Bill extends Model
         'waffarnalak',
         'updatable',
         'has_coupon',
+        'coupon_code',
         'coupon_discount_value'
     ];
 
     protected $hidden = [
         'deleted_at'
     ];
-    //protected $dates = ['created_at'];
-
-    //protected $dates = ['created_at'];
-
-    //protected $dates = ['created_at'];
-
-
-    //protected $dates = ['created_at'];
-
-
-
 
     protected $dates = ['created_at'];
 
@@ -119,6 +109,14 @@ class Bill extends Model
     public function getHasCouponAttribute(): bool
     {
         return $this->couponBill()->first() ? true : false;
+    }
+
+    public function getCouponCodeAttribute(): string
+    {
+        if ($this->has_coupon) {
+            return $this->coupons()->first()->code;
+        }
+        return '';
     }
 
     public function getCouponDiscountValueAttribute(): float
