@@ -43,7 +43,7 @@ class CouponController extends Controller
         if ($coupon->active != true) {
             $coupon->active = true;
             $coupon->save();
-            return response()->json($coupon, 200);
+            return response()->json(['coupon'=>$coupon], 200);
         } else {
             return response()->json(['message' => 'this code is alredy activated'], 422);
         }
@@ -55,7 +55,7 @@ class CouponController extends Controller
         if ($coupon->active != false) {
             $coupon->active = false;
             $coupon->save();
-            return response()->json($coupon, 200);
+            return response()->json(['coupon'=>$coupon], 200);
         } else {
             return response()->json(['message' => 'this code is alredy deactivated'], 422);
         }
@@ -65,6 +65,6 @@ class CouponController extends Controller
     {
         $coupon = Coupon::findOrFail($id);
         $coupon->delete();
-        return response()->json(null, 204);
+        return response()->json(null, 200);
     }
 }

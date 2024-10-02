@@ -53,17 +53,6 @@ class Bill extends Model
     protected $hidden = [
         'deleted_at'
     ];
-    //protected $dates = ['created_at'];
-
-    //protected $dates = ['created_at'];
-
-    //protected $dates = ['created_at'];
-
-
-    //protected $dates = ['created_at'];
-
-
-
 
     protected $dates = ['created_at'];
 

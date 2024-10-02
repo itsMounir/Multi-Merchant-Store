@@ -36,7 +36,8 @@ class DiscountAdded extends Notification
     {
         return [
             "supplier"=>$this->supplier,
-            'message' => "{$this->supplier->first_name} {$this->supplier->last_name} قام بإضافة خصم جديد."
+            'message' => "{$this->supplier->store_name}  قام بإضافة خصم جديد.",
+            'image'=>$this->supplier->images
         ];
     }
 }

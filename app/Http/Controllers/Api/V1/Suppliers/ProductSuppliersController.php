@@ -16,6 +16,11 @@ use App\Http\Requests\Api\V1\Suppliers\{
     AddOfferRequest,
     UpdateOfferRequest
 };
+use App\Notifications\{
+    UpdatePrice
+
+};
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\DB;
 class ProductSuppliersController extends Controller
 {
@@ -182,15 +187,24 @@ class ProductSuppliersController extends Controller
     {
         $supplier = Auth::user();
         $productSupplier = $this->findProductSupplier($supplier->id, $product_id);
-
+        $product = DB::table('products')->where('id', $productSupplier->product_id)->first();
         $updateData = $request->only(['price','quantity','offer_price', 'max_offer_quantity', 'offer_expires_at']);
-        if($updateData['quantity']==0){
-            $productSupplier->is_available=0;
-            $productSupplier->has_offer=0;
-            $productSupplier->max_offer_quantity=0;
-            $productSupplier->offer_price=0;
-            $productSupplier->offer_expires_at="9999-1-1";
+       if($request->price){
+        $markets=$supplier->getMarketsToNotify();
+        foreach ($markets as $market) {
+            Notification::send($market, new UpdatePrice($product,$supplier));
         }
+
+       }
+       if (isset($updateData['quantity'])) {
+        if ($updateData['quantity'] == 0) {
+            $productSupplier->is_available = 0;
+            $productSupplier->has_offer = 0;
+            $productSupplier->max_offer_quantity = 0;
+            $productSupplier->offer_price = 0;
+            $productSupplier->offer_expires_at = "9999-1-1";
+        }
+    }
         $productSupplier->update($updateData);
 
 
