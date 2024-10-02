@@ -124,9 +124,9 @@ class Handler extends ExceptionHandler
         }
 
         // // general case exception message.
-        if ($e instanceof Throwable) {
+       /* if ($e instanceof Throwable) {
             return response()->json('something went wrong, try again later.',500);
-        }
+        }*/
 
 
         return parent::render($request, $e);
