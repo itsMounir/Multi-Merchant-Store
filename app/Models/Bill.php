@@ -46,8 +46,8 @@ class Bill extends Model
         'waffarnalak',
         'updatable',
         'has_coupon',
-        'coupon_discount_value',
-        'coupon_code'
+        'coupon_code',
+        'coupon_discount_value'
     ];
 
     protected $hidden = [
@@ -110,13 +110,13 @@ class Bill extends Model
     {
         return $this->couponBill()->first() ? true : false;
     }
-    
-    public function getCouponCodeAttribute():float
+
+    public function getCouponCodeAttribute(): string
     {
-        if($this->has_coupon){
-        return $this->coupons()->first()->code;
+        if ($this->has_coupon) {
+            return $this->coupons()->first()->code;
         }
-        return 0;
+        return '';
     }
 
     public function getCouponDiscountValueAttribute(): float
