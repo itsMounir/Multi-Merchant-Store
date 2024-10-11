@@ -46,7 +46,7 @@ class ReportController extends Controller
             ->avg('total_price');
 
 
-        $totalPrice = $supplier->deliveredProductPrice($request->start_date, $request->end_date);
+        $totalPrice = $supplier->deliveredProductPrice($request->start_date, $request->end_date,$supplier->id);
 
 
         $wastedBillCount = $supplier->bills()
