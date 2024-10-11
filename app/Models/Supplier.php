@@ -209,7 +209,7 @@ class Supplier extends Authenticatable
         return $this->morphMany(Image::class, 'imageable');
     }
 
-    public function deliveredProductPrice($startDate, $endDate)
+    public function deliveredProductPrice($startDate, $endDate):float
 {
     return DB::table('bills')
         ->join('bill_product', 'bills.id', '=', 'bill_product.bill_id')
