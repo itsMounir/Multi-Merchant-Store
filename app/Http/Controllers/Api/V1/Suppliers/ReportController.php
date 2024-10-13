@@ -46,7 +46,7 @@ class ReportController extends Controller
             ->avg('total_price');
 
 
-        $totalPrice = $supplier->deliveredProductPrice($request->start_date, $request->end_date);
+        $totalPrice =$supplier->deliveredProductPrice($request->start_date, $request->end_date,$supplier->id);
 
 
         $wastedBillCount = $supplier->bills()
@@ -54,6 +54,8 @@ class ReportController extends Controller
             ->whereDate('created_at', '>=', $request->start_date)
             ->whereDate('created_at', '<=', $request->end_date)
             ->count();
+
+
 
 
         $receivedBillCount = $supplier->bills()
@@ -66,8 +68,8 @@ class ReportController extends Controller
         $responseData = [
             'paid_Bill' => $paidBillCount,
             'markets_Count' => $marketsCount,
-            'average_Bills' => is_null($averageBillPrice) ? 0 : $averageBillPrice,
-            'total_Price' => is_null($totalPrice)?0:$totalPrice,
+            'average_Bills' => is_null($averageBillPrice) ? 0 :round(floatval($averageBillPrice),2),
+            'total_Price' =>  is_null($totalPrice)?0: round(floatval($totalPrice),2),
             'wasted_Bill' => $wastedBillCount,
             'received_Bill' => $receivedBillCount
         ];
