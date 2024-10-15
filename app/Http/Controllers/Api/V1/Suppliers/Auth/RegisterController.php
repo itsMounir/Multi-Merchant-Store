@@ -49,8 +49,10 @@ class RegisterController extends Controller
             }
 
             $supervisor = User::role('supervisor')->get();
-            DB::afterCommit(function () use ($supervisor, $supplier) {
+            $admin = User::role('admin')->get();
+            DB::afterCommit(function () use ($supervisor, $supplier,$admin) {
                 Notification::send($supervisor, new NewAccount($supplier, 'supplier'));
+                Notification::send($admin, new NewAccount($supplier, 'supplier'));
             });
 
             $accessToken = $supplier->createToken(
@@ -64,7 +66,7 @@ class RegisterController extends Controller
                 [TokenAbility::ISSUE_ACCESS_TOKEN->value],
                 Carbon::now()->addMinutes(config('sanctum.rt_expiration'))
             );
-            
+
             //Subsicribe To Supplier Topic
             $this->subscribeToTopic($supplier->deviceToken,'supplier');
 

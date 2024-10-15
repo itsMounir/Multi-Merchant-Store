@@ -38,6 +38,7 @@ class RegisterSupplier extends FormRequest
             'image' => ['required','image'],
             'to_sites' => 'required|array',
             'to_sites.*.min_bill_price' => 'required|numeric',
+            'details'=>'nullable',
         ];
     }
 
