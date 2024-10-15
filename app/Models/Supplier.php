@@ -35,7 +35,6 @@ class Supplier extends Authenticatable
         'status',
         'supplier_category_id',
         'delivery_duration',
-
         'min_selling_quantity',
         'location_details',
         'city_id',
