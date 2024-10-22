@@ -12,8 +12,11 @@ Route::prefix('users/statistic')->middleware([
     'ability:' . TokenAbility::ACCESS_API->value
 ])->group(function () {
 
-    Route::get('bills', [StatisticsController::class, 'getBillStatistics']);
-    Route::get('market-users', [StatisticsController::class, 'getMarketUsersStatistics']);
-    //Route::get('subscriptions', [StatisticsController::class, 'getMarketSubscriptionsStatistics']);
-    Route::get('users-with-bills', [StatisticsController::class, 'getUsersWithBillsStatistics']);
+    Route::get('bills-inventory', [StatisticsController::class, 'getBillsInventory']);
+    Route::get('week-bills-statistics', [StatisticsController::class, 'getBillStatisticsPerWeek']);
+    Route::get('month-bills-statistics', [StatisticsController::class, 'getBillStatisticsPerMonth']);
+    Route::get('users-count', [StatisticsController::class, 'getMarketsAndSuppliersCount']);
+
+    Route::get('top-three-order', [StatisticsController::class, 'getTopThreeOrderingMarketsAndSuppliers']);
+    Route::get('top-three-cancelling', [StatisticsController::class, 'getTopThreecancellingMarketsAndSuppliers']);
 });
