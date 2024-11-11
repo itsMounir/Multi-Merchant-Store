@@ -57,40 +57,83 @@ class ProductSupplier extends Model
             ->join('products', 'product_supplier.product_id', '=', 'products.id')
             ->where('products.name', 'like', '%' . $productName . '%')
             ->select('product_supplier.id as ID', 'product_supplier.*', 'products.*')
-            ->get();
+            ->paginate(10);
 
-        $response = $productSuppliers->map(function ($productSupplier) {
+        $response = $productSuppliers->getCollection()->map(function ($productSupplier) {
             $product = Product::find($productSupplier->product_id);
             $productCategory = ProductCategory::find($productSupplier->product_category_id);
-            if($product){
-            return [
-                'id' => $productSupplier->product_id,
-                'product_category_id' => $productSupplier->product_category_id,
-                'name' => $product->name,
-                'discription' => $product->discription,
-                'size' => $product->size,
-                'size_of' => $product->size_of,
-                'created_at' => $product->created_at,
-                'updated_at' => $product->updated_at,
-                'image' => $product->getImageAttribute(),
-                'product_category' => $productCategory->name,
-                'pivot' => [
-                    'supplier_id' => $productSupplier->supplier_id,
-                    'product_id' => $productSupplier->product_id,
-                    'id' => $productSupplier->ID,
-                    'price' => $productSupplier->price,
-                   'quantity'=>$productSupplier->quantity,
-                    'has_offer' => $productSupplier->has_offer,
-                    'offer_price' => $productSupplier->offer_price,
-                    'max_offer_quantity' => $productSupplier->max_offer_quantity,
-                    'offer_expires_at' => $productSupplier->offer_expires_at,
-                    'max_selling_quantity' => $productSupplier->max_selling_quantity,
-                    'is_available' => $productSupplier->is_available
-                ]
-            ];
-    }})->filter();
 
-        return $response->values()->toArray();
+            if ($product) {
+                return [
+                    'id' => $productSupplier->product_id,
+                    'product_category_id' => $productSupplier->product_category_id,
+                    'name' => $product->name,
+                    'discription' => $product->discription,
+                    'size' => $product->size,
+                    'size_of' => $product->size_of,
+                    'created_at' => $product->created_at,
+                    'updated_at' => $product->updated_at,
+                    'image' => $product->getImageAttribute(),
+                    'product_category' => $productCategory ? $productCategory->name : null,
+                    'pivot' => [
+                        'supplier_id' => $productSupplier->supplier_id,
+                        'product_id' => $productSupplier->product_id,
+                        'id' => $productSupplier->ID,
+                        'price' => $productSupplier->price,
+                        'quantity' => $productSupplier->quantity,
+                        'has_offer' => $productSupplier->has_offer,
+                        'offer_price' => $productSupplier->offer_price,
+                        'max_offer_quantity' => $productSupplier->max_offer_quantity,
+                        'offer_expires_at' => $productSupplier->offer_expires_at,
+                        'max_selling_quantity' => $productSupplier->max_selling_quantity,
+                        'is_available' => $productSupplier->is_available,
+                    ],
+                ];
+            }
+        })->filter();
+
+        // تفاصيل pagination
+        $links = [];
+        $totalPages = $productSuppliers->lastPage();
+
+        // إضافة روابط الصفحات
+        for ($i = 1; $i <= $totalPages; $i++) {
+            $links[] = [
+                'url' => $productSuppliers->url($i),
+                'label' => (string) $i,
+                'active' => $i === $productSuppliers->currentPage(),
+            ];
+        }
+
+        return [
+            'current_page' => $productSuppliers->currentPage(),
+            'data' => $response->values()->toArray(),
+            'first_page_url' => $productSuppliers->url(1), // رابط الصفحة الأولى
+            'from' => $productSuppliers->firstItem(), // رقم العنصر الأول في الصفحة الحالية
+            'last_page' => $productSuppliers->lastPage(), // رقم آخر صفحة
+            'last_page_url' => $productSuppliers->url($productSuppliers->lastPage()), // رابط آخر صفحة
+            'links' => [
+                [
+                    'url' => $productSuppliers->previousPageUrl(),
+                    'label' => '&laquo; Previous',
+                    'active' => false,
+                ],
+                ...$links,
+                [
+                    'url' => $productSuppliers->nextPageUrl(),
+                    'label' => 'Next &raquo;',
+                    'active' => false,
+                ]
+            ],
+            'next_page_url' => $productSuppliers->nextPageUrl(),
+            'prev_page_url' => $productSuppliers->previousPageUrl(),
+            'path' => $productSuppliers->path(),
+            'per_page' => $productSuppliers->perPage(),
+            'to' => $productSuppliers->currentPage() * $productSuppliers->perPage(),
+            'total' => $productSuppliers->total(),
+        ];
+
+
     }
 
 }

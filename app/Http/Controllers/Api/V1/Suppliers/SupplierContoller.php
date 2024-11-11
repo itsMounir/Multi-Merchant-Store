@@ -16,6 +16,7 @@ use App\Models\{
     User,
     City
 };
+use Illuminate\Http\JsonResponse;
 
 
 use Illuminate\Support\Facades\{
@@ -44,14 +45,17 @@ class SupplierContoller extends Controller
         if (!$supplier) {
             return $this->sudResponse('Unauthorized', 401);
         }
+
+        $query = Product::query();
+
         if ($request->has('search') && $request->search != '') {
-
-            $data = Product::where('name', 'like', '%' . $request->search . '%')->get();
-        } else {
-
-            $data = Product::get();
+            $query->where('name', 'like', '%' . $request->search . '%');
         }
-        return $this->indexOrShowResponse('products', $data);
+        $data = $query->paginate(10);
+
+        return response()->json([
+            'products' => $data
+        ]);
     }
 
 

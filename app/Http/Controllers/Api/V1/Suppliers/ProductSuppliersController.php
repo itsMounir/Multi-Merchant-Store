@@ -20,6 +20,7 @@ use App\Notifications\{
     UpdatePrice
 
 };
+use iluminate\pagination\paginator;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\DB;
 class ProductSuppliersController extends Controller
@@ -29,8 +30,10 @@ class ProductSuppliersController extends Controller
     public function index()
     {
         $supplier=Auth::user();
-        $product=$supplier->products()->get();
-        return $this->indexOrShowResponse('body',$product);
+        $product=$supplier->products()->paginate(10);
+        return response()->json([
+            'body' => $product
+        ]);
     }
 
 
@@ -148,25 +151,25 @@ class ProductSuppliersController extends Controller
     }*/
 
 
-    public function get_product_available_or_Not_available(Request $request, $id){
+    public function get_product_available_or_Not_available(Request $request, $id)
+    {
         $supplier = Auth::user();
-        $productCount= $supplier->count_product();
+        $productCount = $supplier->count_product();
+
+        if ($request->has('search') && $request->search != '') {
+             $product = ProductSupplier::search_Product($supplier->id, $request->search, $id);
 
 
-        if ($request->has('search')&&$request->search!='') {
-
-            $product = ProductSupplier::search_Product($supplier->id,$request->search,$id);
         } else {
+            $product = $supplier->products()->where('is_available', $id)->paginate(10);
 
-            $product = $supplier->products()->where('is_available', $id)->get();
         }
-        $data=[
-            'count_product'=>$productCount,
-            'body'=>$product
-        ];
+        return response()->json([
 
-        return response()->json($data);
+            'data' => $product // يتم هنا استخدام paginate
+        ]);
     }
+
 
 
 
