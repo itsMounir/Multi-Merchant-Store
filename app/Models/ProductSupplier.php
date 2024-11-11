@@ -92,11 +92,10 @@ class ProductSupplier extends Model
             }
         })->filter();
 
-        // تفاصيل pagination
+
         $links = [];
         $totalPages = $productSuppliers->lastPage();
 
-        // إضافة روابط الصفحات
         for ($i = 1; $i <= $totalPages; $i++) {
             $links[] = [
                 'url' => $productSuppliers->url($i),
@@ -108,10 +107,10 @@ class ProductSupplier extends Model
         return [
             'current_page' => $productSuppliers->currentPage(),
             'data' => $response->values()->toArray(),
-            'first_page_url' => $productSuppliers->url(1), // رابط الصفحة الأولى
-            'from' => $productSuppliers->firstItem(), // رقم العنصر الأول في الصفحة الحالية
-            'last_page' => $productSuppliers->lastPage(), // رقم آخر صفحة
-            'last_page_url' => $productSuppliers->url($productSuppliers->lastPage()), // رابط آخر صفحة
+            'first_page_url' => $productSuppliers->url(1),
+            'from' => $productSuppliers->firstItem(),
+            'last_page' => $productSuppliers->lastPage(),
+            'last_page_url' => $productSuppliers->url($productSuppliers->lastPage()),
             'links' => [
                 [
                     'url' => $productSuppliers->previousPageUrl(),
