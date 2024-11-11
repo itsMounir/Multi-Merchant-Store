@@ -166,7 +166,7 @@ class ProductSuppliersController extends Controller
         }
         return response()->json([
 
-            'data' => $product // يتم هنا استخدام paginate
+            'data' => $product 
         ]);
     }
 
