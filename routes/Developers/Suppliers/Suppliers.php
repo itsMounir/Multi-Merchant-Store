@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\Api\V1\Markets\BillsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Suppliers\{
     ProductSuppliersController,
@@ -15,7 +17,8 @@ use App\Http\Controllers\Api\V1\Suppliers\{
     Route::post('forget/password',[ForgetPassword::class,'forgetPassword']);
     Route::post('verifyCode',[ResetPassword::class,'verifyCode']);
     Route::post('reset/password',[ResetPassword::class,'resetPassword']);
-    
+    Route::get('count_bill_price',[BillController::class,'count_bill_price']);
+
 
 
 Route::middleware(['auth:sanctum', 'type.supplier','active'])->group(function () {
