@@ -73,10 +73,11 @@ class SuppliersController extends Controller
             ])
             ->get();
 
-        $filtered_products = $productsFilters->applyFilters(
+        $products_with_offer = $productsFilters->applyFilters(
             Product::query()->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
                 ->where('product_supplier.supplier_id', $supplier->id)
                 ->where('product_supplier.is_available', true)
+                ->where('product_supplier.has_offer', true)
         )
             ->select([
                 'products.*',
@@ -90,6 +91,24 @@ class SuppliersController extends Controller
             ])
             ->get();
 
+            $products_without_offer = $productsFilters->applyFilters(
+                Product::query()->join('product_supplier', 'products.id', '=', 'product_supplier.product_id')
+                    ->where('product_supplier.supplier_id', $supplier->id)
+                    ->where('product_supplier.is_available', true)
+                    ->where('product_supplier.has_offer', false)
+            )
+                ->select([
+                    'products.*',
+                    'product_supplier.price',
+                    //'product_supplier.is_available',
+                    'product_supplier.max_selling_quantity',
+                    'product_supplier.has_offer',
+                    'product_supplier.offer_price',
+                    'product_supplier.max_offer_quantity',
+                    'product_supplier.offer_expires_at'
+                ])
+                ->paginate(15);
+
         $categories_ids = [];
         foreach ($products as $product) {
             $categoryId = $product->product_category_id;
@@ -100,15 +119,6 @@ class SuppliersController extends Controller
         }
         $categories = ProductCategory::whereIn('id', $categories_ids)->orderBy('position')->get(['id', 'name']);
         $offers = Offer::where('supplier_id', $supplier->id)->get();
-        $products_with_offer = [];
-        $products_without_offer = [];
-        foreach ($filtered_products as $product) {
-            if ($product->has_offer) {
-                $products_with_offer[] = $product;
-            } else {
-                $products_without_offer[] = $product;
-            }
-        }
 
         return response()->json([
             'supplier' => $supplier,
