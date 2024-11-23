@@ -241,4 +241,19 @@ class BillController extends Controller
 
         return $this->sudResponse('تم بنجاح');
     }
+
+
+    public function count_bill_price(){
+        $bills = Bill::where('status', 'تم التوصيل')
+             ->whereDate('created_at', '>=', '2024-10-01')
+             ->whereDate('created_at', '<=', now())
+             ->get();
+        $price=0;
+        foreach($bills as $bill){
+            $price=$price+$bill->total_price_after_discount;
+
+        }
+        $data=[$price,$bills->count()];
+        return $data;
+    }
 }
