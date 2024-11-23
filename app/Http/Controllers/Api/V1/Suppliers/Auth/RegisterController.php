@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Notification;
 
 class RegisterController extends Controller
 {
-    use Images , FirebaseNotification;
+    use Images, FirebaseNotification;
     public function create(RegisterSupplier $request)
     {
         return DB::transaction(function () use ($request) {
@@ -50,7 +50,7 @@ class RegisterController extends Controller
 
             $supervisor = User::role('supervisor')->get();
             $admin = User::role('admin')->get();
-            DB::afterCommit(function () use ($supervisor, $supplier,$admin) {
+            DB::afterCommit(function () use ($supervisor, $supplier, $admin) {
                 Notification::send($supervisor, new NewAccount($supplier, 'supplier'));
                 Notification::send($admin, new NewAccount($supplier, 'supplier'));
             });
@@ -68,7 +68,7 @@ class RegisterController extends Controller
             );
 
             //Subsicribe To Supplier Topic
-            $this->subscribeToTopic($supplier->deviceToken,'supplier');
+            $this->subscribeToTopic($supplier->deviceToken, 'supplier');
 
             return response()->json([
                 'message' => '.تم إنشاء الحساب بنجاح، يرجى انتظار التأكيد من الادمن',

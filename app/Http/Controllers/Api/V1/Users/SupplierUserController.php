@@ -29,7 +29,9 @@ class SupplierUserController extends Controller
         $category = $request->query('category');
         $status = $request->query('status');
 
-        $query = Supplier::query()->with('image', 'distributionLocations');
+        $query = Supplier::query()->with('image', 'distributionLocations')->withCount(['bills' => function ($query) {
+            $query->where('status', '!=','ملغية')->where('status', '!=','رفض الإستلام');
+        }]);
         if ($category) {
             $query->where('supplier_category_id', $category);
         }
@@ -56,7 +58,7 @@ class SupplierUserController extends Controller
     public function show($id)
     {
 
-        $supplier = Supplier::with('image', 'distributionLocations')->findOrFail($id);
+        $supplier = Supplier::with(['image', 'distributionLocations','bills.market'])->findOrFail($id);
         $this->authorize('view', $supplier);
 
         $supplier->makeHidden('min_bill_price');
@@ -66,6 +68,38 @@ class SupplierUserController extends Controller
         return response()->json(['user' => $supplier], 200);
     }
 
+    /**
+     * Display the Supplier with his incoming Bills
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function userWithBills($id)
+    {
+        $supplier = Supplier::with(['image', 'bills.market'])->findOrFail($id);
+        $this->authorize('view', $supplier);
+
+       // $supplier->makeHidden('min_bill_price');
+        $supplier->category_name = $supplier->category->type;
+        $supplier->city_name = $supplier->city->name;
+        return response()->json(['supplier' => $supplier]);
+    }
+
+    /**
+     * Display the Supplier with his products
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function userWithProducts($id)
+    {
+        $supplier = Supplier::with(['image', 'products'])->findOrFail($id);
+        $this->authorize('view', $supplier);
+
+        $supplier->makeHidden('min_bill_price');
+        $supplier->catgory_name = $supplier->category->type;
+        $supplier->city_name = $supplier->city->name;
+        return response()->json(['supplier' => $supplier]);
+    }
+    
     /**
      * Display list of Supplier that match the inserted name
      * @param Request $request
@@ -166,53 +200,7 @@ class SupplierUserController extends Controller
         }
     }
 
-    /**
-     * Display the Supplier with his incoming Bills
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function userWithBills($id)
-    {
-        $supplier = Supplier::with('image', 'bills.market')->findOrFail($id);
-        $this->authorize('view', $supplier);
-
-        $supplier->makeHidden('min_bill_price');
-        $supplier->category_name = $supplier->category->type;
-        $supplier->city_name = $supplier->city->name;
-        return response()->json(['supplier' => $supplier]);
-    }
-
-    /**
-     * Display the Supplier with his products
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function userWithProducts($id)
-    {
-        $supplier = Supplier::with('image', 'products')->findOrFail($id);
-        $this->authorize('view', $supplier);
-
-        $supplier->makeHidden('min_bill_price');
-        $supplier->catgory_name = $supplier->category->type;
-        $supplier->city_name = $supplier->city->name;
-        return response()->json(['supplier' => $supplier]);
-    }
-
-    /**
-     * Display the Supplier with his distribution location
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function userWithDistributionLocations(string $id)
-    {
-        $supplier = Supplier::with('image', 'distributionLocations')->findOrFail($id);
-        $this->authorize('view', $supplier);
-
-        $supplier->makeHidden('min_bill_price');
-        $supplier->catgory_name = $supplier->category->type;
-        $supplier->city_name = $supplier->city->name;
-        return response()->json(['supplier' => $supplier]);
-    }
+    
     /**
      * Add or Update a distribution location to supplier
      * @param Request $requset

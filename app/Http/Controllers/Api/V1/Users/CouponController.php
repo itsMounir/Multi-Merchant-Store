@@ -27,7 +27,7 @@ class CouponController extends Controller
     public function store(Request $request)
     {
         $query = $request->validate([
-            'code' => 'required|string|min:6|max:6',
+            'code' => 'required|string|min:6|unique:coupons,code',
             'min_bill_limit' => 'required',
             'disscount_value' => 'required',
         ]);
@@ -65,6 +65,6 @@ class CouponController extends Controller
     {
         $coupon = Coupon::findOrFail($id);
         $coupon->delete();
-        return response()->json(null, 200);
+        return response()->json(null, 204);
     }
 }

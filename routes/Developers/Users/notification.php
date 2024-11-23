@@ -22,5 +22,8 @@ Route::prefix('users/notification')->middleware([
     });
 
     Route::post('market/send/{id}',[NotificationController::class,'sendNotificationToMarket']);
+    Route::post('market/city/send',[NotificationController::class,'sendNotificationToMarketInCity']);
+
     Route::post('supplier/send/{id}',[NotificationController::class,'sendNotificationToSupplier']);
+    Route::post('supplier/city/send',[NotificationController::class,'sendNotificationToSupplierInCity']);
 });
