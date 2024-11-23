@@ -33,36 +33,68 @@ class StatisticsController extends Controller
         $end_date = $request->end_date;
         $start_date = Carbon::createFromFormat('Y-m-d', $request->start_date)->startOfDay();
         $end_date = Carbon::createFromFormat('Y-m-d', $request->end_date)->endOfDay();
-        $bills = Bill::whereBetween('created_at', [$start_date, $end_date])->get();
-        $bills_count = count($bills);
-        $bills_with_additional_cost = $bills->where('has_additional_cost', 1);
-        $bills_with_additional_cost_count = count($bills_with_additional_cost);
-        $bills_without_additional_cost = $bills->where('has_additional_cost', 0);
-        $bills_without_additional_cost_count = count($bills_without_additional_cost);
-        $bills_with_discount = $bills->where('goal_discount', '>', '0');
+        $bills = Bill::whereBetween('created_at', [$start_date, $end_date]);
+        $bills_count = $bills->count();
+
+        $bills_cancelled_count = (clone $bills)->whereIn('status', ['ملغية', 'رفض الاستلام'])->count();
+        $total_waste_cost = $bills->sum('total_price');
+
+        $bills_on_prepere_count = (clone $bills)->whereIn('status', ['انتظار', 'جديد', 'قيد التحضير'])->count();
+
+        $bills_done = (clone $bills)->where('status', 'تم التوصيل');
+        $bills_done_count = $bills_done->count();
+        $total_cost = $bills_done->sum('total_price');
+
+        $bills_with_5_pound_profit_count = (clone $bills_done)->whereDate('created_at', '<=', Carbon::parse('2024-9-6'))->where('has_additional_cost', 1)->count();
+        $total_profit_5_pound = $bills_with_5_pound_profit_count * 5;
+ 
+        $bills_with_1_point_25_percent_profit = (clone $bills_done)->whereDate('created_at', '>', Carbon::parse('2024-9-6'))->where('has_additional_cost', 1);
+        $bills_with_1_point_25_percent_profit_count = $bills_with_1_point_25_percent_profit->count();
+        $bills_with_1_point_25_percent_profit_total_cost = $bills_with_1_point_25_percent_profit->sum('total_price');
+        $total_profit_1_point_25_percent = $bills_with_1_point_25_percent_profit->sum('total_price') * 0.0125;
+
+
+
+        $bills_without_profit = (clone $bills_done)->where('has_additional_cost', 0);
+        $bills_without_profit_count = $bills_without_profit->count();
+
+        $bills_with_profit_count = $bills_with_5_pound_profit_count + $bills_with_1_point_25_percent_profit_count;
+
+        $bills_with_discount = (clone $bills_done)->where('goal_discount', '>', '0');
         $bills_with_discount_count = $bills_with_discount->count();
 
+        $total_discount = $bills_with_discount->sum('goal_discount');
 
-        $total_cost = $bills->sum('total_price');
-        $total_discount = $bills->sum('goal_discount');
-        $total_additional_cost = $bills_with_additional_cost_count * 5;
+        $total_profit = $total_profit_1_point_25_percent + $total_profit_5_pound;
 
-        $_60_percetn_of_total_profit = $total_additional_cost * 60 / 100;
-        $_40_percent_of_total_profit = $total_additional_cost * 40 / 100;
+        $_60_percetn_of_total_profit = $total_profit * 60 / 100;
+        $_40_percent_of_total_profit = $total_profit * 40 / 100;
 
         return response()->json(['data' => [
-            'bills_count' => $bills_count,
+            'bills_count' => $bills_count, //العدد الكلي للفواتير
+            'bills_done_count' => $bills_done_count, // عدد الفواتير المنجزة
+            'bills_cancelled_count' => $bills_cancelled_count, // عدد الفواتير الملغية
+            'bills_on_prepere_count' => $bills_on_prepere_count, // عدد الفواتير قيد التجضير
+            'total_cost' => $total_cost, // قيمة الفواتير المنجزة الكلية
+            'total_waste_cost' => $total_waste_cost, // قيمة الفواتير الملغية
 
-            'bills_with_additional_cost_count' => $bills_with_additional_cost_count,
-            'bills_without_additional_cost_count' => $bills_without_additional_cost_count,
-            'bills_with_discount_count' => $bills_with_discount_count,
+            'bills_without_profit_count' => $bills_without_profit_count, //عدد الفواتير الخالية من الربح
+            'bills_with_profit_count' => $bills_with_profit_count, // عدد الفواتير الحاوية للربح
+            'total_profit' => $total_profit, // قيمة الربح الكلية
 
-            'total_cost' => $total_cost,
-            'total_additional_cost ' => $total_additional_cost,
-            'total_discount' => $total_discount,
+            'bills_with_discount_count' => $bills_with_discount_count, // عدد الفواتير الحاوية للخصم
+            'total_discount' => $total_discount, // القيمة المجملة للخصم
 
-            '60%_of_the_total' => $_60_percetn_of_total_profit,
-            '40%_of_the_total' => $_40_percent_of_total_profit,
+            'bills_5_pound_count' => $bills_with_5_pound_profit_count, // عدد الفواتير ذات الربح الثابت
+            'bills_5_pound_profit' => $total_profit_5_pound, // القيمة المجملة للربح الثابت
+
+            'bills_1.25%_count' => $bills_with_1_point_25_percent_profit_count, // عدد الفواتير ذات الربح النسبي
+            'bills_1.25%_total_cost' => $bills_with_1_point_25_percent_profit_total_cost, // القيمة المجملة للفواتير
+            'bills_1.25%_profit' => $total_profit_1_point_25_percent, // القيمة الجملة للربح
+
+
+            '60%_of_the_total' => $_60_percetn_of_total_profit, // 60 % من الربح 
+            '40%_of_the_total' => $_40_percent_of_total_profit, // 40%  من الربح
         ]], 200);
     }
 

@@ -29,7 +29,9 @@ class SupplierUserController extends Controller
         $category = $request->query('category');
         $status = $request->query('status');
 
-        $query = Supplier::query()->with('image', 'distributionLocations');
+        $query = Supplier::query()->with('image', 'distributionLocations')->withCount(['bills' => function ($query) {
+            $query->where('status', '!=','ملغية')->where('status', '!=','رفض الإستلام');
+        }]);
         if ($category) {
             $query->where('supplier_category_id', $category);
         }

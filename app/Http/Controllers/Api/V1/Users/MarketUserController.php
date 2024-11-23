@@ -22,7 +22,9 @@ class MarketUserController extends Controller
     {
         $this->authorize('viewAny', Market::class);
 
-        $query = Market::query();
+        $query = Market::query()->withCount(['bills' => function ($query) {
+            $query->where('status', '!=','ملغية')->where('status', '!=','رفض الإستلام');
+        }]);
         $perPage = $request->input('per_page', 20);
 
         $filter = $this->filter($request, $query);
