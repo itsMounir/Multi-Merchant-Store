@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('coupons', function (Blueprint $table) {
             $table->id();
-            $table->string('code', '6');
+            $table->string('code',20);
             $table->float('min_bill_limit');
             $table->float('disscount_value');
-            $table->boolean('active')->default(0);
+            $table->boolean('active')->default(1);
             $table->softDeletes();
             $table->timestamps();
         });

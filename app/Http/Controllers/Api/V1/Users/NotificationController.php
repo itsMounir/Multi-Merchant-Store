@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Users;
 
 use App\Http\Controllers\Controller;
+use App\Models\City;
 use App\Models\Market;
 use App\Models\Supplier;
 use App\Models\User;
@@ -115,6 +116,52 @@ class NotificationController extends Controller
             $supplier = Supplier::findOrfail($id);
             Notification::send($supplier, new PrivateSupplierNotification($request->title, $request->body));
             $this->sendNotification($supplier->deviceToken, $request->title, $request->body);
+            DB::commit();
+            return response()->json(['message' => 'notofication sent successfully', 'notification' => ['title' => $request->title, 'body' => $request->body]], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json($e->getMessage(), 400);
+        }
+    }
+
+    public function sendNotificationToSupplierInCity(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $data =  $request->validate([
+                'title' => ['required'],
+                'body' => ['required'],
+                'city_id' => 'required|exists:cities,id',
+            ]);
+            $city = City::findOrFail($data['city_id']);
+            $suppliers = Supplier::where('city_id', $city->id)->get();
+            foreach ($suppliers as $supplier) {
+                Notification::send($supplier, new PrivateSupplierNotification($data['title'], $data['body']));
+                $this->sendNotification($supplier->deviceToken, $data['title'], $data['body']);
+            }
+            DB::commit();
+            return response()->json(['message' => 'notofication sent successfully', 'notification' => ['title' => $request->title, 'body' => $request->body]], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json($e->getMessage(), 400);
+        }
+    }
+
+    public function sendNotificationToMarketInCity(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $data = $request->validate([
+                'title' => 'required',
+                'body' => 'required',
+                'city_id' => 'required|exists:cities,id',
+            ]);
+            $city = City::findOrFail($data['city_id']);
+            $markets = Market::where('city_id', $city->id)->get();
+            foreach ($markets as $market) {
+                Notification::send($market, new PrivateSupplierNotification($data['title'], $data['body']));
+                $this->sendNotification($market->deviceToken, $data['title'], $data['body']);
+            }
             DB::commit();
             return response()->json(['message' => 'notofication sent successfully', 'notification' => ['title' => $request->title, 'body' => $request->body]], 201);
         } catch (\Exception $e) {

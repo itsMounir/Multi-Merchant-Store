@@ -10,10 +10,6 @@ Route::prefix('users/coupon')->middleware([
     'isOnline',
     'ability:' . TokenAbility::ACCESS_API->value
 ])->group(function () {
-
-    Route::get('qq', function () {
-        return "qq";
-    });
     
     Route::get('index', [CouponController::class, 'index']);
     Route::post('store', [CouponController::class, 'store']);

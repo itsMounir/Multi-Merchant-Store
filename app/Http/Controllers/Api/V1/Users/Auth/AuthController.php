@@ -37,6 +37,7 @@ class AuthController extends Controller
             [TokenAbility::ISSUE_ACCESS_TOKEN->value],
             Carbon::now()->addMinutes(config('sanctum.rt_expiration'))
         );
+        
         $user->load('roles');
         return response()->json([
             'message' => 'تم تسجيل الدخول بنجاح',

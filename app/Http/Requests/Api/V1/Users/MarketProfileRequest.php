@@ -5,6 +5,7 @@ namespace App\Http\Requests\Api\V1\Users;
 use App\Models\Market;
 use App\Rules\EgyptPhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class MarketProfileRequest extends FormRequest
 {
@@ -32,7 +33,7 @@ class MarketProfileRequest extends FormRequest
             'phone_number' => ['string', 'unique:suppliers,phone_number,' . $user . ',id', 'required', new EgyptPhoneNumber],
             'market_category_id' => ['required'],
             'city_id' => ['required'],
-            'store_name' => ['string', 'unique:markets,store_name,' . $user . ',id', 'required'],
+            'store_name' => ['string', 'required', Rule::unique('markets', 'store_name')->where('city_id', $this->city_id)],
         ];
     }
 }
